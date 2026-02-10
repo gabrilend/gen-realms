@@ -1,69 +1,108 @@
-# 3-003: Trade Row Selection Prompt
+# 5-003: World State Prompt
 
 ## Current Behavior
-Trade row fills randomly from the deck.
+No persistent world state for LLM context.
 
 ## Intended Behavior
-The LLM DM influences which cards appear in the trade row:
-- Receives game state context
-- Selects narratively appropriate cards
-- Biases toward cards that fit the emerging story
-- Still maintains game balance
-- Returns structured card selections
+A world state prompt that:
+- Maintains persistent narrative context
+- Summarizes game progress
+- Tracks faction dominance
+- Describes battlefield conditions
+- Updates as game progresses
 
 ## Suggested Implementation Steps
 
-1. Create `src/llm/prompts/trade-row.lua`
-2. Design the system prompt:
+1. Create world state structure:
+   ```c
+   // {{{ world state
+   typedef struct {
+       char* battlefield_description;
+       char* player1_forces;
+       char* player2_forces;
+       char* recent_events[10];
+       int event_count;
+       int turn_number;
+   } WorldState;
+   // }}}
    ```
-   You are the Dungeon Master for Symbeline Realms.
-   Your role is to select cards for the trade row that
-   advance the narrative while maintaining game balance.
 
-   Consider:
-   - The current story arc
-   - Each player's faction preferences
-   - Dramatic tension
-   - Card availability in deck
+2. Implement `world_state_init()`:
+   ```c
+   // {{{ init
+   WorldState* world_state_init(Game* game) {
+       WorldState* ws = malloc(sizeof(WorldState));
+       ws->battlefield_description =
+           "The contested realm of Symbeline stretches before "
+           "two rival commanders, each seeking dominion.";
+       ws->turn_number = 1;
+       return ws;
+   }
+   // }}}
    ```
-3. Design the user prompt template with game state injection
-4. Implement `TradeRowPrompt.generate(game_state)` - build prompt
-5. Implement `TradeRowPrompt.parse_response(response)` - extract selections
-6. Add validation (selected cards must exist in deck)
-7. Implement fallback to random if LLM fails
-8. Write tests for prompt generation and parsing
+
+3. Implement `world_state_update()`:
+   ```c
+   // {{{ update
+   void world_state_update(WorldState* ws, Game* game) {
+       // Update force descriptions based on played cards
+       // Track faction balance
+       // Update battlefield conditions
+   }
+   // }}}
+   ```
+
+4. Implement `world_state_to_prompt()`:
+   ```c
+   // {{{ to prompt
+   char* world_state_to_prompt(WorldState* ws) {
+       return prompt_build(PROMPT_WORLD_STATE, &(PromptVars){
+           .battlefield = ws->battlefield_description,
+           .player1 = ws->player1_forces,
+           .player2 = ws->player2_forces,
+           .turn = ws->turn_number
+       });
+   }
+   // }}}
+   ```
+
+5. Add faction tracking (which faction is dominant)
+
+6. Add event summarization (last N events)
+
+7. Write tests
 
 ## Related Documents
-- 3-001-llm-api-integration-module.md
-- 3-002-game-state-serialization.md
-- 1-004-trade-row-implementation.md
+- 5-002-prompt-network-structure.md
+- docs/02-game-mechanics.md
 
 ## Dependencies
-- 3-001: LLM API Integration
-- 3-002: Game State Serialization
+- 5-002: Prompt Network Structure
 
-## Prompt Example
+## Example Output
 
 ```
-System: You are the Dungeon Master for Symbeline Realms...
+The battle for Symbeline enters its twelfth turn.
 
-User: The trade row needs 2 new cards.
+Lady Morgaine commands the combined might of the Wilds and
+Kingdom factions. Her forces include:
+- A pack of three dire beasts
+- Two Knight Commanders
+- The fortified Trading Post
 
-Current story: Lady Morgaine has been building a beast army
-while Lord Theron relies on merchant wealth.
+Lord Theron marshals the Merchant Guilds and Artificer Order:
+- Three mechanical constructs
+- A network of trade caravans
+- The ancient Watchtower outpost
 
-Available cards in deck: [list of 30 remaining cards]
-
-Player 1 deck composition: 60% Wilds, 30% Kingdom
-Player 2 deck composition: 50% Merchant, 40% Artificer
-
-Select 2 cards that would create interesting choices.
-Respond with card IDs only, one per line.
+The battlefield shows signs of prolonged conflict, with
+fallen constructs and beast remains scattered across the
+contested ground.
 ```
 
 ## Acceptance Criteria
-- [ ] Prompt includes relevant game context
-- [ ] LLM returns valid card selections
-- [ ] Selections parse correctly
-- [ ] Fallback works when LLM unavailable
-- [ ] Narrative influence is noticeable
+- [ ] World state initializes correctly
+- [ ] State updates on game events
+- [ ] Faction balance tracked
+- [ ] Recent events summarized
+- [ ] Prompt output is narrative quality

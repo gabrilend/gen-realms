@@ -1,45 +1,114 @@
-# 4-009: Image Caching and Persistence
+# 6-009: Image Caching and Persistence
 
 ## Current Behavior
-Generated images are not saved.
+Generated images are not cached or saved.
 
 ## Intended Behavior
-Save and cache generated images for replay and export:
-- Cache generated regions by prompt hash
-- Persist full canvas states to disk
-- Support game replay with cached images
-- Export final battle scenes
-- Reduce redundant generation
+A caching system that:
+- Caches generated images by prompt hash
+- Persists canvas states to disk
+- Supports game replay with cached images
+- Exports final battle scenes
+- Reduces redundant generation
 
 ## Suggested Implementation Steps
 
-1. Create `src/visual/image-cache.lua`
-2. Define cache structure:
-   ```lua
-   local cache = {
-     memory = {},
-     disk_path = "output/images/",
-     game_id = "",
-     frame_index = 0
-   }
+1. Create `src/visual/image-cache.h`:
+   ```c
+   // {{{ cache types
+   typedef struct {
+       char* prompt_hash;
+       unsigned char* image_data;
+       size_t image_size;
+       time_t generated_at;
+       int use_count;
+   } ImageCacheEntry;
+
+   typedef struct {
+       ImageCacheEntry* entries;
+       int entry_count;
+       int max_entries;
+       char* cache_dir;
+       char* game_id;
+   } ImageCache;
+   // }}}
    ```
-3. Implement `ImageCache.new(game_id)` - create for game session
-4. Implement `ImageCache.get(prompt_hash)` - check for cached region
-5. Implement `ImageCache.set(prompt_hash, image)` - store region
-6. Implement `ImageCache.save_frame(canvas)` - persist full canvas
-7. Implement `ImageCache.export_final(path)` - save final image
-8. Implement `ImageCache.load_game(game_id)` - restore for replay
-9. Add cleanup for old cache entries
-10. Write tests for cache operations
+
+2. Implement `image_cache_init()`:
+   ```c
+   // {{{ init
+   ImageCache* image_cache_init(const char* cache_dir, const char* game_id) {
+       ImageCache* ic = malloc(sizeof(ImageCache));
+       ic->cache_dir = strdup(cache_dir);
+       ic->game_id = strdup(game_id);
+       ic->max_entries = 256;
+       ic->entries = calloc(ic->max_entries, sizeof(ImageCacheEntry));
+
+       // Create game-specific directory
+       char path[512];
+       snprintf(path, sizeof(path), "%s/%s", cache_dir, game_id);
+       mkdir(path, 0755);
+
+       return ic;
+   }
+   // }}}
+   ```
+
+3. Implement `image_cache_get()`:
+   ```c
+   // {{{ get
+   unsigned char* image_cache_get(ImageCache* ic, const char* prompt_hash,
+                                   size_t* out_size) {
+       for (int i = 0; i < ic->entry_count; i++) {
+           if (strcmp(ic->entries[i].prompt_hash, prompt_hash) == 0) {
+               ic->entries[i].use_count++;
+               *out_size = ic->entries[i].image_size;
+               return ic->entries[i].image_data;
+           }
+       }
+       return NULL;  // Cache miss
+   }
+   // }}}
+   ```
+
+4. Implement `image_cache_set()`:
+   ```c
+   // {{{ set
+   void image_cache_set(ImageCache* ic, const char* prompt_hash,
+                        unsigned char* data, size_t size) {
+       // Add to memory cache
+       ImageCacheEntry* entry = &ic->entries[ic->entry_count++];
+       entry->prompt_hash = strdup(prompt_hash);
+       entry->image_data = malloc(size);
+       memcpy(entry->image_data, data, size);
+       entry->image_size = size;
+       entry->generated_at = time(NULL);
+
+       // Persist to disk
+       image_cache_save_entry(ic, entry);
+   }
+   // }}}
+   ```
+
+5. Implement `image_cache_save_frame()` for canvas snapshots
+
+6. Implement `image_cache_export_final()` for game completion
+
+7. Implement `image_cache_load_game()` for replay support
+
+8. Add LRU eviction when cache is full
+
+9. Write tests for cache operations
 
 ## Related Documents
-- 3-009-llm-response-caching.md (similar pattern)
-- 4-001-canvas-state-manager.md
+- 5-008-narrative-caching.md (similar pattern)
+- 6-005-battle-canvas-manager.md
 
 ## Dependencies
-- 4-001: Canvas State Manager
+- 6-005: Battle Canvas Manager
+- stb_image_write (PNG export)
 
-## Cache Structure on Disk
+## Cache Directory Structure
 
 ```
 output/images/
@@ -49,14 +118,14 @@ output/images/
     ...
     frame_final.png
     cache/
-      abc123.png  (region by hash)
-      def456.png
+      abc123def.png  (by prompt hash)
+      456789fed.png
     metadata.json
 ```
 
 ## Acceptance Criteria
-- [ ] Generated regions cached
+- [ ] Images cached by prompt hash
+- [ ] Cache hit avoids regeneration
 - [ ] Canvas states persist to disk
-- [ ] Replay loads cached images
 - [ ] Final image exportable
-- [ ] Cache reduces API calls
+- [ ] Replay loads cached images

@@ -1,68 +1,129 @@
-# 2-010: Phase 2 Demo
+# 6-010: Phase 6 Demo
 
 ## Current Behavior
-Phase 1 demo exists with placeholder cards.
+Phase 5 demo exists with LLM narrative but no visuals.
 
 ## Intended Behavior
-An enhanced demo that:
-- Uses the complete card database
-- All four factions playable
-- Faction strategies emerge through play
-- Balance is testable through repeated games
-- Card art placeholders display
-- Win/loss statistics tracked
+A demonstration showing the complete visual generation system:
+- ComfyUI integration working
+- Card art generated dynamically
+- Battle canvas with progressive inpainting
+- Style-consistent faction visuals
+- Image caching reducing generation time
 
 ## Suggested Implementation Steps
 
-1. Update `issues/completed/demos/phase-2-demo.lua`
-2. Integrate card loader with game initialization
-3. Build trade deck from all faction cards
-4. Display faction colors in TUI
-5. Show card art (ASCII mode)
-6. Add faction indicator to cards in hand
-7. Track game statistics:
-   - Games played
-   - Wins per player
-   - Faction usage
-   - Average game length
-8. Update simple AI to consider factions
-9. Create match history log
-10. Update run script
+1. Create `run-phase6-demo.sh` in project root
+2. Configure ComfyUI endpoint (local server)
+3. Run game with visual generation enabled
+4. Display generated card art
+5. Show battle canvas building progressively
+6. Export final battle scene
+7. Display cache statistics
+8. Verify style consistency
 
 ## Related Documents
-- 1-012-phase-1-demo.md
-- All Phase 2 issues
+- All Phase 6 issues (6-001 through 6-009)
+- 5-010-phase-5-demo.md
 
 ## Dependencies
-- All Phase 2 issues (2-001 through 2-009)
+- All previous Phase 6 issues (6-001 through 6-009)
+- Phase 5 complete (LLM narrative)
+- ComfyUI running locally
 
-## Demo Features
+## Demo Output
 
 ```
-=== Symbeline Realms - Phase 2 Demo ===
+=== SYMBELINE REALMS: PHASE 6 DEMO ===
 
-Your Hand:
-[1] Guild Courier (Merchant) +2T, Ally: Draw
-[2] Wolf Scout (Wilds) +2C, Ally: +2C
-[3] Village Scout +1T
-[4] Village Scout +1T
-[5] Hedge Knight +1C
+Connecting to ComfyUI: http://localhost:8188
+Model: sd_xl_base_1.0
 
-Trade Row:
-[A] Dire Bear (Wilds) Cost: 4 | +5C, Ally: Draw
-[B] Trading Post (Merchant) Cost: 3 | Base, +2T/turn
-[C] Construct Apprentice (Artificer) Cost: 1 | +1T, Scrap: +2C
-[D] Knight Commander (Kingdom) Cost: 4 | +4C+2A, Ally: Discard
-[E] Sellsword (Neutral) Cost: 3 | +3C, Scrap: +3T
-[W] Wandering Merchant Cost: 2 | Always Available
+--- INITIALIZATION ---
 
-Stats: Games: 5 | You: 3 wins | AI: 2 wins
+Generating card art...
+[1/5] Dire Bear (Wilds) - 3.2s
+[2/5] Trading Post (Merchant) - 2.8s
+[3/5] Knight Commander (Kingdom) - 3.1s
+[4/5] Construct Sentinel (Artificer) - 2.9s
+[5/5] Wandering Merchant (Neutral) - 2.7s
+
+Card art generation complete.
+
+--- GAME START ---
+
+Building battle canvas (512x512)...
+
+[CANVAS] Generating SKY region...
+  Prompt: "Fantasy battlefield sky, dramatic clouds,
+           two armies facing, medieval, magical, painterly"
+  Time: 4.2s
+  Status: Complete ✓
+
+[CANVAS] Generating P1_BASE region...
+  Prompt: "Forest stronghold, wooden palisade,
+           primal totems, Wilds faction, fantasy art"
+  Time: 3.8s
+  Status: Complete ✓
+
+--- TURN 3 ---
+
+Lady Morgaine plays: Dire Bear
+
+[CANVAS] Generating P1_FORCES region...
+  Prompt: "Massive dire bear, forest creature,
+           primal rage, charging left-to-right,
+           fantasy card art, Wilds faction"
+  Time: 3.5s
+  Status: Complete ✓
+
+[UPGRADE] Ally bonus active - applying golden glow overlay
+
+--- TURN 7 ---
+
+Attack for 5 damage!
+
+[CANVAS] Generating CENTER region...
+  Prompt: "Battle clash, bear attacking knight,
+           magical energy, combat action, dynamic pose"
+  Time: 4.1s
+  Status: Complete ✓
+
+--- GAME OVER ---
+
+Lady Morgaine wins!
+
+[CANVAS] Exporting final battle scene...
+  Path: output/images/game_20240115/frame_final.png
+  Size: 512x512
+  Status: Exported ✓
+
+=== STATISTICS ===
+
+ComfyUI Calls: 12
+Cache Hits: 3 (25%)
+Average Generation Time: 3.4s
+Total Canvas Regions: 6
+Style Consistency: High (all fantasy)
+Final Image Size: 847 KB
+
+Opening battle scene in viewer...
+
+Demo complete.
 ```
+
+## Visual Output
+
+The demo should produce:
+1. Individual card art images (256x256 each)
+2. Progressive canvas snapshots (frame_001.png, frame_002.png, ...)
+3. Final composite battle scene (512x512)
+4. Cache directory with reusable generations
 
 ## Acceptance Criteria
-- [ ] Complete card database in use
-- [ ] All factions appear in trade row
-- [ ] Faction colors/indicators visible
-- [ ] Games feel strategically different
-- [ ] Statistics tracking works
-- [ ] Demo showcases Phase 2 content
+- [ ] ComfyUI generates images successfully
+- [ ] Card art matches faction styles
+- [ ] Battle canvas builds progressively
+- [ ] Cache reduces redundant generation
+- [ ] Final scene exports correctly
+- [ ] Demo runs to completion

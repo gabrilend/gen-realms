@@ -1,69 +1,96 @@
-# 3-005: Context Window Management
+# 5-005: Event Narration Prompts
 
 ## Current Behavior
-No context management exists. Each LLM call is independent.
+No narrative generated for game events.
 
 ## Intended Behavior
-A system that manages narrative history within token limits:
-- Maintains rolling story summary
-- Includes recent events in full
-- Summarizes older events
-- Stays within model context limits
-- Preserves key narrative beats
+Event-specific prompts that generate narrative for:
+- Card plays
+- Purchases
+- Attacks
+- Base destruction
+- Turn transitions
+- Game end
 
 ## Suggested Implementation Steps
 
-1. Create `src/llm/context-manager.lua`
-2. Define context structure:
-   ```lua
-   local context = {
-     max_tokens = 4000,
-     story_summary = "",        -- compressed history
-     recent_events = {},        -- last 5-10 events in full
-     key_moments = {},          -- always-include dramatic events
-     current_state = ""         -- game state summary
-   }
+1. Define event types and templates:
+   ```c
+   // {{{ event templates
+   static const char* EVENT_TEMPLATES[] = {
+       [EVENT_CARD_PLAYED] =
+           "Narrate %s playing the %s. Effect: %s. One sentence.",
+       [EVENT_CARD_PURCHASED] =
+           "Describe %s acquiring the %s from the markets. Brief.",
+       [EVENT_ATTACK_PLAYER] =
+           "Describe an attack dealing %d damage to %s. Dramatic.",
+       [EVENT_ATTACK_BASE] =
+           "Narrate the assault on %s's %s (defense %d). Vivid.",
+       [EVENT_BASE_DESTROYED] =
+           "Describe the fall of %s. Dramatic conclusion.",
+       [EVENT_TURN_START] =
+           "Brief transition: Turn %d begins for %s.",
+       [EVENT_GAME_OVER] =
+           "Narrate %s's victory over %s. Epic conclusion."
+   };
+   // }}}
    ```
-3. Implement `Context.new(config)` - create manager
-4. Implement `Context.add_event(ctx, event_text)` - append event
-5. Implement `Context.summarize_old(ctx)` - compress old events
-6. Implement `Context.get_prompt_context(ctx)` - build context string
-7. Implement token counting (estimate by characters/4)
-8. Implement key moment tagging (when to preserve events)
-9. Add periodic full summarization
-10. Write tests for context overflow handling
+
+2. Implement event narration builder:
+   ```c
+   // {{{ build event narration
+   char* event_narration_build(GameEvent* event) {
+       const char* template = EVENT_TEMPLATES[event->type];
+
+       switch (event->type) {
+           case EVENT_CARD_PLAYED:
+               return prompt_format(template,
+                   event->player->name,
+                   event->card->type->name,
+                   effect_to_string(event->card->type->effects));
+           // ... other cases
+       }
+   }
+   // }}}
+   ```
+
+3. Implement attack narration with intensity scaling
+
+4. Implement turn transition narration
+
+5. Implement game over narration
+
+6. Write tests for each event type
 
 ## Related Documents
-- 3-004-narrative-generation-prompt.md
-- 3-001-llm-api-integration-module.md
+- 5-002-prompt-network-structure.md
+- 1-008d-event-emission.md
 
 ## Dependencies
-- 3-001: LLM API Integration
+- 5-002: Prompt Network Structure
+- Game event system
 
-## Context Example
+## Event Examples
 
 ```
-=== Story Summary (compressed) ===
-The battle began with Lady Morgaine favoring the Wilds
-while Lord Theron built merchant alliances. Early skirmishes
-saw both sides testing defenses.
+EVENT_CARD_PLAYED:
+"Lady Morgaine summons the Dire Bear to the battlefield,
+its savage strength adding five points of combat to her
+growing army."
 
-=== Key Moments ===
-Turn 8: The Sacred Grove was established, spawning wolves
-Turn 12: Lord Theron's authority fell below 20
+EVENT_ATTACK_PLAYER:
+"Lord Theron's forces strike directly at Lady Morgaine,
+her authority crumbling by seven points under the
+relentless assault."
 
-=== Recent Events (last 3 turns) ===
-Turn 14: Morgaine unleashed the Primal Titan, dealing 12 damage
-Turn 15: Theron fortified with the Arcane Workshop
-Turn 16: (current turn)
-
-=== Current State ===
-Morgaine: 31 Authority | Theron: 18 Authority
+EVENT_BASE_DESTROYED:
+"With a thunderous crash, the ancient Watchtower
+collapses, its defenders scattered to the winds."
 ```
 
 ## Acceptance Criteria
-- [ ] Context stays within token limit
-- [ ] Old events summarize correctly
-- [ ] Recent events preserved in full
-- [ ] Key moments always included
-- [ ] Narrative continuity maintained
+- [ ] All event types have templates
+- [ ] Narration quality is good
+- [ ] Attack intensity scales with damage
+- [ ] Turn transitions are brief
+- [ ] Game over is epic

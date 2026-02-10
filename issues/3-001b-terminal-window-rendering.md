@@ -1,0 +1,129 @@
+# 3-001b: Terminal Window Rendering
+
+## Current Behavior
+No rendering functions for terminal windows.
+
+## Intended Behavior
+Implement rendering functions for each UI panel:
+- Hand window shows player's cards
+- Trade row window shows available purchases
+- Base window shows deployed bases
+- Narrative window shows story text
+- Status bar shows game state
+
+## Suggested Implementation Steps
+
+1. Implement `terminal_render_status()`:
+   ```c
+   // {{{ render status
+   void terminal_render_status(TerminalUI* ui, Game* game, int player_id) {
+       werase(ui->status_win);
+       Player* p = &game->players[player_id];
+       Player* opp = &game->players[1 - player_id];
+
+       mvwprintw(ui->status_win, 0, 0,
+           "Turn %d | %s | You: Auth %d d10:%d d4:%d | Opp: Auth %d",
+           game->turn, game->phase == MAIN ? "MAIN" : "DISCARD",
+           p->authority, p->d10, p->d4,
+           opp->authority);
+
+       wrefresh(ui->status_win);
+   }
+   // }}}
+   ```
+
+2. Implement `terminal_render_hand()`:
+   ```c
+   // {{{ render hand
+   void terminal_render_hand(TerminalUI* ui, Player* player) {
+       werase(ui->hand_win);
+       box(ui->hand_win, 0, 0);
+       mvwprintw(ui->hand_win, 0, 2, " YOUR HAND ");
+
+       for (int i = 0; i < player->hand_count; i++) {
+           Card* card = player->hand[i];
+           int color = faction_to_color_pair(card->type->faction);
+           wattron(ui->hand_win, COLOR_PAIR(color));
+           mvwprintw(ui->hand_win, i + 1, 1, "[%d] %s",
+               i, card->type->name);
+           wattroff(ui->hand_win, COLOR_PAIR(color));
+       }
+
+       mvwprintw(ui->hand_win, getmaxy(ui->hand_win) - 2, 1,
+           "Trade: %d Combat: %d", player->trade, player->combat);
+
+       wrefresh(ui->hand_win);
+   }
+   // }}}
+   ```
+
+3. Implement `terminal_render_trade_row()`:
+   ```c
+   // {{{ render trade row
+   void terminal_render_trade_row(TerminalUI* ui, TradeRow* row) {
+       werase(ui->trade_win);
+       box(ui->trade_win, 0, 0);
+       mvwprintw(ui->trade_win, 0, 2, " TRADE ROW ");
+
+       for (int i = 0; i < row->count; i++) {
+           Card* card = row->cards[i];
+           int color = faction_to_color_pair(card->type->faction);
+           wattron(ui->trade_win, COLOR_PAIR(color));
+           mvwprintw(ui->trade_win, i + 1, 1, "[%d] %-20s %dg",
+               i, card->type->name, card->type->cost);
+           wattroff(ui->trade_win, COLOR_PAIR(color));
+       }
+
+       wrefresh(ui->trade_win);
+   }
+   // }}}
+   ```
+
+4. Implement `terminal_render_bases()`:
+   ```c
+   // {{{ render bases
+   void terminal_render_bases(TerminalUI* ui, Player* player, Player* opponent) {
+       werase(ui->base_win);
+       box(ui->base_win, 0, 0);
+
+       mvwprintw(ui->base_win, 0, 2, " YOUR BASES ");
+       int y = 1;
+       for (int i = 0; i < player->base_count; i++) {
+           Base* base = &player->bases[i];
+           mvwprintw(ui->base_win, y++, 1, "[%d] %s (%d def)",
+               i, base->card->type->name, base->defense);
+       }
+
+       int mid = getmaxy(ui->base_win) / 2;
+       mvwprintw(ui->base_win, mid, 2, " OPPONENT BASES ");
+       y = mid + 1;
+       for (int i = 0; i < opponent->base_count; i++) {
+           Base* base = &opponent->bases[i];
+           mvwprintw(ui->base_win, y++, 1, "[%d] %s (%d def)",
+               i, base->card->type->name, base->defense);
+       }
+
+       wrefresh(ui->base_win);
+   }
+   // }}}
+   ```
+
+5. Implement `terminal_render_narrative()` with scrolling support
+
+6. Implement `terminal_render()` to call all sub-renderers
+
+7. Write rendering tests
+
+## Related Documents
+- 3-001a-terminal-ui-init.md
+- 3-001-terminal-renderer.md (parent issue)
+
+## Dependencies
+- 3-001a: Terminal UI Initialization
+
+## Acceptance Criteria
+- [ ] Hand window shows all cards with faction colors
+- [ ] Trade row shows cards with costs
+- [ ] Base window shows both players' bases
+- [ ] Status bar shows all game state info
+- [ ] Narrative window scrolls properly

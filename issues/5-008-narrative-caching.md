@@ -1,69 +1,104 @@
-# 3-008: Narrative Display Formatting
+# 5-008: Narrative Caching
 
 ## Current Behavior
-Game displays only mechanical information.
+No caching of generated narratives.
 
 ## Intended Behavior
-Present narrative text alongside game state:
-- Story text appears in dedicated display area
-- Mechanical actions also shown for clarity
-- Text scrolls or pages for long narratives
-- Color/styling distinguishes narrative from UI
-- Option to toggle narrative verbosity
+A caching system that:
+- Stores generated narratives by event signature
+- Avoids regenerating identical narratives
+- Expires stale cache entries
+- Persists across game sessions (optional)
 
 ## Suggested Implementation Steps
 
-1. Create `src/display/narrative.lua`
-2. Define display layout:
+1. Create cache structure:
+   ```c
+   // {{{ narrative cache
+   typedef struct {
+       char* event_signature;
+       char* narrative;
+       time_t generated_at;
+       int use_count;
+   } NarrativeCacheEntry;
+
+   typedef struct {
+       NarrativeCacheEntry* entries;
+       int count;
+       int max_entries;
+       int ttl_seconds;
+   } NarrativeCache;
+   // }}}
    ```
-   +------------------+------------------+
-   |   Game State     |   Narrative      |
-   |                  |                  |
-   |  Hand: [cards]   |  "The dire bear  |
-   |  Trade Row: ...  |   roars..."      |
-   |                  |                  |
-   |  Actions: ...    |  [more story...] |
-   +------------------+------------------+
+
+2. Implement `narrative_cache_init()`:
+   ```c
+   // {{{ init
+   NarrativeCache* narrative_cache_init(int max_entries, int ttl) {
+       NarrativeCache* nc = malloc(sizeof(NarrativeCache));
+       nc->max_entries = max_entries;
+       nc->ttl_seconds = ttl;
+       nc->entries = calloc(max_entries, sizeof(NarrativeCacheEntry));
+       return nc;
+   }
+   // }}}
    ```
-3. Implement `Narrative.add_text(text)` - queue narrative
-4. Implement `Narrative.render(width, height)` - format for display
-5. Implement text wrapping for long lines
-6. Add scrollback buffer for history
-7. Add color codes for different speakers/events
-8. Implement verbosity levels (full, summary, off)
-9. Integrate with main TUI renderer
-10. Write tests for formatting edge cases
+
+3. Implement event signature generation:
+   ```c
+   // {{{ event signature
+   char* event_signature(GameEvent* event) {
+       // Create unique string identifying this event type
+       // e.g., "card_played:dire_bear:player1"
+   }
+   // }}}
+   ```
+
+4. Implement `narrative_cache_get()`:
+   ```c
+   // {{{ get
+   char* narrative_cache_get(NarrativeCache* nc, const char* sig) {
+       for (int i = 0; i < nc->count; i++) {
+           if (strcmp(nc->entries[i].event_signature, sig) == 0) {
+               // Check TTL
+               if (time(NULL) - nc->entries[i].generated_at < nc->ttl_seconds) {
+                   nc->entries[i].use_count++;
+                   return nc->entries[i].narrative;
+               }
+           }
+       }
+       return NULL;
+   }
+   // }}}
+   ```
+
+5. Implement `narrative_cache_set()`
+
+6. Implement LRU eviction when cache is full
+
+7. Add cache statistics
+
+8. Write tests
 
 ## Related Documents
-- 3-007-event-hook-system.md
-- 1-012-phase-1-demo.md
+- 5-005-event-narration-prompts.md
+- 5-001-llm-api-client.md
 
 ## Dependencies
-- 3-007: Event Hook System (provides narrative text)
+- 5-005: Event Narration Prompts
 
-## Display Example
+## Cache Strategy
 
-```
-╔══════════════════════════════════════════════════════════════════╗
-║  Symbeline Realms                              Turn 12           ║
-╠═══════════════════════════════╦══════════════════════════════════╣
-║  Lady Morgaine                ║                                  ║
-║  Authority: 28    d10: 7      ║  From the depths of the          ║
-║                               ║  Thornwood, Lady Morgaine        ║
-║  Hand:                        ║  summons a dire bear of          ║
-║  [1] Dire Bear     +5C        ║  ancient lineage. Its roar       ║
-║  [2] Wolf Scout    +2C        ║  echoes across the battlefield.  ║
-║  [3] Village Scout +1T        ║                                  ║
-║                               ║  Lord Theron's merchants         ║
-║  Trade: 1  Combat: 7          ║  scramble as the beast charges.  ║
-╠═══════════════════════════════╩══════════════════════════════════╣
-║  [P]lay [B]uy [A]ttack [E]nd turn                    [N] Narr.   ║
-╚══════════════════════════════════════════════════════════════════╝
-```
+| Event Type | Cacheable | TTL |
+|------------|-----------|-----|
+| Card played | Yes | Game duration |
+| Attack | Partially | Short (varies by damage) |
+| Turn start | No | - |
+| Game over | Yes | Permanent |
 
 ## Acceptance Criteria
-- [ ] Narrative displays alongside game state
-- [ ] Text wraps correctly
-- [ ] Scrollback history accessible
-- [ ] Verbosity levels work
-- [ ] Display is visually clear
+- [ ] Narratives cached by signature
+- [ ] Cache hit avoids LLM call
+- [ ] TTL expiration works
+- [ ] LRU eviction works
+- [ ] Cache statistics available

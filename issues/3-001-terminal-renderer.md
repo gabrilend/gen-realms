@@ -69,10 +69,17 @@ A full ncurses-based TUI for SSH clients that:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+## Sub-Issues
+This issue has been split into sub-issues for manageable implementation:
+- 3-001a: Terminal UI Initialization
+- 3-001b: Terminal Window Rendering
+- 3-001c: Terminal Formatting and Colors
+- 3-001d: Terminal Input and Resize
+
 ## Acceptance Criteria
-- [ ] ncurses initializes correctly
-- [ ] All panels render with correct content
-- [ ] Faction colors display
-- [ ] Upgrade bonuses shown on cards
-- [ ] Resize handled gracefully
-- [ ] Scrollable narrative history
+- [ ] ncurses initializes correctly (3-001a)
+- [ ] All panels render with correct content (3-001b)
+- [ ] Faction colors display (3-001c)
+- [ ] Upgrade bonuses shown on cards (3-001c)
+- [ ] Resize handled gracefully (3-001d)
+- [ ] Scrollable narrative history (3-001b)

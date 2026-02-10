@@ -1,70 +1,100 @@
-# 4-004: Inpainting API Integration
+# 6-004: Upgrade Visualization
 
 ## Current Behavior
-No image generation capability exists.
+Card upgrades have no visual representation.
 
 ## Intended Behavior
-Connect to inpainting API for image generation:
-- Send canvas + mask + prompt
-- Receive generated image region
-- Support multiple backends (local, API)
-- Handle errors and retries
-- Manage generation queue
+A system to visualize card upgrades and enhancements:
+- Shows upgrade effects on card art
+- Displays ally bonuses visually
+- Animates scrap effects
+- Indicates empowered states
+- Supports overlay compositing
 
 ## Suggested Implementation Steps
 
-1. Create `src/visual/inpaint-client.lua`
-2. Define client interface:
-   ```lua
-   local InpaintClient = {
-     endpoint = "",
-     api_key = "",
-     model = "",
-     config = {
-       strength = 0.8,
-       guidance = 7.5,
-       steps = 30
-     }
-   }
+1. Create `src/visual/upgrade-viz.h`:
+   ```c
+   // {{{ upgrade types
+   typedef enum {
+       UPGRADE_ALLY_ACTIVE,
+       UPGRADE_EMPOWERED,
+       UPGRADE_SCRAPPED,
+       UPGRADE_TARGETED
+   } UpgradeType;
+
+   typedef struct {
+       unsigned char* base_image;
+       unsigned char* overlay;
+       float intensity;
+       int width;
+       int height;
+   } UpgradeVisualization;
+   // }}}
    ```
-3. Implement `Inpaint.new(config)` - create client
-4. Implement `Inpaint.generate(canvas, mask, prompt, refs)`:
-   - Send request with image + mask
-   - Include reference images if supported
-   - Return generated image
-5. Add request queuing for rate limits
-6. Add retry logic for failures
-7. Support local Stable Diffusion backend
-8. Create config file for API settings
-9. Write tests with mock responses
+
+2. Define upgrade overlays:
+   ```c
+   // {{{ overlays
+   typedef struct {
+       const char* glow_color;
+       float glow_radius;
+       const char* particle_type;
+       float overlay_opacity;
+   } UpgradeOverlay;
+
+   static const UpgradeOverlay OVERLAYS[] = {
+       [UPGRADE_ALLY_ACTIVE] = {"#FFD700", 10.0f, "sparkle", 0.3f},
+       [UPGRADE_EMPOWERED] = {"#FF4444", 15.0f, "flame", 0.4f},
+       [UPGRADE_SCRAPPED] = {"#888888", 5.0f, "dust", 0.6f},
+       [UPGRADE_TARGETED] = {"#FF0000", 8.0f, "target", 0.5f}
+   };
+   // }}}
+   ```
+
+3. Implement `upgrade_apply_overlay()`:
+   ```c
+   // {{{ apply overlay
+   void upgrade_apply_overlay(UpgradeVisualization* viz, UpgradeType type) {
+       UpgradeOverlay* overlay = &OVERLAYS[type];
+       // Apply glow effect
+       // Add particle overlay
+       // Composite onto base image
+   }
+   // }}}
+   ```
+
+4. Implement `upgrade_animate_transition()` for state changes
+
+5. Implement `upgrade_generate_particles()` for effects
+
+6. Add alpha blending for overlay compositing
+
+7. Support multiple simultaneous upgrades
+
+8. Write tests for visual composition
 
 ## Related Documents
-- 3-001-llm-api-integration-module.md (similar pattern)
+- 6-002-card-image-prompt-builder.md
+- 1-007-card-effect-system.md
 
 ## Dependencies
-- 4-001: Canvas State Manager
-- 4-003: Reference Image Mapping
+- 6-002: Card Image Prompt Builder
+- 1-007: Card Effect System
 
-## API Request Example
+## Upgrade Visual Effects
 
-```lua
-local request = {
-  image = canvas.image_data,      -- base image
-  mask = region.mask,             -- white = generate
-  prompt = "A dire bear charging through forest, fantasy art",
-  negative_prompt = "sci-fi, spaceship, modern",
-  reference_images = {refs.faction_style},
-  strength = 0.8,
-  guidance_scale = 7.5
-}
-
-local result = client:generate(request)
-canvas:set_region(region.x, region.y, result.image)
-```
+| Upgrade | Visual Effect |
+|---------|---------------|
+| Ally Bonus | Golden glow, faction sparkles |
+| Empowered | Red aura, energy particles |
+| Scrapped | Fade to gray, dust particles |
+| Targeted | Red outline, crosshair overlay |
+| Combo | Multi-colored energy trails |
 
 ## Acceptance Criteria
-- [ ] Can connect to inpainting API
-- [ ] Sends canvas + mask correctly
-- [ ] Receives and processes result
-- [ ] Handles API errors gracefully
-- [ ] Queue prevents rate limiting
+- [ ] Ally activation shows visually
+- [ ] Empowered state has distinct look
+- [ ] Scrap animation plays on removal
+- [ ] Multiple upgrades can combine
+- [ ] Effects render performantly

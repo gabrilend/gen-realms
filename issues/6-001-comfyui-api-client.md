@@ -1,61 +1,101 @@
-# 4-001: Canvas State Manager
+# 6-001: ComfyUI API Client
 
 ## Current Behavior
-No visual canvas exists. Game has no image generation capability.
+No image generation capability exists.
 
 ## Intended Behavior
-A canvas manager that tracks the battle scene state:
-- Maintains current canvas image (pixels)
-- Tracks which regions have been filled
-- Stores generation history
-- Supports multiple canvas sizes
-- Provides region querying
+An HTTP client for ComfyUI API that:
+- Connects to ComfyUI server
+- Submits workflow JSON
+- Polls for completion
+- Retrieves generated images
+- Handles errors and timeouts
 
 ## Suggested Implementation Steps
 
-1. Create `src/visual/` directory
-2. Create `src/visual/canvas.lua`
-3. Define canvas structure:
-   ```lua
-   local canvas = {
-     width = 512,
-     height = 512,
-     image_data = nil,        -- actual pixel data
-     region_mask = {},        -- which regions are filled
-     history = {},            -- previous states
-     generation_queue = {}    -- pending regions
-   }
+1. Create `src/visual/` directory structure
+2. Create `src/visual/comfyui-client.h` with interface:
+   ```c
+   // {{{ comfyui types
+   typedef struct {
+       char* server_url;
+       int port;
+       int timeout_ms;
+       int poll_interval_ms;
+   } ComfyUIConfig;
+
+   typedef struct {
+       char* prompt_id;
+       char* status;
+       char* image_data;
+       size_t image_size;
+       char* error_message;
+   } ComfyUIResponse;
+   // }}}
    ```
-4. Implement `Canvas.new(width, height)` - create empty canvas
-5. Implement `Canvas.get_region(x, y, w, h)` - extract region
-6. Implement `Canvas.set_region(x, y, image)` - update region
-7. Implement `Canvas.is_filled(x, y, w, h)` - check if region done
-8. Implement `Canvas.save_state()` - add to history
-9. Implement `Canvas.export(path)` - save to file
-10. Write tests for region operations
+
+3. Implement `comfyui_init()`:
+   ```c
+   // {{{ init
+   ComfyUIConfig* comfyui_init(const char* url, int port) {
+       ComfyUIConfig* cfg = malloc(sizeof(ComfyUIConfig));
+       cfg->server_url = strdup(url);
+       cfg->port = port;
+       cfg->timeout_ms = 60000;
+       cfg->poll_interval_ms = 500;
+       return cfg;
+   }
+   // }}}
+   ```
+
+4. Implement `comfyui_submit_workflow()`:
+   ```c
+   // {{{ submit
+   char* comfyui_submit_workflow(ComfyUIConfig* cfg, const char* workflow_json) {
+       // POST to /prompt endpoint
+       // Return prompt_id for polling
+   }
+   // }}}
+   ```
+
+5. Implement `comfyui_poll_status()`:
+   ```c
+   // {{{ poll
+   ComfyUIResponse* comfyui_poll_status(ComfyUIConfig* cfg, const char* prompt_id) {
+       // GET /history/{prompt_id}
+       // Return status and image when complete
+   }
+   // }}}
+   ```
+
+6. Implement `comfyui_get_image()` to download result
+
+7. Add WebSocket support for real-time progress
+
+8. Write tests with mock server
 
 ## Related Documents
-- notes/vision (progressive inpainting concept)
+- 5-001-llm-api-client.md (similar HTTP pattern)
 - docs/01-architecture-overview.md
 
 ## Dependencies
-- None (standalone module)
+- libcurl (HTTP client)
+- cJSON (JSON parsing)
 
-## Canvas Regions (per vision)
+## API Workflow
 
 ```
-.----------------.
-| >- 0  = .  @ * |  <- Top region (sky, distant forces)
-|  *  \  / \  *  |
-| vv    o=.     jc|  <- Middle region (main battle)
-| *-H    \\ < <  |
-|  /   *  ))     |  <- Bottom region (ground, bases)
-'----------------'
+1. Client connects to ComfyUI (default: localhost:8188)
+2. Submit workflow JSON to POST /prompt
+3. Receive prompt_id
+4. Poll GET /history/{prompt_id}
+5. When complete, GET /view?filename={output}
+6. Return image bytes to caller
 ```
 
 ## Acceptance Criteria
-- [ ] Canvas initializes with correct dimensions
-- [ ] Regions can be queried and updated
-- [ ] Fill state tracked per region
-- [ ] History preserved for undo/export
-- [ ] Canvas exports to image file
+- [ ] Connects to ComfyUI server
+- [ ] Submits workflow successfully
+- [ ] Polls and detects completion
+- [ ] Retrieves generated images
+- [ ] Handles errors gracefully

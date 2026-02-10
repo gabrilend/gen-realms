@@ -1,62 +1,99 @@
-# 3-010: Phase 3 Demo
+# 5-010: Phase 5 Demo
 
 ## Current Behavior
-Phase 2 demo has complete cards but no narrative.
+Phase 4 demo exists without LLM integration.
 
 ## Intended Behavior
-A demo that showcases the LLM Dungeon Master:
-- Full narrative experience during gameplay
-- DM-influenced trade row selections
-- Story text for all major events
-- Narrative history scrollback
-- Game feels like a narrated story
+A demonstration showing the complete LLM DM system:
+- Narrative generation for all event types
+- World state tracking
+- Trade row selection by LLM
+- Context window management
+- Coherence through full game
 
 ## Suggested Implementation Steps
 
-1. Update `issues/completed/demos/phase-3-demo.lua`
-2. Integrate LLM client with game loop
-3. Enable trade row DM selection
-4. Enable event-driven narrative generation
-5. Display narrative panel alongside game
-6. Add narrative toggle (full/summary/off)
-7. Add game transcript export
-8. Create "story mode" option (slower, more narrative)
-9. Include sample API configuration
-10. Update run script with API key setup
+1. Create `run-phase5-demo.sh` in project root
+2. Configure LLM endpoint (local or API)
+3. Run complete game with narrative enabled
+4. Display narrative alongside game state
+5. Show context window usage
+6. Verify coherence throughout game
+7. Capture sample narratives
 
 ## Related Documents
-- 2-010-phase-2-demo.md
-- All Phase 3 issues
+- All Phase 5 issues (5-001 through 5-009)
+- 4-010-phase-4-demo.md
 
 ## Dependencies
-- All Phase 3 issues (3-001 through 3-009)
+- All previous Phase 5 issues (5-001 through 5-009)
+- Phase 4 complete (card content)
 
-## Demo Experience
+## Demo Output
 
 ```
-╔══════════════════════════════════════════════════════════════════╗
-║  Symbeline Realms - Phase 3 Demo                   [DM Active]   ║
-╠═══════════════════════════════════════════════════════════════════╣
-║                                                                   ║
-║  "As dawn breaks over the contested realm, two commanders        ║
-║   prepare their forces. Lady Morgaine of the Thornwood           ║
-║   surveys her domain, while Lord Theron counts his gold..."      ║
-║                                                                   ║
-╠═══════════════════════════════════════════════════════════════════╣
-║  Your Hand:                    ║  Trade Row (DM Selected):       ║
-║  [1] Guild Courier   +2T       ║  [A] Dire Bear (4g)             ║
-║  [2] Wolf Scout      +2C       ║  [B] Trading Post (3g)          ║
-║  [3] Village Scout   +1T       ║  [C] Knight Commander (4g)      ║
-║                                ║  "The markets today favor       ║
-║  Trade: 0  Combat: 0           ║   those who seek power..."      ║
-╠═══════════════════════════════════════════════════════════════════╣
-║  [P]lay [B]uy [A]ttack [E]nd   [S]croll narrative   [T]ranscript ║
-╚══════════════════════════════════════════════════════════════════╝
+=== SYMBELINE REALMS: PHASE 5 DEMO ===
+
+Connecting to LLM endpoint: http://localhost:11434/v1
+Model: llama3
+
+--- GAME START ---
+
+[NARRATIVE] The contested realm of Symbeline stretches
+before two rival commanders. Lady Morgaine of the
+Thornwood faces Lord Theron of the Golden Fleet.
+
+--- TURN 1 ---
+Lady Morgaine draws: Scout, Scout, Viper, Scout, Explorer
+
+[NARRATIVE] Lady Morgaine surveys her modest forces -
+scouts and a single viper, ready to begin the conquest.
+
+Playing: Viper (+2 Combat)
+[NARRATIVE] A venomous viper slithers forth from the
+underbrush, its deadly fangs gleaming.
+
+Trade Row Selection:
+- LLM chose: Dire Bear (Wilds) for thematic coherence
+[NARRATIVE] Word spreads through the Thornwood - a
+legendary dire bear has been sighted near the markets.
+
+--- TURN 12 ---
+
+[WORLD STATE]
+- Turn: 12
+- Context tokens: 2847 / 4096
+- Coherence score: 0.94
+
+Lady Morgaine attacks for 7!
+[NARRATIVE] With a thunderous roar, the combined might
+of Lady Morgaine's wild host crashes against Lord
+Theron's defenses. His authority crumbles by seven
+points under the savage assault.
+
+--- GAME OVER ---
+
+Lady Morgaine wins with 12 authority remaining!
+
+[NARRATIVE] As the dust settles over the battlefield of
+Symbeline, Lady Morgaine stands triumphant. The beasts
+of the Thornwood have proven their might, and a new
+era begins under her wild dominion.
+
+=== STATISTICS ===
+Total LLM calls: 47
+Cache hits: 12 (25.5%)
+Average response time: 340ms
+Context summarizations: 3
+Coherence recoveries: 0
+
+Demo complete.
 ```
 
 ## Acceptance Criteria
-- [ ] LLM generates narrative during play
-- [ ] Trade row influenced by DM
-- [ ] Story feels continuous across turns
-- [ ] Transcript can be exported
-- [ ] Can play without API (cached/fallback)
+- [ ] LLM generates narratives for all events
+- [ ] World state tracks correctly
+- [ ] Trade row selection uses LLM
+- [ ] Context stays within window
+- [ ] Narrative coherent through game
+- [ ] Demo runs to completion

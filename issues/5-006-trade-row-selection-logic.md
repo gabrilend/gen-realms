@@ -1,63 +1,89 @@
-# 3-006: Singleton Encouragement Logic
+# 5-006: Trade Row Selection Logic
 
 ## Current Behavior
-Trade row selection is random or purely narrative.
+Trade row refills randomly from deck.
 
 ## Intended Behavior
-The LLM DM biases trade row toward cards matching player decks:
-- Track which cards players have acquired
-- Increase probability of matching faction cards
-- Encourage "unified, semi-singleton decks" per vision
-- Balance narrative with this mechanical bias
-- Make faction commitment rewarding
+LLM-guided trade row selection that:
+- Considers current game state
+- Balances faction representation
+- Creates narrative opportunities
+- Encourages strategic variety
+- Maintains game balance
 
 ## Suggested Implementation Steps
 
-1. Create `src/llm/singleton-bias.lua`
-2. Implement deck analysis:
-   ```lua
-   local function analyze_deck(player)
-     local factions = {}
-     for _, card in ipairs(player.deck.all_cards) do
-       factions[card.faction] = (factions[card.faction] or 0) + 1
-     end
-     return factions
-   end
+1. Create selection prompt:
+   ```c
+   // {{{ selection prompt
+   static const char* TRADE_ROW_PROMPT =
+       "Given the game state:\n%s\n\n"
+       "Available cards to add to trade row:\n%s\n\n"
+       "Select the most narratively interesting card that:\n"
+       "1. Balances faction representation\n"
+       "2. Creates strategic options\n"
+       "3. Fits the current battle narrative\n\n"
+       "Respond with just the card name.";
+   // }}}
    ```
-3. Implement `Bias.calculate_weights(player, available_cards)`
-4. Weight formula: `base_weight * (1 + faction_match_bonus)`
-5. Integrate with trade row selection prompt:
-   - Include faction analysis in prompt
-   - Suggest weighted probabilities to LLM
-6. Implement fallback weighted random selection
-7. Add configuration for bias strength
-8. Write tests for bias distribution
+
+2. Implement `trade_row_select()`:
+   ```c
+   // {{{ select card
+   int trade_row_select(Game* game, CardType** candidates, int count) {
+       char* state = world_state_to_prompt(game->world_state);
+       char* cards = cards_list_to_string(candidates, count);
+
+       char* prompt = prompt_format(TRADE_ROW_PROMPT, state, cards);
+       LLMResponse* resp = llm_request(prompt, SYSTEM_NARRATOR);
+
+       // Parse response to find matching card
+       return find_card_by_name(candidates, count, resp->text);
+   }
+   // }}}
+   ```
+
+3. Implement faction balance tracking:
+   ```c
+   // {{{ faction balance
+   typedef struct {
+       int merchant_count;
+       int wilds_count;
+       int kingdom_count;
+       int artificer_count;
+   } FactionBalance;
+
+   FactionBalance get_trade_row_balance(TradeRow* row);
+   // }}}
+   ```
+
+4. Add fallback to random selection on LLM failure
+
+5. Implement singleton encouragement (unique cards)
+
+6. Write tests
 
 ## Related Documents
-- notes/vision (singleton encouragement)
-- 3-003-trade-row-selection-prompt.md
+- 5-002-prompt-network-structure.md
 - 1-004-trade-row-implementation.md
 
 ## Dependencies
-- 3-003: Trade Row Selection Prompt
+- 5-001: LLM API Client
+- 5-003: World State Prompt
+- 1-004: Trade Row Implementation
 
-## Example Bias Calculation
+## Selection Criteria
 
-```
-Player 1 deck: 8 Wilds, 4 Kingdom, 2 Neutral
-
-Available cards:
-- Dire Bear (Wilds): base 1.0 * 1.8 = 1.8 weight
-- Trading Post (Merchant): base 1.0 * 1.0 = 1.0 weight
-- Knight Commander (Kingdom): base 1.0 * 1.4 = 1.4 weight
-
-Faction match bonus = 0.1 * (cards_of_faction / total_cards)
-Wilds: 8/14 = 0.57 * 1.4 = 0.8 bonus
-```
+| Priority | Criterion |
+|----------|-----------|
+| 1 | Underrepresented faction |
+| 2 | Narrative fit |
+| 3 | Strategic variety |
+| 4 | Cost distribution |
 
 ## Acceptance Criteria
-- [ ] Deck composition analyzed correctly
-- [ ] Bias weights calculated
-- [ ] LLM receives bias information
-- [ ] Faction-focused decks see matching cards
-- [ ] Bias is tunable
+- [ ] LLM selects trade row cards
+- [ ] Faction balance considered
+- [ ] Fallback to random works
+- [ ] Selection is timely (not too slow)
+- [ ] Results feel narratively cohesive

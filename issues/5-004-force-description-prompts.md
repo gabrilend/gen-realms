@@ -1,76 +1,86 @@
-# 3-004: Narrative Generation Prompt
+# 5-004: Force Description Prompts
 
 ## Current Behavior
-No story narration exists. Game is purely mechanical.
+No faction/force descriptions generated.
 
 ## Intended Behavior
-The LLM generates narrative text describing game events:
-- Turn-by-turn story progression
-- Card plays described as fantasy actions
-- Combat as epic battles
-- Purchases as alliances or acquisitions
-- Maintains consistent tone and world
+Prompts that generate thematic descriptions for:
+- Player's current forces (cards in play)
+- Faction army composition
+- Individual card narratives
+- Base descriptions
 
 ## Suggested Implementation Steps
 
-1. Create `src/llm/prompts/narrative.lua`
-2. Design the system prompt for story voice:
-   ```
-   You are narrating an epic fantasy battle in Symbeline Realms.
+1. Create force description templates:
+   ```c
+   // {{{ templates
+   static const char* FORCE_TEMPLATE =
+       "Describe the forces of %s, who commands: %s. "
+       "Their faction allegiance leans toward %s. "
+       "Use vivid fantasy imagery in 2-3 sentences.";
 
-   Style: High fantasy, dramatic but concise. Like a bard
-   recounting a legendary battle.
-
-   Rules:
-   - Keep narration to 2-3 sentences per event
-   - Reference card names as characters/forces
-   - Build tension as authority drops
-   - Celebrate dramatic plays
+   static const char* CARD_TEMPLATE =
+       "Describe the %s joining the battle. "
+       "It is a %s card from the %s faction. "
+       "One dramatic sentence.";
+   // }}}
    ```
-3. Design event-specific prompt templates:
-   - Card play narration
-   - Purchase narration
-   - Attack narration
-   - Turn summary
-4. Implement `NarrativePrompt.generate(event_type, event_data)`
-5. Implement `NarrativePrompt.parse_response(response)` - clean text
-6. Add variety prompts to avoid repetition
-7. Write tests for each event type
+
+2. Implement `force_description_build()`:
+   ```c
+   // {{{ build force description
+   char* force_description_build(Player* player) {
+       char* cards_list = cards_to_string(player->in_play);
+       char* faction = get_dominant_faction(player);
+
+       return prompt_build(PROMPT_FORCE_DESCRIPTION, &(PromptVars){
+           .player_name = player->name,
+           .cards = cards_list,
+           .faction = faction
+       });
+   }
+   // }}}
+   ```
+
+3. Implement card-specific descriptions
+
+4. Implement base descriptions
+
+5. Cache descriptions to avoid regeneration
+
+6. Write tests
 
 ## Related Documents
-- 3-002-game-state-serialization.md
-- notes/vision
+- 5-002-prompt-network-structure.md
+- 5-003-world-state-prompt.md
 
 ## Dependencies
-- 3-001: LLM API Integration
-- 3-002: Game State Serialization
+- 5-002: Prompt Network Structure
+- 5-003: World State Prompt
 
-## Example Narrations
+## Faction Themes
 
-**Card Play (Dire Bear):**
-```
-From the depths of the Thornwood, Lady Morgaine summons
-a dire bear of ancient lineage. Its roar echoes across
-the battlefield as it joins her growing pack.
-```
+| Faction | Theme Keywords |
+|---------|---------------|
+| Merchant | Gold, caravans, trade ships, prosperity, cunning |
+| Wilds | Beasts, forests, primal fury, nature's wrath |
+| Kingdom | Knights, castles, honor, gleaming armor, banners |
+| Artificer | Constructs, arcane, purple energy, workshops |
 
-**Attack:**
-```
-Lord Theron's constructs unleash a barrage of arcane bolts!
-Lady Morgaine's authority wavers as 6 damage tears through
-her defenses.
-```
+## Example Output
 
-**Purchase:**
 ```
-With gold enough to buy a kingdom, Lord Theron secures the
-allegiance of the Master Artificer. His workshop shall
-forge mighty weapons indeed.
+Card Played: Dire Bear (Wilds)
+
+"From the shadowed depths of the Thornwood, a massive dire
+bear answers the call to battle, its roar shaking the very
+foundations of the contested realm."
 ```
 
 ## Acceptance Criteria
-- [ ] Narration generated for all event types
-- [ ] Tone is consistent fantasy style
-- [ ] Card names appear naturally in story
-- [ ] Text is concise (2-3 sentences)
-- [ ] Variety maintained across turns
+- [ ] Force descriptions generate correctly
+- [ ] Faction themes reflected
+- [ ] Card descriptions are dramatic
+- [ ] Base descriptions included
+- [ ] Descriptions cached appropriately

@@ -1,66 +1,119 @@
-# 4-005: Frame Sequencing Logic
+# 6-005: Battle Canvas Manager
 
 ## Current Behavior
-No ordering of generation operations.
+No system to manage the battle scene image.
 
 ## Intended Behavior
-Logic to sequence inpainting for coherent scene building:
-- Background first (sky, environment)
-- Middle ground (main action)
-- Foreground (details, effects)
-- Respects dependencies (can't add detail to empty region)
-- Creates smooth visual narrative
+A canvas manager that tracks the full battle scene:
+- Maintains current battle image state
+- Tracks which regions have been generated
+- Supports progressive inpainting
+- Stores canvas history for replay
+- Exports final battle scenes
 
 ## Suggested Implementation Steps
 
-1. Create `src/visual/sequencer.lua`
-2. Define generation layers:
-   ```lua
-   local layers = {
-     BACKGROUND = 1,  -- sky, distant mountains
-     ENVIRONMENT = 2, -- trees, buildings
-     MIDGROUND = 3,   -- main combatants
-     FOREGROUND = 4,  -- effects, particles
-     OVERLAY = 5      -- text, UI elements
-   }
+1. Create `src/visual/canvas.h`:
+   ```c
+   // {{{ canvas types
+   typedef struct {
+       unsigned char* pixels;
+       int width;
+       int height;
+       int channels;
+   } Image;
+
+   typedef struct {
+       Image* current;
+       Image** history;
+       int history_count;
+       int history_max;
+       bool* region_filled;
+       int region_count;
+   } BattleCanvas;
+   // }}}
    ```
-3. Map events to layers:
-   - Game start -> BACKGROUND
-   - Base played -> ENVIRONMENT
-   - Ship played -> MIDGROUND
-   - Attack -> FOREGROUND (effects)
-4. Implement `Sequencer.queue_event(event)` - add to queue
-5. Implement `Sequencer.get_next()` - return next generation task
-6. Implement dependency checking (lower layers first)
-7. Add frame timestamps for animation timing
-8. Write tests for sequencing order
+
+2. Define canvas regions:
+   ```c
+   // {{{ regions
+   typedef enum {
+       REGION_SKY,
+       REGION_P1_FORCES,
+       REGION_CENTER,
+       REGION_P2_FORCES,
+       REGION_P1_BASE,
+       REGION_P2_BASE,
+       REGION_COUNT
+   } CanvasRegion;
+
+   typedef struct {
+       int x, y, width, height;
+       const char* name;
+   } RegionBounds;
+   // }}}
+   ```
+
+3. Implement `canvas_init()`:
+   ```c
+   // {{{ init
+   BattleCanvas* canvas_init(int width, int height) {
+       BattleCanvas* bc = malloc(sizeof(BattleCanvas));
+       bc->current = image_create(width, height, 4);
+       bc->history_max = 100;
+       bc->history = calloc(bc->history_max, sizeof(Image*));
+       bc->region_filled = calloc(REGION_COUNT, sizeof(bool));
+       return bc;
+   }
+   // }}}
+   ```
+
+4. Implement `canvas_set_region()`:
+   ```c
+   // {{{ set region
+   void canvas_set_region(BattleCanvas* bc, CanvasRegion region, Image* img) {
+       RegionBounds bounds = get_region_bounds(region);
+       image_blit(bc->current, img, bounds.x, bounds.y);
+       bc->region_filled[region] = true;
+       canvas_save_history(bc);
+   }
+   // }}}
+   ```
+
+5. Implement `canvas_get_mask()` for inpainting
+
+6. Implement `canvas_save_history()` for undo/replay
+
+7. Implement `canvas_export()` to save final image
+
+8. Write tests for canvas operations
 
 ## Related Documents
-- 4-002-inpainting-region-selection.md
-- notes/vision (frame progression)
+- 6-006-inpainting-region-selection.md
+- 6-007-scene-composition-rules.md
 
 ## Dependencies
-- 4-002: Inpainting Region Selection
+- 6-001: ComfyUI API Client
 
-## Sequence Example
+## Canvas Layout (512x512)
 
 ```
-Turn 1: Game starts
-  Frame 1: Generate BACKGROUND (empty battlefield, sky)
-  Frame 2: Generate ENVIRONMENT (bases on each side)
-
-Turn 3: Player plays Dire Bear
-  Frame 3: Generate MIDGROUND (bear appears left side)
-
-Turn 4: Attack for 5 damage
-  Frame 4: Generate FOREGROUND (attack effects, motion)
-
-Result: Coherent scene built up over 4 frames
++--------------------------------------------------+
+|                      SKY (0-20%)                  |
++----------+------------------+--------------------+
+|          |                  |                    |
+| P1_FORCES|     CENTER       |    P2_FORCES      |
+| (20-50%) |   (30-70%)       |    (50-80%)       |
+|          |                  |                    |
++----------+------------------+--------------------+
+| P1_BASE  |                  |       P2_BASE     |
+| (70-100%)|                  |    (70-100%)      |
++----------+------------------+--------------------+
 ```
 
 ## Acceptance Criteria
-- [ ] Layers defined and respected
-- [ ] Dependencies enforced
-- [ ] Queue processes in correct order
-- [ ] Frame timing recorded
-- [ ] Scene builds coherently
+- [ ] Canvas initializes correctly
+- [ ] Regions can be updated individually
+- [ ] Fill state tracked per region
+- [ ] History preserved for replay
+- [ ] Final image exports properly

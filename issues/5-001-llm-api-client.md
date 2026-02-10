@@ -1,63 +1,108 @@
-# 3-001: LLM API Integration Module
+# 5-001: LLM API Client
 
 ## Current Behavior
-No LLM integration exists. Game has no AI narrative capability.
+No LLM integration exists.
 
 ## Intended Behavior
-A module that connects to LLM APIs for text generation:
-- Supports multiple LLM backends (local, API)
-- Handles authentication and rate limiting
-- Manages request/response formatting
-- Provides error handling and fallbacks
-- Configurable model selection
-- Async-capable for non-blocking calls
+A C-based HTTP client for LLM API calls that:
+- Connects to configurable LLM endpoint (OpenAI-compatible)
+- Sends JSON requests with prompts
+- Parses JSON responses
+- Handles errors and retries
+- Supports streaming responses (optional)
 
 ## Suggested Implementation Steps
 
-1. Create `src/llm/` directory
-2. Create `src/llm/api-client.lua` with base client:
-   ```lua
-   local LLMClient = {
-     endpoint = "",
-     api_key = "",
-     model = "",
-     max_tokens = 500,
-     temperature = 0.7
-   }
+1. Create `src/llm/api-client.h` with type definitions:
+   ```c
+   // {{{ LLM types
+   typedef struct {
+       char* endpoint;
+       char* api_key;
+       char* model;
+       int timeout_ms;
+       int max_retries;
+   } LLMConfig;
+
+   typedef struct {
+       char* text;
+       int tokens_used;
+       bool success;
+       char* error;
+   } LLMResponse;
+   // }}}
    ```
-3. Implement `LLMClient.new(config)` - create configured client
-4. Implement `LLMClient.complete(prompt)` - send prompt, get response
-5. Implement `LLMClient.chat(messages)` - multi-turn conversation
-6. Add request retry logic
-7. Add rate limiting
-8. Create config file for API credentials (gitignored)
-9. Support environment variable auth
-10. Write tests with mock responses
+
+2. Create `src/llm/api-client.c` with implementation
+
+3. Implement `llm_init(LLMConfig* config)`:
+   ```c
+   // {{{ llm_init
+   void llm_init(LLMConfig* config) {
+       // Initialize libcurl or similar HTTP client
+       curl_global_init(CURL_GLOBAL_DEFAULT);
+   }
+   // }}}
+   ```
+
+4. Implement `llm_request()`:
+   ```c
+   // {{{ llm_request
+   LLMResponse* llm_request(const char* prompt, const char* system_prompt) {
+       cJSON* request = cJSON_CreateObject();
+       cJSON_AddStringToObject(request, "model", config->model);
+
+       cJSON* messages = cJSON_CreateArray();
+       // Add system and user messages
+       // ...
+
+       // Send HTTP POST to endpoint
+       // Parse response
+   }
+   // }}}
+   ```
+
+5. Implement retry logic with exponential backoff
+
+6. Implement response parsing
+
+7. Add error handling for network failures
+
+8. Write tests with mock server
 
 ## Related Documents
-- docs/01-architecture-overview.md
-- notes/vision
+- docs/04-architecture-c-server.md
+- 2-001-configuration-system.md
 
 ## Dependencies
-- None (standalone module)
+- libcurl for HTTP requests
+- cJSON for JSON handling
+- 2-001: Configuration System (endpoint settings)
 
-## Configuration Example
+## API Format
 
-```lua
--- config/llm.lua (gitignored)
-return {
-  backend = "anthropic",  -- or "openai", "local"
-  endpoint = "https://api.anthropic.com/v1/messages",
-  api_key = os.getenv("ANTHROPIC_API_KEY"),
-  model = "claude-3-haiku-20240307",
-  max_tokens = 500,
-  temperature = 0.7
+```json
+// Request
+{
+  "model": "gpt-4",
+  "messages": [
+    {"role": "system", "content": "You are a fantasy narrator..."},
+    {"role": "user", "content": "Describe the dire bear attack"}
+  ]
+}
+
+// Response
+{
+  "choices": [{
+    "message": {"content": "The dire bear emerges..."}
+  }],
+  "usage": {"total_tokens": 150}
 }
 ```
 
 ## Acceptance Criteria
-- [ ] Can connect to LLM API
-- [ ] Sends prompts and receives responses
-- [ ] Handles API errors gracefully
-- [ ] Configuration is flexible
-- [ ] Credentials not committed to repo
+- [ ] HTTP client connects to LLM endpoint
+- [ ] JSON requests formatted correctly
+- [ ] Responses parsed successfully
+- [ ] Errors handled gracefully
+- [ ] Retries work with backoff
