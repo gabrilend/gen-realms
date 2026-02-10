@@ -68,10 +68,16 @@ A client-side animation system that:
 | Authority change | Number ticks up/down |
 | Turn change | Brief overlay "Your Turn" / "Opponent's Turn" |
 
+## Sub-Issues
+This issue has been split into sub-issues for manageable implementation:
+- 3-008a: Animation Core and Queue
+- 3-008b: Card Movement Animations
+- 3-008c: Attack and Damage Effects
+
 ## Acceptance Criteria
-- [ ] Card play animates smoothly
-- [ ] Purchase animates correctly
-- [ ] Attack shows visual feedback
-- [ ] Speed preference respected
-- [ ] Animations can be disabled
-- [ ] No animation queue backup/stutter
+- [ ] Card play animates smoothly (3-008b)
+- [ ] Purchase animates correctly (3-008b)
+- [ ] Attack shows visual feedback (3-008c)
+- [ ] Speed preference respected (3-008a)
+- [ ] Animations can be disabled (3-008a)
+- [ ] No animation queue backup/stutter (3-008a)
