@@ -15,7 +15,13 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-004 | Trade Row Implementation | pending |
 | 1-005 | Turn Loop Structure | pending |
 | 1-006 | Basic Combat Resolution | pending |
-| 1-007 | Card Effect Parser | pending |
+| 1-007 | Card Effect System | pending |
+| 1-007a | ↳ Effect Dispatch Infrastructure | pending |
+| 1-007b | ↳ Resource Effects | pending |
+| 1-007c | ↳ Card Manipulation Effects | pending |
+| 1-007d | ↳ Special Effects | pending |
+| 1-007e | ↳ Upgrade and Spawn Effects | pending |
+| 1-007f | ↳ Conditional and Ally Abilities | pending |
 | 1-008 | Auto-Draw Resolution System | pending |
 | 1-009 | Deck Flow Tracker (d10/d4) | pending |
 | 1-010 | Base Card Type | pending |
@@ -23,7 +29,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 0/13
+## Completed: 0/18
 
 ## Technology Stack
 - C11 with cJSON for card definitions

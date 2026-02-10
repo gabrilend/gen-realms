@@ -13,46 +13,27 @@ A C-based effect system using dispatch tables that:
 - Provides hooks for effect execution events (narrative, visuals)
 - Supports card upgrades that modify effect values
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Create `src/core/07-effects.h` with type definitions
-2. Create `src/core/07-effects.c` with implementation
-3. Define effect types enum:
-   ```c
-   typedef enum {
-       EFFECT_ADD_TRADE,
-       EFFECT_ADD_COMBAT,
-       EFFECT_ADD_AUTHORITY,
-       EFFECT_DRAW_CARDS,
-       EFFECT_OPPONENT_DISCARD,
-       EFFECT_SCRAP_TRADE_ROW,
-       EFFECT_SCRAP_HAND_DISCARD,
-       EFFECT_DESTROY_BASE,
-       EFFECT_COPY_SHIP,
-       EFFECT_NEXT_SHIP_FREE,
-       EFFECT_NEXT_SHIP_TOP,
-       EFFECT_UPGRADE_CARD,       // for blacksmith-style effects
-       EFFECT_SPAWN_UNIT          // for base spawning
-   } EffectType;
+This issue has been split into the following sub-issues:
 
-   typedef struct {
-       EffectType type;
-       int value;                 // amount for numeric effects
-       char* target_card_id;      // for spawn/upgrade effects
-   } Effect;
+| ID | Description | Status |
+|----|-------------|--------|
+| 1-007a | Effect Dispatch Infrastructure | pending |
+| 1-007b | Resource Effects | pending |
+| 1-007c | Card Manipulation Effects | pending |
+| 1-007d | Special Effects | pending |
+| 1-007e | Upgrade and Spawn Effects | pending |
+| 1-007f | Conditional and Ally Abilities | pending |
 
-   // Event callback for narrative/visual hooks
-   typedef void (*EffectEventFunc)(Game* game, CardInstance* card,
-                                    Effect* effect, void* context);
-   ```
-4. Create dispatch table of effect handlers
-5. Implement `void effects_execute(Effect* effect, Game* game, Player* player)`
-6. Implement `void effects_execute_card(CardInstance* card, Game* game, Player* p)`
-7. Implement `void effects_check_ally(CardInstance* card, Game* game, Player* p)`
-8. Implement `void effects_execute_scrap(CardInstance* card, Game* game, Player* p)`
-9. Implement upgrade bonus application (from CardInstance bonuses)
-10. Add event callback registration for LLM/visual hooks
-11. Write tests in `tests/test-effects.c`
+## Implementation Order
+
+1. **1-007a** first - establishes infrastructure all others depend on
+2. **1-007b** second - simple effects to validate infrastructure
+3. **1-007c** third - card manipulation requires deck integration
+4. **1-007d** fourth - special effects build on basics
+5. **1-007e** fifth - Symbeline-specific mechanics
+6. **1-007f** last - conditional logic wraps everything together
 
 ## Related Documents
 - docs/02-game-mechanics.md (upgrade system)
