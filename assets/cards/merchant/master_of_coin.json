@@ -1,0 +1,19 @@
+{
+  "id": "master_of_coin",
+  "name": "Master of Coin",
+  "cost": 7,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 4 },
+    { "type": "draw_card", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 3 }
+  ],
+  "scrap_effects": [
+    { "type": "add_authority", "value": 6 }
+  ],
+  "flavor": "The realm's coffers are my garden, and I tend them well.",
+  "art_prompt": "elderly guild master surrounded by ledgers and treasure, grand counting house, medieval fantasy"
+}

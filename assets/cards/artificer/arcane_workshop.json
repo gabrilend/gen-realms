@@ -1,0 +1,17 @@
+{
+  "id": "arcane_workshop",
+  "name": "Arcane Workshop",
+  "cost": 3,
+  "faction": "artificer",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "effects": [
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Old becomes new. Weak becomes strong.",
+  "art_prompt": "cluttered magical workshop with floating tools, arcane machinery, medieval fantasy"
+}

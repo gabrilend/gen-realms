@@ -1,0 +1,15 @@
+{
+  "id": "dire_bear",
+  "name": "Dire Bear",
+  "cost": 4,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 5 }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Its roar shakes the trees. Its claws reshape the land.",
+  "art_prompt": "massive armored bear with glowing runes, ancient forest, medieval fantasy"
+}

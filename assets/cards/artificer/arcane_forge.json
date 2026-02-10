@@ -1,0 +1,18 @@
+{
+  "id": "arcane_forge",
+  "name": "Arcane Forge",
+  "cost": 5,
+  "faction": "artificer",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": true,
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "discard", "optional": true },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Here, the impossible is merely difficult.",
+  "art_prompt": "fortified magical forge with rune-etched walls, defensive golems, medieval fantasy"
+}

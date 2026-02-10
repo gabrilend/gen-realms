@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "symbeline-realms-card-schema",
+  "title": "Symbeline Realms Card Schema",
+  "description": "Schema for defining cards in Symbeline Realms deck-building game",
+  "type": "object",
+  "required": ["id", "name", "cost", "faction", "card_type", "effects"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the card type (snake_case)",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name for the card"
+    },
+    "cost": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Trade cost to acquire (0 = starting deck card, cannot be bought)"
+    },
+    "faction": {
+      "type": "string",
+      "enum": ["neutral", "merchant", "wilds", "kingdom", "artificer"],
+      "description": "Faction affiliation for ally abilities"
+    },
+    "card_type": {
+      "type": "string",
+      "enum": ["ship", "base", "unit"],
+      "description": "Card category determining play behavior"
+    },
+    "effects": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/effect" },
+      "description": "Effects triggered when card is played"
+    },
+    "ally_effects": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/effect" },
+      "description": "Effects triggered when another card of same faction is in play"
+    },
+    "scrap_effects": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/effect" },
+      "description": "Effects triggered when card is scrapped (removed from game)"
+    },
+    "defense": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Base defense value (bases only)"
+    },
+    "is_outpost": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, must be destroyed before attacking player (bases only)"
+    },
+    "spawns": {
+      "type": "string",
+      "description": "ID of unit card spawned each turn (bases only)"
+    },
+    "always_available": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, always available for purchase (like Explorer)"
+    },
+    "flavor": {
+      "type": "string",
+      "description": "Flavor text for narrative immersion"
+    },
+    "art_prompt": {
+      "type": "string",
+      "description": "Base prompt for AI art generation"
+    }
+  },
+  "definitions": {
+    "effect": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "add_trade",
+            "add_combat",
+            "add_authority",
+            "draw_card",
+            "opponent_discard",
+            "scrap_trade_row",
+            "scrap_hand_or_discard",
+            "acquire_free",
+            "spawn",
+            "upgrade_attack",
+            "upgrade_trade",
+            "upgrade_authority",
+            "copy_ship"
+          ],
+          "description": "Type of effect"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Magnitude of effect (for add_* effects, draw count, etc.)"
+        },
+        "max_cost": {
+          "type": "integer",
+          "description": "Maximum cost of target card (for acquire_free)"
+        },
+        "target": {
+          "type": "string",
+          "enum": ["self", "hand", "discard", "trade_row", "opponent_hand"],
+          "description": "Target location for scrap/upgrade effects"
+        },
+        "card_id": {
+          "type": "string",
+          "description": "Specific card to spawn (for spawn effect)"
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, player may choose not to use this effect"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "card_type": { "const": "base" } }
+      },
+      "then": {
+        "required": ["defense"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "guild_hall",
+  "name": "Guild Hall",
+  "cost": 4,
+  "faction": "merchant",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_trade", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 2 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Behind these doors, empires are bought and sold.",
+  "art_prompt": "grand guild hall with merchant banners, marble columns, medieval fantasy"
+}

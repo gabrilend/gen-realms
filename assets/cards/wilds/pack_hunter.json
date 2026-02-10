@@ -1,0 +1,16 @@
+{
+  "id": "pack_hunter",
+  "name": "Pack Hunter",
+  "cost": 2,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Alone we stalk. Together we feast.",
+  "art_prompt": "feral hunter with wolf companions, forest clearing, medieval fantasy"
+}

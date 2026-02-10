@@ -1,0 +1,15 @@
+{
+  "id": "battle_golem",
+  "name": "Battle Golem",
+  "cost": 3,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 4 }
+  ],
+  "ally_effects": [
+    { "type": "scrap_trade_row", "value": 1, "optional": true }
+  ],
+  "flavor": "Forged for war. Programmed for victory.",
+  "art_prompt": "bronze war golem with glowing runes, steam vents, medieval fantasy"
+}

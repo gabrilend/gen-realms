@@ -1,0 +1,21 @@
+{
+  "id": "grand_architect",
+  "name": "Grand Architect",
+  "cost": 7,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 2 },
+    { "type": "add_combat", "value": 4 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "acquire_free", "max_cost": 5 }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 4 },
+    { "type": "add_combat", "value": 4 }
+  ],
+  "flavor": "She designs worlds, not merely machines.",
+  "art_prompt": "master architect with magical blueprints, constructs building themselves, medieval fantasy"
+}

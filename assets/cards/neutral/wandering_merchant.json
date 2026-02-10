@@ -1,0 +1,16 @@
+{
+  "id": "wandering_merchant",
+  "name": "Wandering Merchant",
+  "cost": 2,
+  "faction": "neutral",
+  "card_type": "ship",
+  "always_available": true,
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "flavor": "No allegiance but to coin.",
+  "art_prompt": "traveling merchant with cart and mule, dusty crossroads, medieval fantasy"
+}

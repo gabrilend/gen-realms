@@ -1,0 +1,16 @@
+{
+  "id": "high_paladin",
+  "name": "High Paladin",
+  "cost": 6,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 6 },
+    { "type": "add_authority", "value": 4 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 3 }
+  ],
+  "flavor": "Light incarnate. Justice manifest.",
+  "art_prompt": "radiant paladin with glowing sword and full plate armor, holy light, medieval fantasy"
+}

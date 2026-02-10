@@ -1,0 +1,15 @@
+{
+  "id": "guild_factor",
+  "name": "Guild Factor",
+  "cost": 3,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "flavor": "Numbers never lie, but factors know how to make them whisper.",
+  "art_prompt": "shrewd merchant with ledger and quill, guild office, medieval fantasy"
+}

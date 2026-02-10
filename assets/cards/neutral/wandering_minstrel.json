@@ -1,0 +1,16 @@
+{
+  "id": "wandering_minstrel",
+  "name": "Wandering Minstrel",
+  "cost": 3,
+  "faction": "neutral",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 1 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Songs of home remind us what we fight for.",
+  "art_prompt": "bard with lute and colorful garb, village square, medieval fantasy"
+}

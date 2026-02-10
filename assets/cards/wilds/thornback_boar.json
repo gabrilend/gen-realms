@@ -1,0 +1,15 @@
+{
+  "id": "thornback_boar",
+  "name": "Thornback Boar",
+  "cost": 3,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 4 }
+  ],
+  "scrap_effects": [
+    { "type": "add_combat", "value": 3 }
+  ],
+  "flavor": "The thorns protect. The tusks destroy.",
+  "art_prompt": "wild boar with thorny spines along its back, charging through underbrush, medieval fantasy"
+}

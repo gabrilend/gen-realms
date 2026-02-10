@@ -1,0 +1,16 @@
+{
+  "id": "warlord",
+  "name": "Warlord",
+  "cost": 5,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 5 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "opponent_discard", "value": 1 }
+  ],
+  "flavor": "Victory is not claimed. It is taken.",
+  "art_prompt": "scarred general in battle-worn armor, war tent with maps, medieval fantasy"
+}

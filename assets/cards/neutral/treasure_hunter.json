@@ -1,0 +1,16 @@
+{
+  "id": "treasure_hunter",
+  "name": "Treasure Hunter",
+  "cost": 4,
+  "faction": "neutral",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 4 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "The real treasure was the loot we found along the way.",
+  "art_prompt": "rogue with lockpicks and sack of gold, dungeon corridor, medieval fantasy"
+}

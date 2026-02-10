@@ -1,0 +1,12 @@
+{
+  "id": "viper",
+  "name": "Hedge Knight",
+  "cost": 0,
+  "faction": "neutral",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "Steel speaks louder than gold.",
+  "art_prompt": "weathered hedge knight with dented armor and worn sword, roadside, medieval fantasy"
+}

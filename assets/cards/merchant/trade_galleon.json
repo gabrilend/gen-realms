@@ -1,0 +1,15 @@
+{
+  "id": "trade_galleon",
+  "name": "Trade Galleon",
+  "cost": 4,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 4 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "A full hold means a safe journey home.",
+  "art_prompt": "massive merchant galleon with golden sails, harbor at sunset, medieval fantasy"
+}

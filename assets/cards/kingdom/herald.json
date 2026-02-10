@@ -1,0 +1,15 @@
+{
+  "id": "herald",
+  "name": "Royal Herald",
+  "cost": 1,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "The crown's voice carries far.",
+  "art_prompt": "herald with trumpet and royal banner, castle gate, medieval fantasy"
+}

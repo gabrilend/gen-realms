@@ -1,0 +1,15 @@
+{
+  "id": "trade_caravan",
+  "name": "Trade Caravan",
+  "cost": 3,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 3 }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "flavor": "Silk from the east, gold from the west.",
+  "art_prompt": "merchant caravan with laden camels and wagons, desert trade route, medieval fantasy"
+}

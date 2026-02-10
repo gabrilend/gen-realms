@@ -1,0 +1,14 @@
+{
+  "id": "trading_post",
+  "name": "Trading Post",
+  "cost": 3,
+  "faction": "merchant",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "flavor": "Where roads meet, profit follows.",
+  "art_prompt": "wooden trading post at crossroads, merchant stalls, medieval fantasy"
+}

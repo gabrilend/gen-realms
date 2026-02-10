@@ -1,0 +1,16 @@
+{
+  "id": "knight_errant",
+  "name": "Knight Errant",
+  "cost": 3,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 3 },
+    { "type": "add_authority", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "Seeking glory, serving justice.",
+  "art_prompt": "noble knight on horseback, flowing cape, medieval fantasy"
+}

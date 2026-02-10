@@ -1,0 +1,18 @@
+{
+  "id": "heart_of_the_forest",
+  "name": "Heart of the Forest",
+  "cost": 6,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 7,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 4 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "All wild things hear its call.",
+  "art_prompt": "massive glowing tree heart pulsing with green energy, forest spirits, medieval fantasy"
+}

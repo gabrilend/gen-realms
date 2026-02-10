@@ -1,0 +1,15 @@
+{
+  "id": "tinker",
+  "name": "Tinker",
+  "cost": 2,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true }
+  ],
+  "flavor": "Broken is just another word for potential.",
+  "art_prompt": "gnomish tinker with tools and half-built contraption, cluttered workbench, medieval fantasy"
+}

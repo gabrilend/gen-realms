@@ -1,0 +1,15 @@
+{
+  "id": "golem_foundry",
+  "name": "Golem Foundry",
+  "cost": 4,
+  "faction": "artificer",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "spawns": "construct_token",
+  "flavor": "The furnaces never cool. The hammers never rest.",
+  "art_prompt": "massive forge with golems being assembled, molten metal, medieval fantasy"
+}

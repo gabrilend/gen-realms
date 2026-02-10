@@ -1,0 +1,16 @@
+{
+  "id": "knight_commander",
+  "name": "Knight Commander",
+  "cost": 4,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 4 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "opponent_discard", "value": 1 }
+  ],
+  "flavor": "His orders are law. His sword is judgment.",
+  "art_prompt": "imposing knight commander with sword raised, army behind, medieval fantasy"
+}

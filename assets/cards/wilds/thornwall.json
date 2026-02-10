@@ -1,0 +1,17 @@
+{
+  "id": "thornwall",
+  "name": "Thornwall",
+  "cost": 3,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": true,
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "The forest defends its own.",
+  "art_prompt": "living wall of thorny vines with glowing eyes within, dark forest, medieval fantasy"
+}

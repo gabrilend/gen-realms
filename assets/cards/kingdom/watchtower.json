@@ -1,0 +1,14 @@
+{
+  "id": "watchtower",
+  "name": "Watchtower",
+  "cost": 2,
+  "faction": "kingdom",
+  "card_type": "base",
+  "defense": 3,
+  "is_outpost": true,
+  "effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "The first line. The last stand.",
+  "art_prompt": "stone watchtower on hill, guards with crossbows, medieval fantasy"
+}

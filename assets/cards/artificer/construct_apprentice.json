@@ -1,0 +1,15 @@
+{
+  "id": "construct_apprentice",
+  "name": "Construct Apprentice",
+  "cost": 1,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 1 }
+  ],
+  "scrap_effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "flavor": "Every master once fumbled with copper wire.",
+  "art_prompt": "young artificer with goggles and small mechanical servant, workshop, medieval fantasy"
+}

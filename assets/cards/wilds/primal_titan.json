@@ -1,0 +1,16 @@
+{
+  "id": "primal_titan",
+  "name": "Primal Titan",
+  "cost": 7,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 8 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 4 }
+  ],
+  "flavor": "When the first trees grew, it was already ancient.",
+  "art_prompt": "colossal beast of living forest, eyes like stars, storms swirling, medieval fantasy"
+}

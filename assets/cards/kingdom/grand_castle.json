@@ -1,0 +1,15 @@
+{
+  "id": "grand_castle",
+  "name": "Grand Castle",
+  "cost": 5,
+  "faction": "kingdom",
+  "card_type": "base",
+  "defense": 6,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_authority", "value": 3 }
+  ],
+  "spawns": "infantry_token",
+  "flavor": "From these walls, an army is born.",
+  "art_prompt": "massive medieval castle with flying banners, troops marching out, medieval fantasy"
+}

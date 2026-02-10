@@ -1,0 +1,15 @@
+{
+  "id": "wolf_token",
+  "name": "Spirit Wolf",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "unit",
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Return to the grove, and be reborn.",
+  "art_prompt": "translucent spirit wolf with glowing eyes, ethereal forest, medieval fantasy"
+}

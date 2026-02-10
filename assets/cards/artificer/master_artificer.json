@@ -1,0 +1,19 @@
+{
+  "id": "master_artificer",
+  "name": "Master Artificer",
+  "cost": 6,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 3 },
+    { "type": "add_combat", "value": 3 }
+  ],
+  "ally_effects": [
+    { "type": "acquire_free", "max_cost": 4 }
+  ],
+  "scrap_effects": [
+    { "type": "draw_card", "value": 2 }
+  ],
+  "flavor": "Creation is the highest art.",
+  "art_prompt": "elderly artificer with mechanical arms, surrounded by inventions, medieval fantasy"
+}

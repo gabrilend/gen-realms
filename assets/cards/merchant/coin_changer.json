@@ -1,0 +1,16 @@
+{
+  "id": "coin_changer",
+  "name": "Coin Changer",
+  "cost": 1,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 1 },
+    { "type": "add_authority", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 1 }
+  ],
+  "flavor": "Every coin tells a story of hands it has passed through.",
+  "art_prompt": "portly money changer with scales and coin stacks, counting house, medieval fantasy"
+}

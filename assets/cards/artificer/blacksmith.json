@@ -1,0 +1,16 @@
+{
+  "id": "blacksmith",
+  "name": "Blacksmith",
+  "cost": 4,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "upgrade_attack", "value": 1, "target": "discard" }
+  ],
+  "scrap_effects": [
+    { "type": "add_combat", "value": 3 }
+  ],
+  "flavor": "Steel remembers every hammer blow.",
+  "art_prompt": "master blacksmith enchanting weapon at magical forge, sparks flying, medieval fantasy"
+}

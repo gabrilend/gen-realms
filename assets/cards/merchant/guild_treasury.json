@@ -1,0 +1,16 @@
+{
+  "id": "guild_treasury",
+  "name": "Guild Treasury",
+  "cost": 5,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 3 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "acquire_free", "max_cost": 3 }
+  ],
+  "flavor": "Gold begets gold, as surely as rain begets rivers.",
+  "art_prompt": "treasure chest overflowing with gold coins, guild vault, medieval fantasy"
+}

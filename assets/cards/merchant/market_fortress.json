@@ -1,0 +1,16 @@
+{
+  "id": "market_fortress",
+  "name": "Market Fortress",
+  "cost": 6,
+  "faction": "merchant",
+  "card_type": "base",
+  "defense": 6,
+  "is_outpost": true,
+  "effects": [
+    { "type": "add_trade", "value": 2 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "spawns": "gold_token",
+  "flavor": "Gold flows like water within these walls, and guards the same.",
+  "art_prompt": "fortified marketplace with armed guards, gold-topped towers, medieval fantasy"
+}

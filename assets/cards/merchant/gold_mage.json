@@ -1,0 +1,16 @@
+{
+  "id": "gold_mage",
+  "name": "Gold Mage",
+  "cost": 5,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 3 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "flavor": "Gold sings to those who know its true language.",
+  "art_prompt": "wizard with golden robes conjuring coins from air, vault of treasures, medieval fantasy"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "fortune_seeker",
+  "name": "Fortune Seeker",
+  "cost": 5,
+  "faction": "neutral",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 3 },
+    { "type": "add_combat", "value": 3 }
+  ],
+  "flavor": "Fortune favors the bold and the well-armed.",
+  "art_prompt": "adventurer with sword and treasure map, ancient ruins entrance, medieval fantasy"
+}

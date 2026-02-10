@@ -1,0 +1,16 @@
+{
+  "id": "guild_enforcer",
+  "name": "Guild Enforcer",
+  "cost": 4,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 2 },
+    { "type": "add_combat", "value": 3 }
+  ],
+  "ally_effects": [
+    { "type": "add_trade", "value": 1 }
+  ],
+  "flavor": "Debts are always collected, one way or another.",
+  "art_prompt": "muscular guild thug with cudgel and coin purse, dark alley, medieval fantasy"
+}

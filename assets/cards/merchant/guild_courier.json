@@ -1,0 +1,15 @@
+{
+  "id": "guild_courier",
+  "name": "Guild Courier",
+  "cost": 1,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Swift feet carry heavier purses.",
+  "art_prompt": "young messenger in guild livery running through market streets, leather satchel, medieval fantasy"
+}

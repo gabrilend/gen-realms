@@ -1,0 +1,16 @@
+{
+  "id": "goldweaver",
+  "name": "Goldweaver",
+  "cost": 4,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "upgrade_trade", "value": 1, "target": "discard" }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 3 }
+  ],
+  "flavor": "Thread by thread, fortune is woven.",
+  "art_prompt": "alchemist transmuting metal to gold, glowing crucible, medieval fantasy"
+}

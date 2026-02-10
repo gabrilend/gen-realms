@@ -1,0 +1,17 @@
+{
+  "id": "cathedral",
+  "name": "Cathedral of Light",
+  "cost": 6,
+  "faction": "kingdom",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_authority", "value": 4 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 3 }
+  ],
+  "flavor": "Faith shields where stone cannot.",
+  "art_prompt": "grand cathedral with stained glass, divine light streaming down, medieval fantasy"
+}

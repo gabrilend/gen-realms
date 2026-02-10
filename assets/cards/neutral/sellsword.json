@@ -1,0 +1,15 @@
+{
+  "id": "sellsword",
+  "name": "Sellsword",
+  "cost": 3,
+  "faction": "neutral",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 3 }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 3 }
+  ],
+  "flavor": "Loyalty purchased is loyalty uncertain.",
+  "art_prompt": "mercenary swordsman with dual blades, scarred face, tavern doorway, medieval fantasy"
+}

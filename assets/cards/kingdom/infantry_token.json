@@ -1,0 +1,16 @@
+{
+  "id": "infantry_token",
+  "name": "Castle Infantry",
+  "cost": 0,
+  "faction": "kingdom",
+  "card_type": "unit",
+  "effects": [
+    { "type": "add_combat", "value": 1 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "scrap_effects": [
+    { "type": "add_authority", "value": 1 }
+  ],
+  "flavor": "Sworn to the crown. Ready to serve.",
+  "art_prompt": "loyal foot soldier with spear and shield, castle banner, medieval fantasy"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "recycler",
+  "name": "Recycler",
+  "cost": 3,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 1 },
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "discard", "optional": true }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Nothing is waste. Everything transforms.",
+  "art_prompt": "mechanical creature breaking down old equipment, forge fires, medieval fantasy"
+}

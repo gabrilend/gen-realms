@@ -1,0 +1,17 @@
+{
+  "id": "merchant_prince",
+  "name": "Merchant Prince",
+  "cost": 6,
+  "faction": "merchant",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_trade", "value": 5 },
+    { "type": "add_authority", "value": 3 }
+  ],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "Wealth is power, and power is everything.",
+  "art_prompt": "regal merchant lord in silk and gold jewelry, palatial throne room, medieval fantasy"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "enchanter",
+  "name": "Enchanter",
+  "cost": 4,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "upgrade_authority", "value": 1, "target": "discard" }
+  ],
+  "scrap_effects": [
+    { "type": "add_authority", "value": 3 }
+  ],
+  "flavor": "The touch of magic lingers eternal.",
+  "art_prompt": "wizard enchanting armor with protective runes, arcane circle, medieval fantasy"
+}

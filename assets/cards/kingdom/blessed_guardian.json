@@ -1,0 +1,16 @@
+{
+  "id": "blessed_guardian",
+  "name": "Blessed Guardian",
+  "cost": 5,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 3 },
+    { "type": "add_authority", "value": 4 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "While she stands, the realm endures.",
+  "art_prompt": "female paladin in white armor with holy aura, cathedral, medieval fantasy"
+}

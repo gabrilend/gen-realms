@@ -1,0 +1,15 @@
+{
+  "id": "salvage_drone",
+  "name": "Salvage Drone",
+  "cost": 1,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "scrap_trade_row", "value": 1, "optional": true }
+  ],
+  "flavor": "What others discard, we reclaim.",
+  "art_prompt": "small mechanical spider collecting scrap metal, junkyard, medieval fantasy"
+}

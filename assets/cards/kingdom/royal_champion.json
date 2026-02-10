@@ -1,0 +1,15 @@
+{
+  "id": "royal_champion",
+  "name": "Royal Champion",
+  "cost": 4,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 5 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 3 }
+  ],
+  "flavor": "The crown's blade, unsheathed for glory.",
+  "art_prompt": "legendary warrior with golden armor, tournament ground, medieval fantasy"
+}

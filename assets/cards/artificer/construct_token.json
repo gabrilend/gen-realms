@@ -1,0 +1,15 @@
+{
+  "id": "construct_token",
+  "name": "Battle Construct",
+  "cost": 0,
+  "faction": "artificer",
+  "card_type": "unit",
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "add_trade", "value": 3 }
+  ],
+  "flavor": "Built to fight. Scrapped for parts.",
+  "art_prompt": "small combat automaton with blade arms, bronze plating, medieval fantasy"
+}

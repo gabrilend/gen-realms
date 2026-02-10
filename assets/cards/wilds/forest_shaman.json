@@ -1,0 +1,16 @@
+{
+  "id": "forest_shaman",
+  "name": "Forest Shaman",
+  "cost": 4,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 2 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 3 }
+  ],
+  "flavor": "She speaks, and the wild answers.",
+  "art_prompt": "tribal druid with antler headdress, surrounded by spirits, medieval fantasy"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "squire",
+  "name": "Squire",
+  "cost": 1,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 1 },
+    { "type": "add_authority", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 1 }
+  ],
+  "flavor": "Every knight began with a dream.",
+  "art_prompt": "young squire in training armor, castle courtyard, medieval fantasy"
+}

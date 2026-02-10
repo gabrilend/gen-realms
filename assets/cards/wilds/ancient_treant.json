@@ -1,0 +1,16 @@
+{
+  "id": "ancient_treant",
+  "name": "Ancient Treant",
+  "cost": 5,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 6 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 2 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "Patience of ages. Wrath of moments.",
+  "art_prompt": "massive walking tree with glowing eyes, moss-covered bark, medieval fantasy"
+}

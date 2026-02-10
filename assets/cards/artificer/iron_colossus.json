@@ -1,0 +1,19 @@
+{
+  "id": "iron_colossus",
+  "name": "Iron Colossus",
+  "cost": 6,
+  "faction": "artificer",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 6 }
+  ],
+  "ally_effects": [
+    { "type": "scrap_trade_row", "value": 1 },
+    { "type": "add_combat", "value": 2 }
+  ],
+  "scrap_effects": [
+    { "type": "draw_card", "value": 2 }
+  ],
+  "flavor": "Cities tremble at its footfalls.",
+  "art_prompt": "massive iron golem towering over buildings, steam and gears, medieval fantasy"
+}

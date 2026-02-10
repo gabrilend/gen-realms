@@ -1,0 +1,17 @@
+{
+  "id": "divine_sovereign",
+  "name": "Divine Sovereign",
+  "cost": 7,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 5 },
+    { "type": "add_authority", "value": 6 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 4 },
+    { "type": "opponent_discard", "value": 1 }
+  ],
+  "flavor": "Crowned by heaven. Unquestioned by earth.",
+  "art_prompt": "divine king with crown of light, throne room, angelic presence, medieval fantasy"
+}

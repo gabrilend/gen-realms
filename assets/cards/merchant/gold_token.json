@@ -1,0 +1,15 @@
+{
+  "id": "gold_token",
+  "name": "Gold Tribute",
+  "cost": 0,
+  "faction": "merchant",
+  "card_type": "unit",
+  "effects": [
+    { "type": "add_trade", "value": 1 }
+  ],
+  "scrap_effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "flavor": "A small gift from the vaults.",
+  "art_prompt": "stack of gold coins with guild seal, velvet pouch, medieval fantasy"
+}
