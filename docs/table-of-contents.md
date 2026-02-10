@@ -8,6 +8,7 @@ docs/
 ├── 02-game-mechanics.md           Rules and modified mechanics
 ├── 03-roadmap.md                  Development phases and milestones
 ├── 04-architecture-c-server.md    C server architecture details
+├── 05-parallelized-roadmap.md     5-track parallel development guide
 └── table-of-contents.md           This document
 ```
 
