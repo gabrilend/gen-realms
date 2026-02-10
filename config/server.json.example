@@ -1,0 +1,25 @@
+{
+  "game_port": 8080,
+  "ssh_port": 8022,
+
+  "llm_endpoint": "192.168.1.10:5000",
+  "llm_api_key": "",
+  "llm_model": "mistral-7b",
+  "llm_timeout_ms": 30000,
+  "llm_max_retries": 3,
+
+  "comfyui_endpoint": "192.168.1.10",
+  "comfyui_port": 8188,
+  "comfyui_timeout_ms": 60000,
+  "comfyui_poll_interval_ms": 500,
+
+  "max_players": 4,
+  "max_sessions": 10,
+
+  "game_rules": {
+    "starting_authority": 50,
+    "starting_hand_size": 5,
+    "d10_start": 5,
+    "d4_start": 0
+  }
+}

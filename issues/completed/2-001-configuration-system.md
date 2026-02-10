@@ -1,7 +1,9 @@
 # 2-001: Configuration System
 
+## Status: COMPLETED
+
 ## Current Behavior
-No configuration system exists. Server settings are hardcoded.
+Configuration system implemented with JSON parsing and sensible defaults.
 
 ## Intended Behavior
 A JSON-based configuration system that:
@@ -62,8 +64,33 @@ A JSON-based configuration system that:
 ```
 
 ## Acceptance Criteria
-- [ ] Config file parses correctly
-- [ ] Missing file uses defaults
-- [ ] Invalid config fails with clear error
-- [ ] Endpoints stored for later use
-- [ ] Example config file documented
+- [x] Config file parses correctly
+- [x] Missing file uses defaults
+- [x] Invalid config fails with clear error
+- [x] Endpoints stored for later use
+- [x] Example config file documented
+
+## Implementation Notes
+
+### Files Created
+- `src/net/01-config.h` - Type definitions and function prototypes
+- `src/net/01-config.c` - Implementation with cJSON parsing
+- `config/server.json.example` - Example configuration
+- `tests/test-config.c` - Unit tests (7 tests, all passing)
+
+### Key Decisions
+- Extended struct beyond spec to include timeout and retry settings for LLM/ComfyUI
+- Added GameRules nested struct for game-specific settings
+- Used local cJSON library from libs/ rather than system installation
+- Endpoint formatter functions add http:// prefix when needed
+
+### Test Coverage
+- Default values initialization
+- Missing file handling (returns defaults)
+- Valid config validation
+- Invalid port validation
+- Endpoint URL formatting
+- Valid JSON parsing
+- Invalid JSON error handling
+
+Completed: 2026-02-10
