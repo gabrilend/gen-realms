@@ -1,65 +1,77 @@
-# 4-003: Reference Image Mapping
+# 6-003: Dynamic Art Regeneration
 
 ## Current Behavior
-Cards have art_ref but no actual reference images.
+No dynamic card art regeneration exists.
 
 ## Intended Behavior
-A system that maps game cards to reference images for inpainting:
-- Each faction has visual style references
-- Each card type has shape/silhouette references
-- References guide the inpainting model
-- Supports fallbacks for missing references
+A system that regenerates card art when cards are drawn:
+- Track which cards need art regeneration (needs_regen flag)
+- Trigger regeneration on card draw
+- Apply user style preferences from localStorage
+- Queue requests to avoid overwhelming image API
+- Cache generated images for reuse
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Create `assets/references/` directory structure:
-   ```
-   assets/references/
-     factions/
-       merchant/style.png
-       wilds/style.png
-       kingdom/style.png
-       artificer/style.png
-     cards/
-       {card_id}.png
-     silhouettes/
-       ship.png
-       base.png
-       unit.png
-   ```
-2. Create `src/visual/references.lua`
-3. Implement `Ref.get_for_card(card)` - return reference image(s)
-4. Implement `Ref.get_faction_style(faction)` - return style ref
-5. Implement `Ref.get_silhouette(card_type)` - return shape ref
-6. Implement fallback chain (card -> faction -> silhouette)
-7. Support reference blending (for multi-faction scenes)
-8. Write reference contribution guidelines
-9. Create placeholder references for development
+This issue has been split into the following sub-issues:
+
+| ID | Description | Status |
+|----|-------------|--------|
+| 6-003a | Regeneration Tracking | pending |
+| 6-003b | Style Guide Integration | pending |
+| 6-003c | Generation Queue | pending |
+| 6-003d | Cache Invalidation | pending |
+
+## Implementation Order
+
+1. **6-003a** first - track which cards need regeneration
+2. **6-003b** second - apply style preferences to prompts
+3. **6-003c** third - queue and batch requests
+4. **6-003d** last - manage cache lifecycle
 
 ## Related Documents
-- 2-009-card-art-placeholder-system.md
-- notes/vision (card references)
+- docs/02-game-mechanics.md (dynamic art)
+- docs/04-architecture-c-server.md
+- 3-006-client-style-preferences.md
+- 6-001-comfyui-api-client.md
 
 ## Dependencies
-- 2-009: Card Art Placeholder System
+- 6-001: ComfyUI API Client
+- 6-002: Card Image Prompt Builder
+- 3-006: Client Style Preferences
 
-## Reference Usage
+## Dynamic Art Flow
 
 ```
-Generating: Dire Bear in battle
-
-References:
-1. Card reference: dire_bear.png (if exists)
-2. Faction style: wilds/style.png (forest, primal)
-3. Silhouette: ship.png (creature shape)
-
-Prompt influence:
-"A dire bear in the style of [wilds], with shape like [ship]"
+Card Drawn
+    │
+    ▼
+Check needs_regen flag ──── false ──► Use cached image
+    │
+    true
+    │
+    ▼
+Get user style guide from localStorage
+    │
+    ▼
+Build prompt with card data + style
+    │
+    ▼
+Add to generation queue
+    │
+    ▼
+ComfyUI generates image
+    │
+    ▼
+Cache image, clear needs_regen
+    │
+    ▼
+Display new art
 ```
 
 ## Acceptance Criteria
-- [ ] Reference lookup works for all cards
-- [ ] Faction styles defined
-- [ ] Silhouettes provide shape guidance
-- [ ] Fallbacks handle missing images
-- [ ] References loadable by inpainting module
+- [ ] needs_regen flag tracked per CardInstance
+- [ ] Style guide applied to generation requests
+- [ ] Queue prevents API overload
+- [ ] Cache stores generated images
+- [ ] Images display in browser client

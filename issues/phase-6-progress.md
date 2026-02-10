@@ -12,6 +12,10 @@ Integrate image generation for dynamic card art, battle scene visualization, and
 | 6-001 | ComfyUI API Client | pending |
 | 6-002 | Card Image Prompt Builder | pending |
 | 6-003 | Dynamic Art Regeneration | pending |
+| 6-003a | ↳ Regeneration Tracking | pending |
+| 6-003b | ↳ Style Guide Integration | pending |
+| 6-003c | ↳ Generation Queue | pending |
+| 6-003d | ↳ Cache Invalidation | pending |
 | 6-004 | Upgrade Visualization | pending |
 | 6-005 | Battle Canvas Manager | pending |
 | 6-006 | Inpainting Region Selection | pending |
@@ -20,7 +24,7 @@ Integrate image generation for dynamic card art, battle scene visualization, and
 | 6-009 | Image Caching/Persistence | pending |
 | 6-010 | Phase 6 Demo | pending |
 
-## Completed: 0/10
+## Completed: 0/14
 
 ## Technology Stack
 - ComfyUI API for Stable Diffusion

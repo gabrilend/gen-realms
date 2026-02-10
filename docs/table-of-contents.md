@@ -131,12 +131,16 @@ issues/
 └── 5-010-phase-5-demo.md
 ```
 
-### Phase 6: Visual Generation (10 issues)
+### Phase 6: Visual Generation (14 issues)
 ```
 issues/
 ├── 6-001-comfyui-api-client.md
 ├── 6-002-card-image-prompt-builder.md
 ├── 6-003-dynamic-art-regeneration.md
+│   ├── 6-003a-regeneration-tracking.md
+│   ├── 6-003b-style-guide-integration.md
+│   ├── 6-003c-generation-queue.md
+│   └── 6-003d-cache-invalidation.md
 ├── 6-004-upgrade-visualization.md
 ├── 6-005-battle-canvas-manager.md
 ├── 6-006-inpainting-region-selection.md
@@ -233,10 +237,10 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 84
+## Total Issues: 88
 - Phase 1: 22 issues (Core C Engine, including 10 sub-issues)
 - Phase 2: 18 issues (Networking, including 8 sub-issues)
 - Phase 3: 14 issues (Clients, including 4 sub-issues)
 - Phase 4: 10 issues (Content)
 - Phase 5: 10 issues (LLM DM)
-- Phase 6: 10 issues (Visuals)
+- Phase 6: 14 issues (Visuals, including 4 sub-issues)
