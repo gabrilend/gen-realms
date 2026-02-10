@@ -72,10 +72,16 @@ A localStorage-based preference system that:
 </div>
 ```
 
+## Sub-Issues
+This issue has been split into sub-issues for manageable implementation:
+- 3-006a: Preferences Storage Schema
+- 3-006b: Preferences UI Panel
+- 3-006c: Preferences Export/Import
+
 ## Acceptance Criteria
-- [ ] Preferences load from localStorage
-- [ ] Preferences save correctly
-- [ ] Default values work for new users
-- [ ] UI allows editing all preferences
-- [ ] Export/import works
-- [ ] Style guide available for Phase 6
+- [ ] Preferences load from localStorage (3-006a)
+- [ ] Preferences save correctly (3-006a)
+- [ ] Default values work for new users (3-006a)
+- [ ] UI allows editing all preferences (3-006b)
+- [ ] Export/import works (3-006c)
+- [ ] Style guide available for Phase 6 (3-006a)
