@@ -12,27 +12,23 @@ An HTML5 Canvas renderer for browser clients that:
 - Supports responsive layout
 - Provides click targets for interaction
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Create `assets/web/index.html` with canvas element
-2. Create `assets/web/game.js` with rendering logic
-3. Create `assets/web/style.css` for layout
-4. Define render regions:
-   ```javascript
-   const layout = {
-       hand: { x: 0, y: 300, w: 400, h: 200 },
-       tradeRow: { x: 400, y: 0, w: 400, h: 200 },
-       narrative: { x: 400, y: 300, w: 400, h: 200 },
-       status: { x: 0, y: 0, w: 400, h: 50 },
-       bases: { x: 0, y: 50, w: 400, h: 250 }
-   };
-   ```
-5. Implement `renderGame(gamestate)` function
-6. Implement `renderCard(ctx, card, x, y)` with placeholder art
-7. Implement `renderNarrative(ctx, text)` with scroll
-8. Add faction color coding
-9. Handle canvas resize
-10. Make cards clickable (store bounds)
+This issue has been split into the following sub-issues:
+
+| ID | Description | Status |
+|----|-------------|--------|
+| 3-004a | Canvas Infrastructure | pending |
+| 3-004b | Card Rendering | pending |
+| 3-004c | Game Zone Rendering | pending |
+| 3-004d | Status and Narrative Panels | pending |
+
+## Implementation Order
+
+1. **3-004a** first - canvas setup and layout system
+2. **3-004b** second - card rendering primitives
+3. **3-004c** third - game zones use card rendering
+4. **3-004d** last - UI panels complete the display
 
 ## Related Documents
 - docs/04-architecture-c-server.md

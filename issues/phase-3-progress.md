@@ -13,6 +13,10 @@ Implement both terminal (ncurses) and browser (HTML5 Canvas) client renderers wi
 | 3-002 | Terminal Input System | pending |
 | 3-003 | WebAssembly Build Configuration | pending |
 | 3-004 | Browser Canvas Renderer | pending |
+| 3-004a | ↳ Canvas Infrastructure | pending |
+| 3-004b | ↳ Card Rendering | pending |
+| 3-004c | ↳ Game Zone Rendering | pending |
+| 3-004d | ↳ Status and Narrative Panels | pending |
 | 3-005 | Browser Input Handler | pending |
 | 3-006 | Client Style Preferences | pending |
 | 3-007 | Draw Order Interface | pending |
@@ -20,7 +24,7 @@ Implement both terminal (ncurses) and browser (HTML5 Canvas) client renderers wi
 | 3-009 | Narrative Display | pending |
 | 3-010 | Phase 3 Demo | pending |
 
-## Completed: 0/10
+## Completed: 0/14
 
 ## Technology Stack
 - ncurses for terminal UI

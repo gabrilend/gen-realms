@@ -74,13 +74,17 @@ issues/
 └── 2-010-phase-2-demo.md
 ```
 
-### Phase 3: Client Renderers (10 issues)
+### Phase 3: Client Renderers (14 issues)
 ```
 issues/
 ├── 3-001-terminal-renderer.md
 ├── 3-002-terminal-input-system.md
 ├── 3-003-wasm-build-configuration.md
 ├── 3-004-browser-canvas-renderer.md
+│   ├── 3-004a-canvas-infrastructure.md
+│   ├── 3-004b-card-rendering.md
+│   ├── 3-004c-game-zones.md
+│   └── 3-004d-status-narrative-panels.md
 ├── 3-005-browser-input-handler.md
 ├── 3-006-client-style-preferences.md
 ├── 3-007-draw-order-interface.md
@@ -221,10 +225,10 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 72
+## Total Issues: 76
 - Phase 1: 18 issues (Core C Engine, including 6 sub-issues)
 - Phase 2: 14 issues (Networking, including 4 sub-issues)
-- Phase 3: 10 issues (Clients)
+- Phase 3: 14 issues (Clients, including 4 sub-issues)
 - Phase 4: 10 issues (Content)
 - Phase 5: 10 issues (LLM DM)
 - Phase 6: 10 issues (Visuals)
