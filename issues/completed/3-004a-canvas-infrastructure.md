@@ -4,7 +4,7 @@
 3-004: Browser Canvas Renderer
 
 ## Current Behavior
-No browser canvas setup exists.
+Canvas infrastructure is implemented with layout management and demo mode.
 
 ## Intended Behavior
 Core canvas infrastructure that:
@@ -116,8 +116,55 @@ Core canvas infrastructure that:
 - Modern browser with Canvas support
 
 ## Acceptance Criteria
-- [ ] Canvas fills browser window
-- [ ] Resize events handled correctly
-- [ ] Layout regions calculated proportionally
-- [ ] Render loop runs at 60fps
-- [ ] No flicker or tearing
+- [x] Canvas fills browser window
+- [x] Resize events handled correctly
+- [x] Layout regions calculated proportionally
+- [x] Render loop runs at 60fps
+- [x] No flicker or tearing
+
+## Implementation Notes (2026-02-10)
+
+### Files Created/Modified
+- `assets/web/style.css` - Complete stylesheet with faction colors, loading states, tooltips
+- `assets/web/canvas.js` - Layout management module (window.canvasLayout API)
+- `assets/web/index.html` - Updated to use external CSS and canvas.js module
+
+### Layout Regions
+Implemented all required regions with proportional sizing:
+- `status` - Top bar for player stats
+- `tradeRow` - Top center for purchasable cards
+- `hand` - Bottom center for player's hand
+- `playerBases` - Bottom left for player's bases
+- `opponentBases` - Top left for opponent's bases
+- `narrative` - Right side panel for story text
+- `playArea` - Center area for gameplay
+
+### Canvas Layout API (window.canvasLayout)
+```javascript
+init(canvasId)          // Initialize canvas and layout
+getContext()            // Get 2D rendering context
+getLayout()             // Get layout regions object
+getFactionColor(faction, type)  // Get faction color
+getValueColor(valueType)        // Get value color
+handleResize()          // Manually trigger resize
+clear()                 // Clear with background color
+drawRegionBorder(name, title, color)  // Draw region outline
+getCardSize()           // Get card dimensions
+updateFps(time)         // Update FPS counter
+getFps()                // Get current FPS
+startRenderLoop(callback)  // Start render loop
+```
+
+### Demo Mode
+Added standalone demo mode that runs without Wasm:
+- Displays layout regions with colored borders
+- Renders placeholder cards in hand and trade row
+- Shows FPS counter
+- Useful for testing layout without building Wasm
+
+### Design Decisions
+1. Used `{ alpha: false }` on canvas context for better performance
+2. Layout adapts card size for screens under 1000px width
+3. Minimum canvas size enforced (800x600) to prevent layout issues
+4. All colors centralized in FACTION_COLORS and VALUE_COLORS objects
+5. Render loop uses requestAnimationFrame for smooth 60fps

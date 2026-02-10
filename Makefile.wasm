@@ -1,0 +1,99 @@
+# Makefile.wasm - WebAssembly build configuration for Symbeline Realms browser client
+#
+# This makefile compiles the client-side code to WebAssembly using Emscripten,
+# enabling the game to run in web browsers. Server-specific code is excluded.
+#
+# Usage: source emsdk_env.sh && make -f Makefile.wasm
+
+# {{{ configuration
+CC = emcc
+CFLAGS = -O3 -Wall -Wextra
+
+# Emscripten-specific flags
+EMCC_FLAGS = \
+	-s WASM=1 \
+	-s EXPORTED_FUNCTIONS="['_client_init','_client_cleanup','_client_handle_message','_client_get_action','_client_render_frame','_malloc','_free']" \
+	-s EXPORTED_RUNTIME_METHODS="['ccall','cwrap','stringToUTF8','UTF8ToString']" \
+	-s ALLOW_MEMORY_GROWTH=1 \
+	-s MODULARIZE=1 \
+	-s EXPORT_NAME="SymbelineRealms" \
+	-s NO_EXIT_RUNTIME=1 \
+	-s FILESYSTEM=0 \
+	-s ENVIRONMENT=web
+
+# Debug flags (use DEBUG=1 to enable)
+ifdef DEBUG
+	CFLAGS += -g -O0 -DDEBUG
+	EMCC_FLAGS += -s ASSERTIONS=2 -s SAFE_HEAP=1
+else
+	CFLAGS += -DNDEBUG
+endif
+
+# Directories
+SRC_DIR = src
+CLIENT_DIR = $(SRC_DIR)/client
+WASM_DIR = $(CLIENT_DIR)/wasm
+CORE_DIR = $(SRC_DIR)/core
+OUT_DIR = assets/web
+
+# Output files
+TARGET = $(OUT_DIR)/symbeline
+WASM_OUT = $(TARGET).wasm
+JS_OUT = $(TARGET).js
+# }}}
+
+# {{{ source files
+# Client-only sources (no server networking code)
+CLIENT_SOURCES = \
+	$(WASM_DIR)/main.c \
+	$(WASM_DIR)/js-interop.c
+
+# Core game logic (shared between server and client)
+# Note: These will be added as Track A implements them
+CORE_SOURCES = \
+	# $(CORE_DIR)/card.c \
+	# $(CORE_DIR)/deck.c \
+	# $(CORE_DIR)/player.c \
+	# $(CORE_DIR)/game.c
+
+ALL_SOURCES = $(CLIENT_SOURCES) $(CORE_SOURCES)
+# }}}
+
+# {{{ build targets
+.PHONY: all clean check-emcc
+
+all: check-emcc $(OUT_DIR) $(JS_OUT)
+
+# Verify Emscripten is available
+check-emcc:
+	@which emcc > /dev/null || (echo "Error: emcc not found. Run 'source emsdk_env.sh' first." && exit 1)
+
+# Create output directory
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
+# Build WebAssembly
+$(JS_OUT): $(ALL_SOURCES)
+	$(CC) $(CFLAGS) $(EMCC_FLAGS) -o $@ $(ALL_SOURCES)
+	@echo "Build complete:"
+	@echo "  $(JS_OUT)"
+	@echo "  $(WASM_OUT)"
+	@ls -lh $(OUT_DIR)/symbeline.*
+
+clean:
+	rm -f $(OUT_DIR)/symbeline.js $(OUT_DIR)/symbeline.wasm
+# }}}
+
+# {{{ development targets
+# Build with debug symbols and assertions
+debug:
+	$(MAKE) -f Makefile.wasm DEBUG=1
+
+# Check file sizes
+size: $(JS_OUT)
+	@echo "=== Build size analysis ==="
+	@wc -c $(OUT_DIR)/symbeline.* | sort -n
+
+# Quick rebuild (useful during development)
+rebuild: clean all
+# }}}

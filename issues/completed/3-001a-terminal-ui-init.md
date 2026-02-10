@@ -1,7 +1,7 @@
 # 3-001a: Terminal UI Initialization
 
 ## Current Behavior
-No terminal initialization or layout structure exists.
+Terminal UI initialization is implemented with ncurses support.
 
 ## Intended Behavior
 Initialize ncurses with proper configuration and define the screen layout:
@@ -114,7 +114,43 @@ Initialize ncurses with proper configuration and define the screen layout:
 - ncurses library
 
 ## Acceptance Criteria
-- [ ] ncurses initializes without errors
-- [ ] Color pairs defined for all factions
-- [ ] All windows created with correct dimensions
-- [ ] Cleanup properly releases resources
+- [x] ncurses initializes without errors
+- [x] Color pairs defined for all factions
+- [x] All windows created with correct dimensions
+- [x] Cleanup properly releases resources
+
+## Implementation Notes (2026-02-10)
+
+### Files Created
+- `src/client/01-terminal.h` - Header with TerminalUI struct and TerminalColors enum
+- `src/client/01-terminal.c` - Implementation of all terminal functions
+- `tests/test-terminal.c` - Visual test program
+- `Makefile` - Native build configuration
+
+### Extended Color Pairs
+Added additional color pairs beyond the original specification:
+- COLOR_PAIR_AUTHORITY (cyan) - For authority display
+- COLOR_PAIR_COMBAT (magenta) - For combat values
+- COLOR_PAIR_TRADE (yellow) - For trade values
+- COLOR_PAIR_ERROR (red) - For error messages
+- COLOR_PAIR_SUCCESS (green) - For success messages
+
+### Additional Features
+1. SIGWINCH handler for terminal resize detection
+2. `needs_resize` flag for safe resize handling in main loop
+3. Minimum terminal size handling (60x20) with graceful degradation
+4. `terminal_draw_box()` utility for bordered windows
+5. `terminal_draw_status()` for status bar rendering
+6. `terminal_get_faction_color()` helper function
+
+### Design Decisions
+1. Used static global `g_ui_for_resize` for signal handler (necessary for SIGWINCH)
+2. nodelay(stdscr, TRUE) for non-blocking input compatible with resize
+3. Windows are NULL-checked throughout to handle small terminal gracefully
+
+### Build Verification
+```
+gcc -Wall -Wextra -pedantic -std=c11 -c src/client/01-terminal.c  # OK
+gcc -Wall -Wextra -pedantic -std=c11 -c tests/test-terminal.c     # OK
+gcc -o test-terminal *.o -lncurses                                 # OK
+```
