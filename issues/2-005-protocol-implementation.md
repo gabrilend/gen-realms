@@ -11,36 +11,23 @@ A well-defined protocol layer that:
 - Abstracts transport (WebSocket vs SSH)
 - Provides consistent error handling
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Create `src/net/05-protocol.h` with message definitions
-2. Create `src/net/05-protocol.c` with implementation
-3. Define message types:
-   ```c
-   typedef enum {
-       MSG_JOIN,
-       MSG_LEAVE,
-       MSG_ACTION,
-       MSG_DRAW_ORDER,
-       MSG_CHAT,
-       MSG_GAMESTATE,
-       MSG_NARRATIVE,
-       MSG_ERROR
-   } MessageType;
+This issue has been split into the following sub-issues:
 
-   typedef struct {
-       MessageType type;
-       int player_id;
-       cJSON* payload;
-   } Message;
-   ```
-4. Implement `Message* protocol_parse(const char* json)`
-5. Implement `char* protocol_serialize(Message* msg)`
-6. Implement `void protocol_free(Message* msg)`
-7. Implement `bool protocol_validate(Message* msg)`
-8. Create dispatch table for message handlers
-9. Implement `void protocol_dispatch(Message* msg, Game* game)`
-10. Write tests for all message types
+| ID | Description | Status |
+|----|-------------|--------|
+| 2-005a | Message Type Definitions | pending |
+| 2-005b | Client to Server Handlers | pending |
+| 2-005c | Server to Client Generation | pending |
+| 2-005d | Validation and Error Handling | pending |
+
+## Implementation Order
+
+1. **2-005a** first - defines types everything depends on
+2. **2-005d** second - validation needed before handlers
+3. **2-005b** third - client message handling
+4. **2-005c** last - server responses
 
 ## Related Documents
 - docs/04-architecture-c-server.md

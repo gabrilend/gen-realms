@@ -55,7 +55,7 @@ issues/
 └── 1-013-phase-1-demo.md
 ```
 
-### Phase 2: Networking Layer (10 issues)
+### Phase 2: Networking Layer (14 issues)
 ```
 issues/
 ├── 2-001-configuration-system.md
@@ -63,6 +63,10 @@ issues/
 ├── 2-003-websocket-handler.md
 ├── 2-004-ssh-server-integration.md
 ├── 2-005-protocol-implementation.md
+│   ├── 2-005a-message-type-definitions.md
+│   ├── 2-005b-client-to-server-handlers.md
+│   ├── 2-005c-server-to-client-generation.md
+│   └── 2-005d-validation-error-handling.md
 ├── 2-006-connection-manager.md
 ├── 2-007-game-session-management.md
 ├── 2-008-hidden-information-handling.md
@@ -217,9 +221,9 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 68
+## Total Issues: 72
 - Phase 1: 18 issues (Core C Engine, including 6 sub-issues)
-- Phase 2: 10 issues (Networking)
+- Phase 2: 14 issues (Networking, including 4 sub-issues)
 - Phase 3: 10 issues (Clients)
 - Phase 4: 10 issues (Content)
 - Phase 5: 10 issues (LLM DM)
