@@ -55,13 +55,17 @@ issues/
 └── 1-013-phase-1-demo.md
 ```
 
-### Phase 2: Networking Layer (14 issues)
+### Phase 2: Networking Layer (18 issues)
 ```
 issues/
 ├── 2-001-configuration-system.md
 ├── 2-002-http-server.md
 ├── 2-003-websocket-handler.md
 ├── 2-004-ssh-server-integration.md
+│   ├── 2-004a-libssh-build-integration.md
+│   ├── 2-004b-ssh-authentication.md
+│   ├── 2-004c-pty-terminal-handling.md
+│   └── 2-004d-session-lifecycle.md
 ├── 2-005-protocol-implementation.md
 │   ├── 2-005a-message-type-definitions.md
 │   ├── 2-005b-client-to-server-handlers.md
@@ -225,9 +229,9 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 76
+## Total Issues: 80
 - Phase 1: 18 issues (Core C Engine, including 6 sub-issues)
-- Phase 2: 14 issues (Networking, including 4 sub-issues)
+- Phase 2: 18 issues (Networking, including 8 sub-issues)
 - Phase 3: 14 issues (Clients, including 4 sub-issues)
 - Phase 4: 10 issues (Content)
 - Phase 5: 10 issues (LLM DM)

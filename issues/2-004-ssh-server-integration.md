@@ -12,28 +12,23 @@ An embedded SSH server using libssh that:
 - Receives input commands
 - Compiled from source during build
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Add libssh to build system (compile from source)
-2. Create `src/net/04-ssh.h` with type definitions
-3. Create `src/net/04-ssh.c` with implementation
-4. Define SSH session state:
-   ```c
-   typedef struct {
-       ssh_session session;
-       ssh_channel channel;
-       int player_id;
-       int game_id;
-       char input_buffer[256];
-   } SSHConnection;
-   ```
-5. Implement `void ssh_server_init(int port)`
-6. Implement authentication callback (password or key-based)
-7. Implement PTY request handling
-8. Implement `void ssh_send_gamestate(SSHConnection* conn, Game* game)`
-9. Implement input polling and command parsing
-10. Handle disconnect cleanup
-11. Write integration tests
+This issue has been split into the following sub-issues:
+
+| ID | Description | Status |
+|----|-------------|--------|
+| 2-004a | libssh Build Integration | pending |
+| 2-004b | SSH Authentication | pending |
+| 2-004c | PTY and Terminal Handling | pending |
+| 2-004d | Session Lifecycle | pending |
+
+## Implementation Order
+
+1. **2-004a** first - library must be built before anything else
+2. **2-004b** second - authentication needed before session
+3. **2-004c** third - PTY handling for terminal display
+4. **2-004d** last - session management ties it together
 
 ## Related Documents
 - docs/04-architecture-c-server.md

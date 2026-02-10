@@ -13,6 +13,10 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 | 2-002 | HTTP Server | pending |
 | 2-003 | WebSocket Handler | pending |
 | 2-004 | SSH Server Integration | pending |
+| 2-004a | ↳ libssh Build Integration | pending |
+| 2-004b | ↳ SSH Authentication | pending |
+| 2-004c | ↳ PTY and Terminal Handling | pending |
+| 2-004d | ↳ Session Lifecycle | pending |
 | 2-005 | Protocol Implementation | pending |
 | 2-005a | ↳ Message Type Definitions | pending |
 | 2-005b | ↳ Client to Server Handlers | pending |
@@ -24,7 +28,7 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 | 2-009 | Input Validation | pending |
 | 2-010 | Phase 2 Demo | pending |
 
-## Completed: 0/14
+## Completed: 0/18
 
 ## Technology Stack
 - libwebsockets for HTTP/WebSocket server
