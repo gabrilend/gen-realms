@@ -12,33 +12,23 @@ A C-based auto-draw system that:
 - Generates events for the auto-draw sequence (for narrative/display)
 - Prevents tedious play-draw-play loops
 
-## Suggested Implementation Steps
+## Sub-Issues
 
-1. Create `src/core/08-auto-draw.h` with type definitions
-2. Create `src/core/08-auto-draw.c` with implementation
-3. Add spent tracking to CardInstance:
-   ```c
-   // Already in CardInstance from 1-001:
-   // bool draw_effect_spent;  // reset on shuffle
-   ```
-4. Implement `int autodraw_find_eligible(CardInstance** hand, int count, CardInstance** out)`
-5. Implement `void autodraw_execute_all(Game* game, Player* player)`
-6. Implement chain resolution:
-   ```c
-   void autodraw_resolve_chain(Game* game, Player* player) {
-       bool found_new;
-       do {
-           found_new = false;
-           // scan hand for unspent draw effects
-           // execute them, mark spent
-           // if new cards drawn, set found_new = true
-       } while (found_new);
-   }
-   ```
-7. Ensure `deck_shuffle()` resets spent flags on all cards
-8. Integrate into game draw phase
-9. Add event emission for each auto-draw (for LLM narrative)
-10. Write tests in `tests/test-auto-draw.c`
+This issue has been split into the following sub-issues:
+
+| ID | Description | Status |
+|----|-------------|--------|
+| 1-008a | Eligibility Detection | pending |
+| 1-008b | Chain Resolution | pending |
+| 1-008c | Spent Flag Management | pending |
+| 1-008d | Event Emission | pending |
+
+## Implementation Order
+
+1. **1-008a** first - must detect eligible cards before anything else
+2. **1-008c** second - spent flags needed for eligibility
+3. **1-008b** third - chain resolution uses eligibility and spent flags
+4. **1-008d** last - events wrap the chain resolution
 
 ## Related Documents
 - docs/02-game-mechanics.md (auto-draw rules)

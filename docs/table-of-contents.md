@@ -31,7 +31,7 @@ issues/
 └── phase-6-progress.md            Visual Generation status
 ```
 
-### Phase 1: Core C Engine (18 issues)
+### Phase 1: Core C Engine (22 issues)
 ```
 issues/
 ├── 1-001-card-data-structure.md
@@ -48,6 +48,10 @@ issues/
 │   ├── 1-007e-upgrade-spawn-effects.md
 │   └── 1-007f-conditional-ally-abilities.md
 ├── 1-008-auto-draw-resolution-system.md
+│   ├── 1-008a-eligibility-detection.md
+│   ├── 1-008b-chain-resolution.md
+│   ├── 1-008c-spent-flag-management.md
+│   └── 1-008d-event-emission.md
 ├── 1-009-deck-flow-tracker.md
 ├── 1-010-base-card-type.md
 ├── 1-011-spawning-mechanics.md
@@ -229,8 +233,8 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 80
-- Phase 1: 18 issues (Core C Engine, including 6 sub-issues)
+## Total Issues: 84
+- Phase 1: 22 issues (Core C Engine, including 10 sub-issues)
 - Phase 2: 18 issues (Networking, including 8 sub-issues)
 - Phase 3: 14 issues (Clients, including 4 sub-issues)
 - Phase 4: 10 issues (Content)

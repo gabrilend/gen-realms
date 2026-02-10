@@ -23,13 +23,17 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-007e | ↳ Upgrade and Spawn Effects | pending |
 | 1-007f | ↳ Conditional and Ally Abilities | pending |
 | 1-008 | Auto-Draw Resolution System | pending |
+| 1-008a | ↳ Eligibility Detection | pending |
+| 1-008b | ↳ Chain Resolution | pending |
+| 1-008c | ↳ Spent Flag Management | pending |
+| 1-008d | ↳ Event Emission | pending |
 | 1-009 | Deck Flow Tracker (d10/d4) | pending |
 | 1-010 | Base Card Type | pending |
 | 1-011 | Spawning Mechanics | pending |
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 0/18
+## Completed: 0/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
