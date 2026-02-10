@@ -1,0 +1,73 @@
+symbeline-realms is like Star Realms but with a DM deciding what goes in each
+trade-row slot. the DM is auto-generated using LLM technology (Rimworld style)
+it tells a story, and it provides the ships as guidance for it.
+
+the story is output to the display and the context of each of the LLMs,
+so they can all follow along with the story.
+
+also, there's AI generated images of the ships doing battle with the stations
+that is auto-generated while the turn is in play.
+
+it's filled in little by little, to showcase-explain:
+
+original state:
+ .----------------. 
+ |                | 
+ |                | 
+ |                | 
+ |                | 
+ |                | 
+ '----------------' 
+frame 2:                       frame 3:
+ .----------------. .----------------.
+ | >- 0           | | >- 0  = .  @ * |
+ |  *  \          | |  *  \  / \  *  |
+ |                | |                |
+ |                | |                |
+ |                | |                |
+ '----------------' '----------------'
+ frame 4:                      frame 5:
+ .----------------. .----------------.
+ | >- 0  = .  @ * | | >- 0  = .  @ * |
+ |  *  \  / \  *  | |  *  \  / \  *  |
+ | vv             | | vv    o=.     jck
+ | *-H            | | *-H    \\ < <  |
+ |  /  *          | |  /   *  ))     |
+ '----------------' '----------------'
+
+using programmatic inpainting, a canvas can slowly be developed, taking in
+itself as input and the reference images of the picture cards in Star Realms.
+
+oh, and it's fantasy themed, so we use cards that have sci-fi ships and then
+we create fantasy scenarios from them.
+
+we should also appreciably modify the game mechanics. here's some ideas:
+
+  each time you buy a card, increment the d10. whenever it rolls over, you
+  can draw an extra card this turn and each future turn. decrement it when 
+  scrapping a card. underflows reduce the number of cards you draw by 1.
+  track the number of extra cards you draw each turn with a d4. the d10
+  starts at 5.
+
+  the AI trade row management is significantly more likely to play multiples
+  of cards that have already been drawn. To encourage unified, semi-singleton
+  decks.
+
+  cards that produce other cards that go into your discard pile. usually have
+  either a "draw a card" effect or a "scrap this card and gain..." effect. if
+  they don't, and they're permanent (unless scrapped) then they are 1 coin more
+  powerful.
+
+  think... a base that spawns infantry every turn. they show up to the next
+  battle and draw a card, but are scrapped when played. they regroup back at
+  the castle after the battle is over, so the scraps can recoavene.
+
+  in fact most base-effects are like that. deploy an effect, but... next turn.
+  
+  also, when drawn at the start of a turn, their "draw effects" automatically
+  materialize, and you just... draw those cards, and the effect "disappears
+  from the card" until it's drawn again. In this way, the user won't have to
+  play their draw-a-card effects, see what they drew, then play some more cards.
+  they will just... auto-draw. before anything else happens.
+
+
