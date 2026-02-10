@@ -106,9 +106,15 @@ Logic to select which region to inpaint based on game events:
 | Card Played | P1/P2_FORCES | 60 |
 | Turn End | (none) | - |
 
+## Sub-Issues
+This issue has been split into sub-issues for manageable implementation:
+- 6-006a: Region Selector Structure
+- 6-006b: Event-to-Region Mapping
+- 6-006c: Region Priority Queue
+
 ## Acceptance Criteria
-- [ ] Events map to correct regions
-- [ ] Priority queue works correctly
-- [ ] Unfilled regions selected first
-- [ ] Masks generated for inpainting
-- [ ] Dependencies respected (bg first)
+- [ ] Events map to correct regions (6-006b)
+- [ ] Priority queue works correctly (6-006c)
+- [ ] Unfilled regions selected first (6-006c)
+- [ ] Masks generated for inpainting (6-006c)
+- [ ] Dependencies respected (bg first) (6-006c)
