@@ -1,0 +1,17 @@
+{
+  "id": "banner_knight",
+  "name": "Banner Knight",
+  "cost": 3,
+  "faction": "kingdom",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 2 },
+    { "type": "add_authority", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 2 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "flavor": "Where the banner flies, hope follows.",
+  "art_prompt": "knight on horseback carrying royal standard, inspiring troops, medieval fantasy"
+}

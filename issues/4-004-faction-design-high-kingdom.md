@@ -1,4 +1,4 @@
-# 2-004: Faction Design - High Kingdom
+# 4-004: Faction Design - High Kingdom
 
 ## Current Behavior
 No faction cards exist.
@@ -31,35 +31,48 @@ Design and implement the High Kingdom faction with:
 
 ## Related Documents
 - docs/02-game-mechanics.md
-- 2-001-card-template-format.md
+- 4-001-card-json-schema.md
 
 ## Dependencies
-- 2-001: Card Template Format (file structure)
-
-## Example Cards
-
-**Squire** (Cost 1, Ship)
-- Effects: +1 Combat, +1 Authority
-- Ally: +1 Authority
-
-**Knight Commander** (Cost 4, Ship)
-- Effects: +4 Combat, +2 Authority
-- Ally: Target opponent discards a card
-
-**High Paladin** (Cost 6, Ship)
-- Effects: +6 Combat, +4 Authority
-- Ally: +3 Authority
-
-**Grand Castle** (Cost 5, Base, Defense 6)
-- Effects: +3 Authority, spawn Infantry Token each turn
-- Infantry Token: Draw a card, +1 Combat
-
-**Watchtower** (Cost 2, Base, Defense 3, Outpost)
-- Effects: +2 Authority
+- 4-001: Card JSON Schema
 
 ## Acceptance Criteria
-- [ ] 8-12 ship cards created
-- [ ] 2-3 base cards created
-- [ ] Strong defensive identity
-- [ ] Authority gain meaningful but not overpowered
-- [ ] Disruption effects balanced
+- [x] 8-12 ship cards created
+- [x] 2-3 base cards created
+- [x] Strong defensive identity
+- [x] Authority gain meaningful but not overpowered
+- [x] Disruption effects balanced
+
+## Completion Notes (2026-02-10)
+
+**Status: COMPLETED**
+
+### Cards Created (15 total)
+
+**Ships (11):**
+| Card | Cost | Effects | Ally Effects |
+|------|------|---------|--------------|
+| Squire | 1 | +1 Combat, +1 Authority | +1 Authority |
+| Royal Herald | 1 | +2 Authority | Draw 1 |
+| Battle Priest | 2 | +2 Combat | +2 Authority |
+| Knight Errant | 3 | +3 Combat, +1 Authority | +1 Combat |
+| Banner Knight | 3 | +2 Combat, +2 Authority | +2 Authority, Draw 1 |
+| Knight Commander | 4 | +4 Combat, +2 Authority | Opponent discards 1 |
+| Royal Champion | 4 | +5 Combat | +3 Authority |
+| Blessed Guardian | 5 | +3 Combat, +4 Authority | +2 Authority |
+| Warlord | 5 | +5 Combat, Draw 1 | Opponent discards 1 |
+| High Paladin | 6 | +6 Combat, +4 Authority | +3 Authority |
+| Divine Sovereign | 7 | +5 Combat, +6 Authority | +4 Authority, Opponent discards 1 |
+
+**Bases (3):**
+| Card | Cost | Defense | Effects |
+|------|------|---------|---------|
+| Watchtower | 2 | 3 (Outpost) | +2 Authority |
+| Grand Castle | 5 | 6 | +3 Authority, Spawns Infantry Token |
+| Cathedral of Light | 6 | 5 | +4 Authority (Ally: +3 Authority) |
+
+**Token (1):**
+- Castle Infantry: +1 Combat, Draw 1 (Scrap: +1 Authority)
+
+### Addendum (2026-02-10)
+Added **Banner Knight** (Cost 3) to bring faction to 15 cards total.

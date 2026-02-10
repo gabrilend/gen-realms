@@ -28,11 +28,11 @@ Create the actual game content with fantasy-themed cards, faction designs, and a
 |----------|-------|
 | Starting cards | 2 (scout, viper) |
 | Neutral trade cards | 6 |
-| Merchant Guilds | 14 (10 ships, 3 bases, 1 token) |
-| The Wilds | 14 (10 ships, 3 bases, 1 token) |
-| High Kingdom | 14 (10 ships, 3 bases, 1 token) |
+| Merchant Guilds | 15 (11 ships, 3 bases, 1 token) |
+| The Wilds | 15 (11 ships, 3 bases, 1 token) |
+| High Kingdom | 15 (11 ships, 3 bases, 1 token) |
 | Artificer Order | 15 (11 ships, 3 bases, 1 token) |
-| **Total** | **65 cards** |
+| **Total** | **68 cards** |
 
 ## Notes
 Phase 4 transforms the game engine into a playable game with real content. Cards are defined in JSON with faction themes, upgrade effects, and spawning abilities. Focus on balanced faction identities and fantasy flavor.

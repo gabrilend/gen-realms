@@ -1,0 +1,19 @@
+{
+  "id": "beastcaller",
+  "name": "Beastcaller",
+  "cost": 3,
+  "faction": "wilds",
+  "card_type": "ship",
+  "effects": [
+    { "type": "add_combat", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 3 },
+    { "type": "draw_card", "value": 1 }
+  ],
+  "scrap_effects": [
+    { "type": "add_combat", "value": 4 }
+  ],
+  "flavor": "Her howl summons the hunt.",
+  "art_prompt": "wild woman with antlers calling to wolf pack, moonlit forest clearing, medieval fantasy"
+}

@@ -1,4 +1,4 @@
-# 2-003: Faction Design - The Wilds
+# 4-003: Faction Design - The Wilds
 
 ## Current Behavior
 No faction cards exist.
@@ -31,32 +31,48 @@ Design and implement The Wilds faction with:
 
 ## Related Documents
 - docs/02-game-mechanics.md
-- 2-001-card-template-format.md
+- 4-001-card-json-schema.md
 
 ## Dependencies
-- 2-001: Card Template Format (file structure)
-
-## Example Cards
-
-**Wolf Scout** (Cost 1, Ship)
-- Effects: +2 Combat
-- Ally: +2 Combat
-
-**Dire Bear** (Cost 4, Ship)
-- Effects: +5 Combat
-- Ally: Draw a card
-
-**Primal Titan** (Cost 7, Ship)
-- Effects: +8 Combat, Draw a card
-- Ally: +4 Combat
-
-**Sacred Grove** (Cost 4, Base, Defense 5)
-- Effects: Spawn a Wolf Token each turn
-- Wolf Token: +2 Combat, scrap to draw a card
+- 4-001: Card JSON Schema
 
 ## Acceptance Criteria
-- [ ] 8-12 ship cards created
-- [ ] 2-3 base cards created
-- [ ] Strong combat focus evident
-- [ ] Spawning mechanic utilized
-- [ ] Ally chains feel impactful
+- [x] 8-12 ship cards created
+- [x] 2-3 base cards created
+- [x] Strong combat focus evident
+- [x] Spawning mechanic utilized
+- [x] Ally chains feel impactful
+
+## Completion Notes (2026-02-10)
+
+**Status: COMPLETED**
+
+### Cards Created (15 total)
+
+**Ships (11):**
+| Card | Cost | Effects | Ally Effects |
+|------|------|---------|--------------|
+| Wolf Scout | 1 | +2 Combat | +2 Combat |
+| Forest Sprite | 1 | +1 Combat | Draw 1 |
+| Pack Hunter | 2 | +2 Combat | +1 Combat, Draw 1 |
+| Beastcaller | 3 | +2 Combat | +3 Combat, Draw 1 |
+| Thornback Boar | 3 | +4 Combat | - (Scrap: +3 Combat) |
+| Swarm of Crows | 3 | +3 Combat | +2 Combat |
+| Dire Bear | 4 | +5 Combat | Draw 1 |
+| Forest Shaman | 4 | +2 Combat, Draw 1 | +3 Combat |
+| Alpha Pack Leader | 5 | +4 Combat, Draw 1 | +4 Combat |
+| Ancient Treant | 5 | +6 Combat | +2 Combat, +2 Authority |
+| Primal Titan | 7 | +8 Combat, Draw 1 | +4 Combat |
+
+**Bases (3):**
+| Card | Cost | Defense | Effects |
+|------|------|---------|---------|
+| Thornwall | 3 | 4 (Outpost) | +2 Combat (Ally: +1 Combat) |
+| Sacred Grove | 4 | 5 | +1 Combat, Spawns Wolf Token |
+| Heart of the Forest | 6 | 7 | +2 Combat (Ally: +4 Combat, Draw 1) |
+
+**Token (1):**
+- Spirit Wolf: +2 Combat (Scrap: Draw 1)
+
+### Addendum (2026-02-10)
+Added **Beastcaller** (Cost 3) to bring faction to 15 cards total.
