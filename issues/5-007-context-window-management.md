@@ -116,9 +116,15 @@ A context management system that:
 | 4 | Force descriptions |
 | 5 (lowest) | Old events |
 
+## Sub-Issues
+This issue has been split into sub-issues for manageable implementation:
+- 5-007a: Context Manager Structure
+- 5-007b: Context Entry Management
+- 5-007c: Context Summarization
+
 ## Acceptance Criteria
-- [ ] Token counting works
-- [ ] Entries added with priorities
-- [ ] Overflow triggers summarization
-- [ ] Context builds correctly
-- [ ] Window stays within limits
+- [ ] Token counting works (5-007a)
+- [ ] Entries added with priorities (5-007b)
+- [ ] Overflow triggers summarization (5-007c)
+- [ ] Context builds correctly (5-007b)
+- [ ] Window stays within limits (5-007a, 5-007c)
