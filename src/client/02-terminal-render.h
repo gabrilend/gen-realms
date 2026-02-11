@@ -9,6 +9,7 @@
 
 #include "01-terminal.h"
 #include "../core/05-game.h"
+#include <stdbool.h>
 
 /* {{{ Main render function */
 
@@ -55,6 +56,28 @@ void terminal_render_card_list(WINDOW* win, CardInstance** cards, int count,
 
 /* Render effect summary string */
 void terminal_render_effects(WINDOW* win, CardInstance* card, int y, int x);
+
+/* }}} */
+
+/* {{{ Formatting utilities */
+
+/* Get short faction tag (5 chars max) */
+const char* format_faction_tag(Faction faction);
+
+/* Format card line with effects and bonuses */
+void format_card_line(char* buf, size_t size, CardInstance* card, bool show_ally);
+
+/* Highlight a card line (toggle reverse video) */
+void terminal_highlight_card(WINDOW* win, int y, int x, int width, bool selected);
+
+/* Format upgrade badge for card (+, ++, ☆) */
+const char* format_upgrade_badge(int attack_bonus, int trade_bonus);
+
+/* Check if terminal supports UTF-8 box drawing */
+bool terminal_supports_utf8(void);
+
+/* Draw border with ASCII fallback for non-UTF8 terminals */
+void terminal_draw_border(WINDOW* win, const char* title);
 
 /* }}} */
 

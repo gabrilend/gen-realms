@@ -9,7 +9,7 @@ Track C implements terminal and browser client interfaces for Symbeline Realms.
 It can be developed with mock gamestate data, with protocol integration after
 the GAMMA checkpoint.
 
-## Current Status: Alpha → Beta (Rendering Core)
+## Current Status: Beta → Gamma (Input Systems)
 
 ### Completed Issues
 
@@ -20,6 +20,8 @@ the GAMMA checkpoint.
 | 3-004a | Canvas infrastructure | 2026-02-10 |
 | 3-001b | Terminal window rendering | 2026-02-10 |
 | 3-004b | Card rendering (Canvas) | 2026-02-10 |
+| 3-001c | Terminal formatting | 2026-02-10 |
+| 3-004c | Game zones (Canvas) | 2026-02-10 |
 
 ### In Progress
 
@@ -27,10 +29,7 @@ None currently.
 
 ### Pending (Alpha → Beta: Rendering Core)
 
-| Issue | Description | Dependencies |
-|-------|-------------|--------------|
-| 3-001c | Terminal formatting | 3-001b ✓ |
-| 3-004c | Game zones (Canvas) | 3-004b ✓ |
+All Alpha-Beta rendering core issues completed.
 
 ### Pending (Beta → Gamma: Input Systems)
 
@@ -90,6 +89,23 @@ Expected deliverables when Track C is complete:
   - Cost badges, upgrade indicators, defense shields
   - Hover/selection states, face-down card backs
 - Demo mode now shows realistic card rendering
+
+### 2026-02-10: Rendering Core Complete
+- Implemented terminal formatting (3-001c)
+  - format_faction_tag() for short faction names
+  - format_card_line() with effects and ally indicator
+  - terminal_highlight_card() for selection states
+  - format_upgrade_badge() for permanent bonuses (+, ++, ***)
+  - terminal_supports_utf8() for box drawing fallback
+- Implemented game zone rendering (3-004c)
+  - zone-renderer.js with full game zone support
+  - renderHand() with hover lift and centering
+  - renderTradeRow() with affordability dimming
+  - renderBases() for player and opponent
+  - renderPlayedCards() with fan layout
+  - renderDeckIndicator() and renderDiscardIndicator()
+  - Click bounds tracking for all interactive elements
+  - Demo mode now interactive (hover and click)
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering

@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <locale.h>
+#include <stdbool.h>
 
 /* {{{ Helper: get color pair for faction
  * Maps Faction enum to ncurses color pair.
@@ -56,6 +58,122 @@ static void format_effect(Effect* effect, char* buf, size_t buf_size) {
         default:
             snprintf(buf, buf_size, "(%s)", effect_type_to_string(effect->type));
             break;
+    }
+}
+/* }}} */
+
+/* {{{ format_faction_tag
+ * Returns short 5-char faction tag for compact display.
+ */
+const char* format_faction_tag(Faction faction) {
+    switch (faction) {
+        case FACTION_MERCHANT:  return "Merch";
+        case FACTION_WILDS:     return "Wilds";
+        case FACTION_KINGDOM:   return "King ";
+        case FACTION_ARTIFICER: return "Artif";
+        default:                return "Neut ";
+    }
+}
+/* }}} */
+
+/* {{{ format_card_line
+ * Formats a card line with effects and optional ally indicator.
+ * show_ally: if true, [ALLY] tag is appended (caller determines if ally is active)
+ */
+void format_card_line(char* buf, size_t size, CardInstance* card, bool show_ally) {
+    if (buf == NULL || card == NULL || size == 0) return;
+
+    CardType* t = card->type;
+    char effects[64] = "";
+    int off = 0;
+
+    /* Build effect string */
+    for (int i = 0; i < t->effect_count && off < 60; i++) {
+        char eff[16];
+        format_effect(&t->effects[i], eff, sizeof(eff));
+        if (off > 0 && off < 58) effects[off++] = ' ';
+        int len = strlen(eff);
+        if (off + len < 60) {
+            strcpy(effects + off, eff);
+            off += len;
+        }
+    }
+
+    /* Add upgrade badges if present */
+    const char* badge = format_upgrade_badge(card->attack_bonus, card->trade_bonus);
+
+    /* show_ally means caller knows ally effect is active for this card */
+    if (show_ally) {
+        snprintf(buf, size, "%-16s %s %s [ALLY]", t->name, effects, badge);
+    } else {
+        snprintf(buf, size, "%-16s %s %s", t->name, effects, badge);
+    }
+}
+/* }}} */
+
+/* {{{ terminal_highlight_card
+ * Apply or remove reverse-video highlighting to a card line.
+ */
+void terminal_highlight_card(WINDOW* win, int y, int x, int width, bool selected) {
+    if (win == NULL) return;
+
+    if (selected) {
+        mvwchgat(win, y, x, width, A_REVERSE, 0, NULL);
+    } else {
+        mvwchgat(win, y, x, width, A_NORMAL, 0, NULL);
+    }
+}
+/* }}} */
+
+/* {{{ format_upgrade_badge
+ * Returns upgrade badge based on bonuses: +, ++, or ☆ for high upgrades.
+ */
+const char* format_upgrade_badge(int attack_bonus, int trade_bonus) {
+    int total = attack_bonus + trade_bonus;
+
+    if (total == 0) return "";
+    if (total == 1) return "+";
+    if (total == 2) return "++";
+    if (total >= 3) return "***";  /* ASCII fallback for star */
+
+    return "";
+}
+/* }}} */
+
+/* {{{ terminal_supports_utf8
+ * Check if the terminal likely supports UTF-8 box drawing characters.
+ */
+bool terminal_supports_utf8(void) {
+    const char* lang = getenv("LANG");
+    const char* lc = getenv("LC_ALL");
+
+    if (lc != NULL && (strstr(lc, "UTF-8") || strstr(lc, "utf-8") || strstr(lc, "utf8"))) {
+        return true;
+    }
+    if (lang != NULL && (strstr(lang, "UTF-8") || strstr(lang, "utf-8") || strstr(lang, "utf8"))) {
+        return true;
+    }
+    return false;
+}
+/* }}} */
+
+/* {{{ terminal_draw_border
+ * Draw border with ASCII fallback for non-UTF8 terminals.
+ * Uses ncurses box() which already handles this, but we add title support.
+ */
+void terminal_draw_border(WINDOW* win, const char* title) {
+    if (win == NULL) return;
+
+    /* ncurses box() uses ACS characters which work on most terminals */
+    box(win, 0, 0);
+
+    if (title != NULL && strlen(title) > 0) {
+        int w = getmaxx(win);
+        int title_len = strlen(title);
+        int title_x = (w - title_len - 2) / 2;
+        if (title_x < 1) title_x = 1;
+
+        mvwprintw(win, 0, title_x, " %s ", title);
     }
 }
 /* }}} */
