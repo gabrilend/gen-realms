@@ -1,7 +1,9 @@
 # 5-001: LLM API Client
 
+## Status: COMPLETED
+
 ## Current Behavior
-No LLM integration exists.
+LLM API client implemented with libcurl for HTTP requests and cJSON for JSON handling.
 
 ## Intended Behavior
 A C-based HTTP client for LLM API calls that:
@@ -101,8 +103,39 @@ A C-based HTTP client for LLM API calls that:
 ```
 
 ## Acceptance Criteria
-- [ ] HTTP client connects to LLM endpoint
-- [ ] JSON requests formatted correctly
-- [ ] Responses parsed successfully
-- [ ] Errors handled gracefully
-- [ ] Retries work with backoff
+- [x] HTTP client connects to LLM endpoint
+- [x] JSON requests formatted correctly
+- [x] Responses parsed successfully
+- [x] Errors handled gracefully
+- [x] Retries work with backoff
+
+## Implementation Notes
+
+### Files Created
+- `src/llm/01-api-client.h` - Type definitions and function prototypes
+- `src/llm/01-api-client.c` - Implementation with libcurl and cJSON
+- `tests/test-llm.c` - Unit tests (9 tests, all passing)
+
+### Key Decisions
+- Used numbered filename prefix (01-) for reading order per project conventions
+- Added LLMMessage struct for multi-message conversations
+- Implemented exponential backoff (1s initial, 16s max, doubles each retry)
+- Only retry on 5xx errors or network issues, not on 4xx client errors
+- llm_init/llm_cleanup handle global curl state
+
+### API Functions
+- `llm_config_create()` - Creates config with defaults
+- `llm_init()` / `llm_cleanup()` - Global initialization
+- `llm_request()` - Simple system+user prompt request
+- `llm_request_messages()` - Multi-message conversation request
+- `llm_response_free()` - Cleanup response memory
+
+### Test Coverage
+- Config creation and defaults
+- Message creation
+- Init/cleanup cycle
+- NULL argument handling
+- Connection refused error
+- Memory safety (NULL free operations)
+
+Completed: 2026-02-10
