@@ -105,6 +105,21 @@
       "default": false,
       "description": "If true, always available for purchase (like Explorer)"
     },
+    "coin_cost": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "MERCHANT ONLY: Cost in Kingdom Coin to activate this effect. Requires a Merchant ally in play. Coins persist between turns but spending requires yellow ally activation."
+    },
+    "auto_draw": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, this card's draw effects resolve at start of turn (before draw order selection). Creates pre-turn card flow."
+    },
+    "forecast": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "MERCHANT ONLY: At turn start, reveals how many draw effects exist on top N cards of deck. Information advantage without card knowledge."
+    },
     "frontier_leader": {
       "type": "boolean",
       "default": false,
@@ -130,6 +145,8 @@
             "add_trade",
             "add_combat",
             "add_authority",
+            "add_coin",
+            "spend_coin",
             "draw_card",
             "opponent_discard",
             "scrap_trade_row",

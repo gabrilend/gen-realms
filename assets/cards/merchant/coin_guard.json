@@ -1,0 +1,14 @@
+{
+  "id": "coin_guard",
+  "name": "Coin Guard",
+  "cost": 0,
+  "faction": "merchant",
+  "card_type": "unit",
+  "auto_draw": true,
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "Paid in castle coin, loyal to the purse.",
+  "art_prompt": "armored guard with castle-coin medallion, spear and shield, medieval fantasy"
+}

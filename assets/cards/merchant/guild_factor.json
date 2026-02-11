@@ -8,7 +8,9 @@
     { "type": "add_trade", "value": 2 }
   ],
   "ally_effects": [
-    { "type": "add_trade", "value": 2 }
+    { "type": "add_trade", "value": 2 },
+    { "type": "spend_coin", "coin_cost": 2, "optional": true },
+    { "type": "spawn", "card_id": "coin_guard", "requires_previous": true }
   ],
   "flavor": "Numbers never lie, but factors know how to make them whisper.",
   "art_prompt": "shrewd merchant with ledger and quill, guild office, medieval fantasy"

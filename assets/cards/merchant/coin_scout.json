@@ -1,0 +1,14 @@
+{
+  "id": "coin_scout",
+  "name": "Coin Scout",
+  "cost": 0,
+  "faction": "merchant",
+  "card_type": "unit",
+  "auto_draw": true,
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "add_trade", "value": 1 }
+  ],
+  "flavor": "Eyes in every market. Ears in every guild hall.",
+  "art_prompt": "hooded scout with coin-purse and dagger, watching from shadows, medieval fantasy"
+}

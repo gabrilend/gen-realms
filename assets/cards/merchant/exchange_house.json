@@ -1,0 +1,16 @@
+{
+  "id": "exchange_house",
+  "name": "Exchange House",
+  "cost": 5,
+  "faction": "merchant",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_trade", "value": 2 },
+    { "type": "add_coin", "value": 1 }
+  ],
+  "forecast": 5,
+  "flavor": "Before the day begins, the ledgers speak of what is to come.",
+  "art_prompt": "grand exchange building with counting houses, merchants studying ledgers at dawn, medieval fantasy"
+}

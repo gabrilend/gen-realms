@@ -74,5 +74,63 @@ Design and implement the Merchant Guilds faction with:
 **Token (1):**
 - Gold Tribute: +1 Trade (Scrap: +2 Authority)
 
-### Addendum (2026-02-10)
+### Addendum 1 (2026-02-10)
 Added **Golden Vault** (Cost 5) to bring faction to 15 cards total.
+
+### Addendum 2 (2026-02-10) - Kingdom Coin & Forecast System
+
+**Major faction expansion with two new mechanics:**
+
+#### Kingdom Coin (Secondary Currency)
+A persistent currency (doesn't reset each turn) for hiring mercenaries.
+
+**Lore:** Castle-stamped coin made from high-melting-point tungsten alloy.
+Too hot to de-mint, too common to covet—it just... is. Used for inter-guild
+trade when regular currency won't do.
+
+**New Coin-Generating Cards:**
+| Card | Cost | Def | Coin | Notes |
+|------|------|-----|------|-------|
+| Royal Coin Mint | 3 | 4 | +1 (ally: +1) | Core coin generator |
+| Exchange House | 5 | 5 | +1 | Also has forecast: 5 |
+| Guild Observatory | 7 | 6 | +2 | Also has forecast: 8 |
+
+**Spending Coin (Requires Merchant Ally):**
+Coins persist between turns, but spending requires a Merchant ally effect.
+
+| Card | Ally Effect | Coin Cost | Reward |
+|------|-------------|-----------|--------|
+| Guild Courier | spend_coin | 1 | +1 Combat |
+| Guild Factor | spend_coin | 2 | Spawn Coin Guard |
+| Gold Mage | spend_coin | 3 | Spawn Coin Scout |
+| Merchant Prince | spend_coin | 5 | Spawn Coin Captain |
+
+**Coin Troops (Spawned Units):**
+| Unit | Effects | Notes |
+|------|---------|-------|
+| Coin Guard | Draw 1, +1 Combat | Spawned for 2 coin |
+| Coin Scout | Draw 1, +1 Trade | Spawned for 3 coin |
+| Coin Captain | Draw 1, +2 Combat, +1 Authority | Spawned for 5 coin |
+
+All Coin Troops have `auto_draw: true` - their draw effects resolve at
+turn start, before draw order selection. Like Survey Ship from Star Realms,
+they permanently improve deck quality with small consistent effects.
+
+#### Forecast (Information Advantage)
+High-level bases reveal how many draw effects exist in your top N cards.
+
+**How It Works:**
+- At turn start, you learn: "Top 5 cards contain 2 draw effects"
+- You don't know which cards, just how many bonus draws await
+- Helps plan turn strategy and card purchases
+
+**Schema Additions:**
+- `add_coin` effect type
+- `coin_cost` property (alternative to trade cost)
+- `auto_draw` property (pre-turn draw resolution)
+- `forecast` property (reveal draw count on top N cards)
+
+**Design Intent:**
+Merchants trade in information and compound growth. Kingdom Coin creates
+a secondary economy. Forecast provides planning advantage. Auto-draw Coin
+Troops are like hiring permanent staff—small effects that add up over time.

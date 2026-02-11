@@ -1,0 +1,15 @@
+{
+  "id": "coin_captain",
+  "name": "Coin Captain",
+  "cost": 0,
+  "faction": "merchant",
+  "card_type": "unit",
+  "auto_draw": true,
+  "effects": [
+    { "type": "draw_card", "value": 1 },
+    { "type": "add_combat", "value": 2 },
+    { "type": "add_authority", "value": 1 }
+  ],
+  "flavor": "Gold commands. Steel obeys.",
+  "art_prompt": "captain in gilded armor with castle-coin banner, commanding mercenaries, medieval fantasy"
+}

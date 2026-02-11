@@ -170,12 +170,95 @@ This balances persistent value against tempo.
 
 | Star Realms | Symbeline Realms | Primary Focus |
 |-------------|------------------|---------------|
-| Trade Federation | Merchant Guilds | Trade, Authority |
-| Blob | The Wilds | Combat, Swarming |
-| Star Empire | High Kingdom | Authority, Disruption |
+| Trade Federation | Merchant Guilds | Trade, Kingdom Coin, Forecast |
+| Blob | The Wilds | Combat, Frontier, Pack Charge |
+| Star Empire | High Kingdom | Authority, Recruit (March Column) |
 | Machine Cult | Artificer Order | Scrap, Upgrades |
 
 ## Faction-Specific Mechanics
+
+### Merchant Guilds: Kingdom Coin & Forecast
+
+#### Kingdom Coin
+
+A secondary currency used by the Merchant Guilds. Unlike trade (which
+resets each turn), Kingdom Coin persists between turns.
+
+**The Coin Itself:**
+- Stamped with the castle seal
+- Made from a common metal with very high melting point (tungsten alloy)
+- Too hot to de-mint, too common to covet—it just... is
+- Used for inter-guild trade and hiring mercenaries
+
+**Generating Coin:**
+| Card | Cost | Coin Generated |
+|------|------|----------------|
+| Royal Coin Mint | 3 | +1 (ally: +1 more) |
+| Exchange House | 5 | +1 |
+| Guild Observatory | 7 | +2 |
+
+**Spending Coin (Requires Merchant Ally):**
+Coins persist between turns, but spending them requires a Merchant ally
+in play. Various Merchant cards have `spend_coin` ally effects that let
+you return coins for bonuses.
+
+| Card | Ally Effect | Coin Cost | Reward |
+|------|-------------|-----------|--------|
+| Guild Courier | spend_coin | 1 | +1 Combat |
+| Guild Factor | spend_coin | 2 | Spawn Coin Guard |
+| Gold Mage | spend_coin | 3 | Spawn Coin Scout |
+| Merchant Prince | spend_coin | 5 | Spawn Coin Captain |
+
+**Coin Troops (Spawned Units):**
+| Unit | Effects | Notes |
+|------|---------|-------|
+| Coin Guard | Draw 1, +1 Combat | Spawned for 2 coin |
+| Coin Scout | Draw 1, +1 Trade | Spawned for 3 coin |
+| Coin Captain | Draw 1, +2 Combat, +1 Authority | Spawned for 5 coin |
+
+**Auto-Draw (Pre-Turn Resolution):**
+All Coin Troops have `auto_draw: true`. Their draw effects resolve at
+the very start of your turn, before you choose draw order. This creates
+a "deck acceleration" effect—you see more cards before deciding.
+
+**Design Intent:**
+The Survey Ship from Star Realms (cost 3, draw 1, +1 trade) creates
+permanent deck improvement. Coin Troops do the same but require:
+1. Merchant infrastructure to generate coins (Coin Mint)
+2. Merchant allies to spend coins (ally effects)
+Small effects that compound over time—the merchant way. The coin economy
+rewards building a dedicated Merchant deck.
+
+#### Forecast
+
+High-level Merchant bases can "forecast" your next hand. The `forecast`
+property reveals how many draw effects exist on the top N cards of your
+deck—but not which cards they are.
+
+**Example:**
+```
+Exchange House (forecast: 5)
+At turn start: "Your top 5 cards contain 2 draw effects."
+This means: if you draw those 5 cards, you'll get 2 bonus draws.
+```
+
+**Forecast Bases:**
+| Base | Cost | Forecast Depth |
+|------|------|----------------|
+| Exchange House | 5 | Top 5 cards |
+| Guild Observatory | 7 | Top 8 cards |
+
+**Strategic Value:**
+- Plan your turn knowing draw potential
+- Decide whether to recruit (Kingdom) or charge (Wilds) based on forecast
+- Information advantage without revealing exact cards
+- Synergizes with draw order choice (see above)
+
+**Design Intent:**
+Merchants trade in information. They don't fight with beasts or faith—
+they predict. Knowing "I'll draw 3 extra cards next turn" lets you plan
+acquisitions, saves, and attacks. The observatory doesn't show futures,
+it shows probabilities.
 
 ### The Wilds: Frontier & The Charge
 

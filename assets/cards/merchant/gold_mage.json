@@ -9,7 +9,9 @@
     { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_trade", "value": 2 }
+    { "type": "add_trade", "value": 2 },
+    { "type": "spend_coin", "coin_cost": 3, "optional": true },
+    { "type": "spawn", "card_id": "coin_scout", "requires_previous": true }
   ],
   "flavor": "Gold sings to those who know its true language.",
   "art_prompt": "wizard with golden robes conjuring coins from air, vault of treasures, medieval fantasy"

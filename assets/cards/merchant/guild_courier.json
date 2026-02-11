@@ -8,7 +8,9 @@
     { "type": "add_trade", "value": 2 }
   ],
   "ally_effects": [
-    { "type": "draw_card", "value": 1 }
+    { "type": "draw_card", "value": 1 },
+    { "type": "spend_coin", "coin_cost": 1, "optional": true },
+    { "type": "add_combat", "value": 1, "requires_previous": true }
   ],
   "flavor": "Swift feet carry heavier purses.",
   "art_prompt": "young messenger in guild livery running through market streets, leather satchel, medieval fantasy"

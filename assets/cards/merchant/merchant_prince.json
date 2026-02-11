@@ -10,7 +10,9 @@
   ],
   "ally_effects": [
     { "type": "draw_card", "value": 1 },
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 2 },
+    { "type": "spend_coin", "coin_cost": 5, "optional": true },
+    { "type": "spawn", "card_id": "coin_captain", "requires_previous": true }
   ],
   "flavor": "Wealth is power, and power is everything.",
   "art_prompt": "regal merchant lord in silk and gold jewelry, palatial throne room, medieval fantasy"
