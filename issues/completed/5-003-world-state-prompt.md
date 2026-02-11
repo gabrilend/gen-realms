@@ -1,7 +1,9 @@
 # 5-003: World State Prompt
 
+## Status: COMPLETED
+
 ## Current Behavior
-No persistent world state for LLM context.
+World state system maintains persistent narrative context for LLM prompts.
 
 ## Intended Behavior
 A world state prompt that:
@@ -101,8 +103,43 @@ contested ground.
 ```
 
 ## Acceptance Criteria
-- [ ] World state initializes correctly
-- [ ] State updates on game events
-- [ ] Faction balance tracked
-- [ ] Recent events summarized
-- [ ] Prompt output is narrative quality
+- [x] World state initializes correctly
+- [x] State updates on game events
+- [x] Faction balance tracked
+- [x] Recent events summarized
+- [x] Prompt output is narrative quality
+
+## Implementation Notes
+
+### Files Created
+- `src/llm/03-world-state.h` - WorldState structure and function prototypes
+- `src/llm/03-world-state.c` - World state management implementation
+- `tests/test-world-state.c` - Unit tests (12 tests, all passing)
+
+### Key Features
+- WorldState struct with battlefield description, player forces, events
+- Circular buffer for event history (last 10 events)
+- Tension calculation based on authority, game length, and authority closeness
+- Dynamic battlefield description based on tension level
+- Integration with PromptVars for PROMPT_WORLD_STATE building
+- Faction name lookup for narrative use
+
+### Tension Calculation
+Factors affecting tension (0.0 - 1.0):
+- Authority closeness (0-0.4): How close player authorities are
+- Low authority danger (0-0.4): How close either player is to losing
+- Game length (0-0.2): Longer games = more dramatic
+
+### Test Coverage
+- State creation and initialization
+- Event recording and circular buffer
+- Tension calculation (low and high scenarios)
+- State updates and battlefield description changes
+- PromptVars population
+- Full context building
+
+### Note
+Uses mock Game structures in tests for standalone compilation.
+Full integration tested when linked with core game modules.
+
+Completed: 2026-02-10
