@@ -12,7 +12,7 @@ Track Gamma handles all game content and AI integration:
 - ComfyUI visual generation
 - Context management and caching
 
-## Current Status: Visual Pipeline In Progress
+## Current Status: Visual Pipeline Complete
 
 ### In Progress
 
@@ -59,6 +59,7 @@ Track Gamma handles all game content and AI integration:
 | 6-006c | Mask generation | 2026-02-11 |
 | 6-007 | Scene composition rules | 2026-02-11 |
 | 6-008 | Style transfer prompts | 2026-02-11 |
+| 6-009 | Image caching/persistence | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -79,8 +80,7 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 6-009 | Image caching/persistence | 6-004 (done) |
-| 6-010 | Phase 6 Demo | 6-009, 5-010 |
+| 6-010 | Phase 6 Demo | 6-009 (done), 5-010 |
 
 ## Checkpoint Status
 
@@ -88,16 +88,16 @@ Track Gamma handles all game content and AI integration:
 |------------|--------|-------|
 | ALPHA | COMPLETE | API clients ready |
 | BETA | COMPLETE | Content and prompts done |
-| GAMMA | IN PROGRESS | Context management done, caching WIP |
-| DELTA | BLOCKED | Waiting on visual pipeline |
+| GAMMA | COMPLETE | Context management and caching done |
+| DELTA | IN PROGRESS | Visual pipeline ready, demos next |
 | EPSILON | BLOCKED | Waiting on balance testing |
 | OMEGA | BLOCKED | Waiting on full integration |
 
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 22 complete, 4 pending
-**Total:** 30 complete, 6 pending
+**AI Issues:** 23 complete, 3 pending
+**Total:** 31 complete, 5 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -107,7 +107,7 @@ Track Gamma handles all game content and AI integration:
 - High Kingdom: 14 cards
 - Artificer Order: 15 cards
 
-**Unit Tests Passing:** 170 total
+**Unit Tests Passing:** 186 total
 - LLM client: 9
 - Prompts: 15
 - World state: 12
@@ -117,6 +117,7 @@ Track Gamma handles all game content and AI integration:
 - Narrative cache: 20
 - ComfyUI client: 12
 - Card prompts: 24
+- Image cache: 16
 
 ## Deliverables
 
@@ -153,6 +154,7 @@ Track Gamma handles all game content and AI integration:
 - [x] `assets/web/region-selector.js` - Inpainting region selection (6-006)
 - [x] `assets/web/scene-composition.js` - Scene composition rules (6-007)
 - [x] `assets/web/style-transfer.js` - Style transfer prompts (6-008)
+- [x] `src/visual/03-image-cache.h/c` - Image caching/persistence (6-009)
 - [ ] `issues/completed/demos/phase-6-demo.sh` - Visual generation demo
 
 ## Notes
@@ -211,7 +213,16 @@ Completed entire visual generation pipeline (6-003 through 6-008):
 - 6-003 needs 3-006 (style preferences) for art regeneration
 - Phase demos (5-010, 6-010) need 3-010 (Phase 3 Demo)
 
+### 2026-02-11: Image Caching Complete
+Completed 6-009 (image caching/persistence):
+- `src/visual/03-image-cache.h/c` - Server-side image cache
+- LRU eviction by entry count and memory limit
+- Two-tier storage (memory + disk persistence)
+- Frame snapshots for game replay
+- Final image export to PNG/JPEG
+- 16 unit tests passing
+
 ### Next Steps
-1. 6-009 (image caching/persistence) - can start immediately
+1. 6-010 (Phase 6 Demo) - blocked on 5-010 (Phase 5 Demo)
 2. 5-006 (trade row logic) - blocked on Track Alpha 1-004
 3. Phase demos (5-010, 6-010) - blocked on respective dependencies
