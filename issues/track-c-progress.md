@@ -22,6 +22,8 @@ the GAMMA checkpoint.
 | 3-004b | Card rendering (Canvas) | 2026-02-10 |
 | 3-001c | Terminal formatting | 2026-02-10 |
 | 3-004c | Game zones (Canvas) | 2026-02-10 |
+| 3-001d | Terminal input/resize | 2026-02-10 |
+| 3-004d | Status/narrative panels | 2026-02-10 |
 
 ### In Progress
 
@@ -35,10 +37,8 @@ All Alpha-Beta rendering core issues completed.
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 3-001d | Terminal input/resize | 3-001c |
-| 3-002 | Terminal input system | 3-001d |
-| 3-004d | Status/narrative panels | 3-004c |
-| 3-005 | Browser input handler | 3-004d |
+| 3-002 | Terminal input system | 3-001d ✓ |
+| 3-005 | Browser input handler | 3-004d ✓ |
 
 ### Pending (Gamma → Delta: Integration)
 
@@ -106,6 +106,25 @@ Expected deliverables when Track C is complete:
   - renderDeckIndicator() and renderDiscardIndicator()
   - Click bounds tracking for all interactive elements
   - Demo mode now interactive (hover and click)
+
+### 2026-02-10: Input Systems Foundation
+- Implemented terminal input handling (3-001d)
+  - 03-terminal-input.h/c with command parsing
+  - Command types: play, buy, attack, scrap, activate, end, help, quit
+  - Input history with up/down arrow navigation
+  - terminal_read_command() with line editing
+  - terminal_show_help() displays command reference
+  - terminal_show_error() and terminal_show_message()
+- Implemented status/narrative panels (3-004d)
+  - panel-renderer.js with full panel support
+  - renderStatusBar() with turn, phase, authority, pools, d10/d4
+  - renderAuthority() with heart icon
+  - renderPool() for trade/combat display
+  - renderDeckTracker() for d10/d4
+  - renderOpponentSummary() shows opponent stats
+  - renderNarrativePanel() with word wrapping
+  - renderActionButtons() for mobile/touch support
+  - Demo now shows proper status bar and narrative panel
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering
