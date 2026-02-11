@@ -13,7 +13,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ## Current Status
 
-**Checkpoint Progress:** Alpha complete, BETA checkpoint (1-012) now available - protocol work unblocked!
+**Checkpoint Progress:** BETA complete! Protocol layer (2-005) implemented with 129 tests passing.
 
 ## Completed Issues
 
@@ -71,6 +71,26 @@ Track B implements the network layer enabling multi-client connections. It inclu
   - Welcome message and echo mode (development)
 - **Dependencies:** Requires `libssh-devel` package
 
+### 2-005: Protocol Implementation (all sub-issues complete)
+- **Status:** COMPLETE
+- **Completed:** 2026-02-11
+- **Files Created:**
+  - `src/net/04-protocol.h` - Protocol definitions (14 message types, 21 error codes)
+  - `src/net/04-protocol.c` - Full protocol implementation (~500 lines)
+  - `tests/test-protocol.c` - 129 comprehensive tests
+- **Sub-issues Completed:**
+  - 2-005a: Message Type Definitions (MessageType, ProtocolError, ChoiceType enums)
+  - 2-005b: Client to Server Handlers (join, action, draw_order, end_turn, leave, chat)
+  - 2-005c: Server to Client Generation (gamestate, narrative, error, player_joined/left, etc.)
+  - 2-005d: Validation and Error Handling (parsing, validation helpers, error messages)
+- **Features Implemented:**
+  - Complete message type system with JSON serialization
+  - Dispatch table routing for client message handlers
+  - Server message generation functions
+  - Validation helpers for JSON fields
+  - 21 protocol error codes with human-readable messages
+  - Integration with 1-012 gamestate serialization
+
 ## In Progress Issues
 
 (None currently)
@@ -82,8 +102,8 @@ Track B implements the network layer enabling multi-client connections. It inclu
 - ~~2-004*: SSH server integration~~ - COMPLETE (all sub-issues)
 
 ### Alpha → Beta
-- 2-005*: Protocol implementation - UNBLOCKED (1-012 complete)
-- 2-003: WebSocket handler - Depends on 2-002, 2-005
+- ~~2-005*: Protocol implementation~~ - COMPLETE
+- 2-003: WebSocket handler - Depends on 2-002, 2-005 (UNBLOCKED)
 - 2-006: Connection manager - Depends on 2-003, 2-004
 
 ### Beta → Gamma

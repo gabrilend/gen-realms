@@ -40,11 +40,13 @@ BIN_DIR = bin
 # Output targets
 TERMINAL_BIN = $(BIN_DIR)/symbeline-terminal
 SERVER_BIN = $(BIN_DIR)/symbeline-server
+DEMO_BIN = $(BIN_DIR)/phase-1-demo
 TEST_TERMINAL_BIN = $(BIN_DIR)/test-terminal
 TEST_CONFIG_BIN = $(BIN_DIR)/test-config
 TEST_HTTP_BIN = $(BIN_DIR)/test-http
 TEST_SSH_BIN = $(BIN_DIR)/test-ssh
 TEST_SERIALIZE_BIN = $(BIN_DIR)/test-serialize
+TEST_PROTOCOL_BIN = $(BIN_DIR)/test-protocol
 # }}}
 
 # {{{ source files
@@ -104,6 +106,19 @@ TEST_SERIALIZE_SOURCES = \
 	$(CORE_SOURCES) \
 	$(CORE_DIR)/09-serialize.c \
 	$(CJSON_SOURCES)
+
+# Demo sources (Phase 1 demo: 1-013)
+DEMO_DIR = $(SRC_DIR)/demo
+DEMO_SOURCES = \
+	$(DEMO_DIR)/phase-1-demo.c \
+	$(CORE_SOURCES)
+
+TEST_PROTOCOL_SOURCES = \
+	tests/test-protocol.c \
+	$(NET_DIR)/04-protocol.c \
+	$(CORE_SOURCES) \
+	$(CORE_DIR)/09-serialize.c \
+	$(CJSON_SOURCES)
 # }}}
 
 # {{{ object files
@@ -117,6 +132,8 @@ TEST_CONFIG_OBJECTS = $(TEST_CONFIG_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_HTTP_OBJECTS = $(TEST_HTTP_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SSH_OBJECTS = $(TEST_SSH_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SERIALIZE_OBJECTS = $(TEST_SERIALIZE_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_PROTOCOL_OBJECTS = $(TEST_PROTOCOL_SOURCES:%.c=$(BUILD_DIR)/%.o)
+DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
 # {{{ output binaries
@@ -124,7 +141,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server test test-core test-terminal test-config test-http test-ssh test-serialize dirs
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol dirs
 
 all: dirs terminal
 
@@ -133,6 +150,7 @@ dirs:
 	@mkdir -p $(BUILD_DIR)/$(CORE_DIR)
 	@mkdir -p $(BUILD_DIR)/$(NET_DIR)
 	@mkdir -p $(BUILD_DIR)/$(LIBS_DIR)
+	@mkdir -p $(BUILD_DIR)/$(DEMO_DIR)
 	@mkdir -p $(BUILD_DIR)/tests
 	@mkdir -p $(BIN_DIR)
 
@@ -141,6 +159,13 @@ terminal: dirs $(TERMINAL_BIN)
 
 $(TERMINAL_BIN): $(TERMINAL_OBJECTS) $(BUILD_DIR)/$(CLIENT_DIR)/terminal-main.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(NCURSES_LIBS)
+
+# Phase 1 Demo (1-013)
+demo: dirs $(DEMO_BIN)
+	@echo "Demo built. Run with: ./$(DEMO_BIN)"
+
+$(DEMO_BIN): $(DEMO_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 # Test programs - run core tests (main test target)
 test: test-core
@@ -185,6 +210,13 @@ test-serialize: dirs $(TEST_SERIALIZE_BIN)
 	./$(TEST_SERIALIZE_BIN)
 
 $(TEST_SERIALIZE_BIN): $(TEST_SERIALIZE_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
+
+# Protocol tests (Track B: 2-005)
+test-protocol: dirs $(TEST_PROTOCOL_BIN)
+	./$(TEST_PROTOCOL_BIN)
+
+$(TEST_PROTOCOL_BIN): $(TEST_PROTOCOL_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
 
 # Object file compilation

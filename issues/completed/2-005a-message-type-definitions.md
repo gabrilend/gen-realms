@@ -1,9 +1,19 @@
 # 2-005a: Message Type Definitions
 
+## Status
+**COMPLETE** - 2026-02-11
+
 ## Parent Issue
 2-005: Protocol Implementation
 
 ## Current Behavior
+All message types implemented in `src/net/04-protocol.h`:
+- MessageType enum with 14 types (6 client→server, 8 server→client)
+- ProtocolError enum with 21 error codes
+- ChoiceType enum for player choice requests
+- Message struct with type, player_id, payload, timestamp
+
+## Previous Behavior
 No message types defined for client-server communication.
 
 ## Intended Behavior
@@ -114,8 +124,8 @@ Complete message type definitions that:
 ```
 
 ## Acceptance Criteria
-- [ ] All message types enumerated
-- [ ] Message struct defined with all fields
-- [ ] Action subtypes defined
-- [ ] JSON schema documented
-- [ ] Type name function works for debugging
+- [x] All message types enumerated (MessageType enum with MSG_TYPE_COUNT sentinel)
+- [x] Message struct defined with all fields (type, player_id, payload, timestamp)
+- [x] Action subtypes defined (uses existing ActionType from 05-game.h)
+- [x] JSON schema documented (in header comments, lines 312-376)
+- [x] Type name function works for debugging (message_type_to_string())

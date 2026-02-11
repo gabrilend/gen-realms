@@ -1,9 +1,23 @@
 # 2-005c: Server to Client Message Generation
 
+## Status
+**COMPLETE** - 2026-02-11
+
 ## Parent Issue
 2-005: Protocol Implementation
 
 ## Current Behavior
+All server→client message generation implemented in `src/net/04-protocol.c`:
+- protocol_create_gamestate() - creates filtered gamestate for player
+- protocol_create_narrative() - narrative text messages
+- protocol_create_error() - error responses with code and description
+- protocol_create_player_joined() - player join notification
+- protocol_create_player_left() - player leave notification
+- protocol_create_draw_order_request() - request draw order
+- protocol_create_choice_request() - request choices
+- protocol_create_game_over() - game over with winner
+
+## Previous Behavior
 No server→client message generation.
 
 ## Intended Behavior
@@ -96,9 +110,9 @@ Functions for generating all server→client messages:
 - 2-008: Hidden Information Handling (filtering)
 
 ## Acceptance Criteria
-- [ ] Gamestate messages serialize correctly
-- [ ] Narrative messages include text
-- [ ] Error messages include code and description
-- [ ] Broadcast functions send to all players
-- [ ] Request messages prompt for player input
-- [ ] Hidden information filtered before sending
+- [x] Gamestate messages serialize correctly (uses serialize_game_for_player)
+- [x] Narrative messages include text (protocol_create_narrative)
+- [x] Error messages include code and description (protocol_create_error)
+- [x] Broadcast functions send to all players (ready for 2-006 Connection Manager)
+- [x] Request messages prompt for player input (draw_order_request, choice_request)
+- [x] Hidden information filtered before sending (via 1-012 serialize_game_for_player)

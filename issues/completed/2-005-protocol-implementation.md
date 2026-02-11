@@ -1,6 +1,22 @@
 # 2-005: Protocol Implementation
 
+## Status
+**COMPLETE** - 2026-02-11
+
 ## Current Behavior
+Protocol layer fully implemented with:
+- 14 message types (6 client→server, 8 server→client)
+- 21 error codes covering all failure modes
+- Dispatch table routing to handlers
+- JSON serialization with cJSON
+- 129 tests passing
+
+## Files Created
+- `src/net/04-protocol.h` - Protocol definitions and API
+- `src/net/04-protocol.c` - Full implementation (~500 lines)
+- `tests/test-protocol.c` - 129 comprehensive tests
+
+## Previous Behavior
 No unified protocol for client-server communication.
 
 ## Intended Behavior
@@ -17,10 +33,10 @@ This issue has been split into the following sub-issues:
 
 | ID | Description | Status |
 |----|-------------|--------|
-| 2-005a | Message Type Definitions | pending |
-| 2-005b | Client to Server Handlers | pending |
-| 2-005c | Server to Client Generation | pending |
-| 2-005d | Validation and Error Handling | pending |
+| 2-005a | Message Type Definitions | COMPLETE |
+| 2-005b | Client to Server Handlers | COMPLETE |
+| 2-005c | Server to Client Generation | COMPLETE |
+| 2-005d | Validation and Error Handling | COMPLETE |
 
 ## Implementation Order
 
@@ -62,8 +78,8 @@ This issue has been split into the following sub-issues:
 ```
 
 ## Acceptance Criteria
-- [ ] All message types defined
-- [ ] Parsing handles malformed JSON
-- [ ] Validation catches invalid messages
-- [ ] Dispatch routes to correct handler
-- [ ] Errors include helpful messages
+- [x] All message types defined (14 types in MessageType enum)
+- [x] Parsing handles malformed JSON (PROTOCOL_ERROR_MALFORMED_JSON)
+- [x] Validation catches invalid messages (validation helpers)
+- [x] Dispatch routes to correct handler (dispatch table pattern)
+- [x] Errors include helpful messages (21 error codes with messages)

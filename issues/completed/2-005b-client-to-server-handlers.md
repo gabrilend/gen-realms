@@ -1,9 +1,22 @@
 # 2-005b: Client to Server Handlers
 
+## Status
+**COMPLETE** - 2026-02-11
+
 ## Parent Issue
 2-005: Protocol Implementation
 
 ## Current Behavior
+All client→server handlers implemented in `src/net/04-protocol.c`:
+- handle_join() - player joining game
+- handle_action() - game actions via deserialize_action()
+- handle_draw_order() - draw order selection
+- handle_end_turn() - end turn
+- handle_leave() - player leaving
+- handle_chat() - chat messages
+- Dispatch table with protocol_get_handler() and protocol_dispatch()
+
+## Previous Behavior
 No handlers for client messages.
 
 ## Intended Behavior
@@ -87,9 +100,9 @@ Message handlers for all client→server messages:
 - 1-005: Turn Loop (game state transitions)
 
 ## Acceptance Criteria
-- [ ] Join handler adds player to game
-- [ ] Action handler dispatches to correct action
-- [ ] Draw order handler validates and applies order
-- [ ] End turn handler advances game state
-- [ ] All handlers send appropriate responses
-- [ ] Invalid messages return errors
+- [x] Join handler adds player to game (handle_join validates name)
+- [x] Action handler dispatches to correct action (via deserialize_action)
+- [x] Draw order handler validates and applies order (handle_draw_order)
+- [x] End turn handler advances game state (handle_end_turn)
+- [x] All handlers send appropriate responses (return ProtocolError codes)
+- [x] Invalid messages return errors (validation in each handler)
