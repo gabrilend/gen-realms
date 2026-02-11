@@ -198,8 +198,8 @@ bool game_start(Game* game) {
         game_init_player_deck(game, game->players[i]);
     }
 
-    /* Create trade row (if we have trade cards) */
-    if (game->card_types && game->card_type_count > 0) {
+    /* Create trade row (if we have trade cards and no trade row exists) */
+    if (!game->trade_row && game->card_types && game->card_type_count > 0) {
         game->trade_row = trade_row_create(game->card_types, game->card_type_count,
                                            game->explorer_type);
     }

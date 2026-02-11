@@ -76,12 +76,48 @@ Commands: (p)lay (b)uy (a)ttack (e)nd turn
 ```
 
 ## Acceptance Criteria
-- [ ] Demo compiles and runs with `./run-phase1-demo.sh`
-- [ ] Complete game can be played to conclusion
-- [ ] All mechanics visible and functional
-- [ ] Auto-draw sequence displays correctly
-- [ ] Draw order choice works
-- [ ] Base deployment delay works
-- [ ] d10/d4 tracking visible
-- [ ] Card upgrades display correctly
-- [ ] Game log captures all actions
+- [x] Demo compiles and runs with `./run-phase1-demo.sh`
+- [x] Complete game can be played to conclusion
+- [x] All mechanics visible and functional
+- [x] Auto-draw sequence displays correctly
+- [x] Draw order choice works
+- [x] Base deployment delay works
+- [x] d10/d4 tracking visible
+- [x] Card upgrades display correctly
+- [ ] Game log captures all actions (not implemented - optional for basic demo)
+
+## Implementation Notes (2026-02-11)
+
+### Files Created:
+- `src/demo/phase-1-demo.c` - Main demo source file (~600 lines)
+- `run-phase1-demo.sh` - Script to build and run the demo
+
+### Features Implemented:
+1. **Text display functions** - Shows player status, hand, bases, trade row
+2. **Input handling** - Commands: play (p), buy (b), explorer (e), attack (a), end turn
+3. **Auto-draw listener** - Displays auto-draw events in real-time
+4. **Demo card set** - 12 card types across all factions with various effects
+5. **Base zone selection** - Player chooses frontier or interior when playing bases
+
+### Commands:
+- `p N` - Play card at index N from hand
+- `b N` - Buy card at slot N from trade row
+- `e` - Buy Explorer (always available)
+- `a` - Attack opponent player
+- `a N` - Attack base at index N
+- `end` - End turn
+- `q` - Quit game
+
+### Build:
+```
+make demo
+./bin/phase-1-demo
+# OR
+./run-phase1-demo.sh
+```
+
+### Notes:
+- Two-player hot-seat mode (no AI opponent yet)
+- Demonstrates all Phase 1 mechanics working together
+- Auto-draw events displayed clearly during resolution
+- Base deployment delay visible (shows "deploying" vs "active")

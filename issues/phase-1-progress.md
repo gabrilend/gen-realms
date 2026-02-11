@@ -30,10 +30,10 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-009 | Deck Flow Tracker (d10/d4) | **completed** |
 | 1-010 | Base Card Type | **completed** |
 | 1-011 | Spawning Mechanics | **completed** |
-| 1-012 | Gamestate Serialization | pending |
-| 1-013 | Phase 1 Demo | pending |
+| 1-012 | Gamestate Serialization | **completed** |
+| 1-013 | Phase 1 Demo | **completed** |
 
-## Completed: 17/22
+## Completed: 19/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -100,3 +100,14 @@ Completed 1-008 (all sub-issues 1-008a through 1-008d):
 - Integrated into game turn flow after draw order selection
 - 192 unit tests passing (22 new)
 - Files: src/core/08-auto-draw.{h,c}, updated 05-game.c
+
+### 2026-02-11: Phase 1 Demo Complete
+Completed 1-013:
+- CLI demonstration showcasing all Phase 1 mechanics
+- Text display for player status, hand, bases, trade row
+- Input handling for play, buy, attack, end turn commands
+- Auto-draw event listener displays chain resolution
+- Demo card set with 12 types across all factions
+- Base zone selection (frontier/interior) on play
+- Two-player hot-seat mode
+- Files: src/demo/phase-1-demo.c, run-phase1-demo.sh
