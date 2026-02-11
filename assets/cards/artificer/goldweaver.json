@@ -6,11 +6,12 @@
   "card_type": "ship",
   "effects": [
     { "type": "draw_card", "value": 1 },
-    { "type": "upgrade_trade", "value": 1, "target": "discard" }
+    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout", "optional": true },
+    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout", "optional": true }
   ],
   "scrap_effects": [
     { "type": "add_trade", "value": 3 }
   ],
-  "flavor": "Thread by thread, fortune is woven.",
-  "art_prompt": "alchemist transmuting metal to gold, glowing crucible, medieval fantasy"
+  "flavor": "Two coins where there was one. The Scout's purse grows heavy.",
+  "art_prompt": "alchemist gilding scout's coin purse with golden thread, medieval fantasy"
 }

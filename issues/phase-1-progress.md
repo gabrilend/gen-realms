@@ -29,11 +29,11 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-008d | ↳ Event Emission | pending |
 | 1-009 | Deck Flow Tracker (d10/d4) | **completed** |
 | 1-010 | Base Card Type | **completed** |
-| 1-011 | Spawning Mechanics | pending |
+| 1-011 | Spawning Mechanics | **completed** |
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 11/22
+## Completed: 12/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -80,3 +80,13 @@ Completed 1-009 and 1-010:
 - Placement affects art generation via base_placement_art_modifier()
 - 160 unit tests passing (20 new)
 - Files: All core modules updated for new zone system
+
+### 2026-02-10: Spawning Mechanics Complete
+Completed 1-011:
+- Card type registry with game_find_card_type() lookup
+- Bases with spawns_id spawn units each turn after deployment
+- Deployment delay (bases must survive one turn before becoming active)
+- Spawn handler implemented in effect system
+- Turn flow integrated: deploy -> process_base_effects -> draw order
+- 170 unit tests passing (10 new)
+- Files: 05-game.{h,c}, 07-effects.c

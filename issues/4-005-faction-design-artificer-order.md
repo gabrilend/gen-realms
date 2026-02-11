@@ -59,8 +59,38 @@ Design and implement the Artificer Order faction with:
 - Effects: You may scrap a card from your hand or discard
 
 ## Acceptance Criteria
-- [ ] 8-12 ship cards created
-- [ ] 2-3 base cards created
-- [ ] Scrap abilities are central
-- [ ] Deck thinning strategy viable
-- [ ] Free acquisition balanced
+- [x] 8-12 ship cards created
+- [x] 2-3 base cards created
+- [x] Scrap abilities are central
+- [x] Deck thinning strategy viable
+- [x] Free acquisition balanced
+
+## Completion Notes (2026-02-10)
+
+**Status: COMPLETED**
+
+### Cards Created (15 total)
+See `assets/cards/artificer/` for full card files.
+
+### Addendum (2026-02-11) - Upgrade Restriction to Starting Cards
+
+**Upgrade specialists now only target Scouts and Vipers in hand:**
+
+| Card | Target | Effect | Notes |
+|------|--------|--------|-------|
+| Blacksmith | Viper only | +2 Attack | Was +1 to any card in discard |
+| Goldweaver | Scout only | +1 Trade ×2 | Two upgrades per turn |
+| Enchanter | Scout or Viper | +2 Authority | Was +1 to any card in discard |
+
+**Design Rationale:**
+- Creates scrap vs upgrade tension (can't do both to same card)
+- Upgrades target hand, not discard (need right card drawn)
+- Cross-faction value: any player can splash upgraders
+- Thematic: Blacksmith sharpens weapons (Vipers), Goldweaver gilds purses (Scouts)
+
+**Schema Addition:**
+New `target_card` field restricts which cards can be upgraded:
+- `viper`: Vipers only
+- `scout`: Scouts only
+- `scout_or_viper`: Either starting card
+- `any`: No restriction (default)

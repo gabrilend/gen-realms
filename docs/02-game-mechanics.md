@@ -457,13 +457,27 @@ if the scrap was executed:
 
 ### Artificer Order: Permanent Upgrades
 
-The Artificer Order specializes in permanent upgrades:
-- Blacksmith: +1 Attack to a card in discard
-- Enchanter: +1 Authority to a card in discard
-- Goldweaver: +1 Trade to a card in discard
-- Master Artificer: Choose any upgrade type
+The Artificer Order can permanently upgrade your starting cards (Scouts
+and Vipers) while they're in your hand. This creates a tension: scrap
+them for velocity, or upgrade them for lasting value?
 
-This makes Artificer Order uniquely valuable for long games.
+**Upgrade Specialists:**
+| Card | Target | Effect | Notes |
+|------|--------|--------|-------|
+| Blacksmith | Viper only | +2 Attack | Sharpen the fang |
+| Goldweaver | Scout only | +1 Trade ×2 | Two scouts per turn |
+| Enchanter | Scout or Viper | +2 Authority | Protective wards |
+
+**The Trade-off:**
+- Scrap a Scout: +2 velocity (smaller deck)
+- Upgrade a Scout: +1 Trade every shuffle (compound value)
+
+Upgrades target cards *in hand*, so you need the right card drawn
+alongside the upgrader. This adds variance but rewards patience.
+
+**Cross-Faction Value:**
+Every player starts with Scouts and Vipers. Artificer upgrades benefit
+any deck—you don't need to commit to Artificer to use their smiths.
 
 ## Victory Conditions
 

@@ -500,10 +500,30 @@ static void handle_upgrade_auth(Game* game, Player* player,
 
 /* {{{ handle_spawn
  * Spawns a unit from a base.
+ * The effect's target_card_id specifies which unit type to create.
+ * The new unit goes to the player's discard pile.
  */
 static void handle_spawn(Game* game, Player* player,
                          Effect* effect, CardInstance* source) {
-    /* TODO: Implement spawn logic (requires card database lookup) */
-    /* effect->target_card_id contains the unit type ID to spawn */
+    (void)source;  /* Base context not needed, effect has target */
+
+    if (!game || !player || !effect || !effect->target_card_id) {
+        return;
+    }
+
+    /* Look up the unit type to spawn */
+    CardType* unit_type = game_find_card_type(game, effect->target_card_id);
+    if (!unit_type) {
+        return;  /* Unknown card type */
+    }
+
+    /* Create the unit instance(s) */
+    int count = effect->value > 0 ? effect->value : 1;
+    for (int i = 0; i < count; i++) {
+        CardInstance* unit = card_instance_create(unit_type);
+        if (unit) {
+            deck_add_to_discard(player->deck, unit);
+        }
+    }
 }
 /* }}} */

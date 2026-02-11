@@ -6,11 +6,11 @@
   "card_type": "ship",
   "effects": [
     { "type": "draw_card", "value": 1 },
-    { "type": "upgrade_authority", "value": 1, "target": "discard" }
+    { "type": "upgrade_authority", "value": 2, "target": "hand", "target_card": "scout_or_viper", "optional": true }
   ],
   "scrap_effects": [
     { "type": "add_authority", "value": 3 }
   ],
-  "flavor": "The touch of magic lingers eternal.",
-  "art_prompt": "wizard enchanting armor with protective runes, arcane circle, medieval fantasy"
+  "flavor": "Ward and blessing alike—the lowly made stalwart.",
+  "art_prompt": "wizard inscribing protective runes on scout's cloak and viper's blade, medieval fantasy"
 }

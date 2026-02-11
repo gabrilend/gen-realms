@@ -669,6 +669,101 @@ static void test_base_zones(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                    Spawning Tests (1-011)                                  */
+/* ========================================================================== */
+
+/* {{{ test_spawning_mechanics */
+static void test_spawning_mechanics(void) {
+    printf("\n=== Spawning Tests (1-011) ===\n");
+
+    /* Create game */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+
+    /* Create and register card types */
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    /* Create unit type that will be spawned */
+    CardType* soldier = card_type_create("soldier", "Soldier", 0, FACTION_KINGDOM, CARD_KIND_UNIT);
+    soldier->effects = effect_array_create(1);
+    soldier->effects[0].type = EFFECT_COMBAT;
+    soldier->effects[0].value = 1;
+    soldier->effect_count = 1;
+
+    /* Create spawning base */
+    CardType* barracks = card_type_create("barracks", "Barracks", 4, FACTION_KINGDOM, CARD_KIND_BASE);
+    card_type_set_base_stats(barracks, 5, false);
+    card_type_set_spawns(barracks, "soldier");
+
+    /* Register types in game (game takes ownership) */
+    game_register_card_type(game, soldier);
+    game_register_card_type(game, barracks);
+
+    /* Test card type lookup */
+    TEST("Find registered type", game_find_card_type(game, "soldier") == soldier);
+    TEST("Find unknown returns NULL", game_find_card_type(game, "unknown") == NULL);
+
+    /* Set starting types (required for game_start) */
+    game_set_starting_types(game, scout, viper, explorer);
+
+    CardType* cards[10];
+    for (int i = 0; i < 5; i++) cards[i] = scout;
+    for (int i = 5; i < 10; i++) cards[i] = viper;
+    game->trade_row = trade_row_create(cards, 10, explorer);
+
+    bool started = game_start(game);
+    TEST("Game started", started);
+
+    Player* p1 = game->players[0];
+    int initial_discard = p1->deck->discard_count;
+
+    /* Add a spawning base to player's frontier (not deployed yet) */
+    CardInstance* base = card_instance_create(barracks);
+    deck_add_base_to_frontier(p1->deck, base);
+    TEST("Base not deployed initially", !base->deployed);
+
+    /* End turn and come back to P1 */
+    game_skip_draw_order(game);  /* P1 draws */
+    Action* end1 = action_create(ACTION_END_TURN);
+    game_process_action(game, end1);
+    action_free(end1);
+    game_skip_draw_order(game);  /* P2 draws */
+    Action* end2 = action_create(ACTION_END_TURN);
+    game_process_action(game, end2);
+    action_free(end2);
+
+    /* Now it's P1's turn again - base should be deployed */
+    TEST("Base deployed after turn", base->deployed);
+
+    /* Check that a soldier was spawned into discard */
+    int new_discard = p1->deck->discard_count;
+    TEST("Unit spawned to discard", new_discard > initial_discard);
+
+    /* Find the spawned unit */
+    CardInstance* spawned = NULL;
+    for (int i = 0; i < p1->deck->discard_count; i++) {
+        if (p1->deck->discard[i]->type == soldier) {
+            spawned = p1->deck->discard[i];
+            break;
+        }
+    }
+    TEST("Spawned unit exists", spawned != NULL);
+    TEST("Spawned unit is soldier type", spawned && spawned->type == soldier);
+    TEST("Spawned unit has unique ID", spawned && spawned->instance_id != NULL);
+    TEST("Spawned unit has image seed", spawned && spawned->image_seed != 0);
+
+    /* Cleanup (game_free will free registered types) */
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                         Effect Tests (1-007)                               */
 /* ========================================================================== */
 
@@ -861,6 +956,7 @@ int main(void) {
     test_game_module();
     test_combat_module();
     test_base_zones();
+    test_spawning_mechanics();
     test_effects_module();
 
     printf("\n=====================================\n");

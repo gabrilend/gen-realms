@@ -174,6 +174,12 @@
           "enum": ["self", "hand", "discard", "trade_row", "opponent_hand"],
           "description": "Target location for scrap/upgrade effects"
         },
+        "target_card": {
+          "type": "string",
+          "enum": ["scout", "viper", "scout_or_viper", "any"],
+          "default": "any",
+          "description": "ARTIFICER UPGRADES: Restricts which card types can be upgraded"
+        },
         "card_id": {
           "type": "string",
           "description": "Specific card to spawn (for spawn effect)"

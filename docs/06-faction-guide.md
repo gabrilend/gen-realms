@@ -36,18 +36,31 @@ This is powerful for removing starting Scouts and Vipers, but dangerous
 if you scrap something you'll need later.
 
 **Upgrade Specialists:**
-Artificers also provide permanent upgrades to other cards:
-- Blacksmith: +1 Attack
-- Enchanter: +1 Authority
-- Goldweaver: +1 Trade
-- Master Artificer: Choose any upgrade
+Artificers can permanently upgrade your starting cards (Scouts and Vipers)
+while they're in your hand:
+
+| Card | Target | Effect |
+|------|--------|--------|
+| Blacksmith | Viper only | +2 Attack |
+| Goldweaver | Scout only | +1 Trade (×2 per turn) |
+| Enchanter | Scout or Viper | +2 Authority |
 
 These upgrades persist across all future shuffles, creating compound value.
 
+**The Scrap vs Upgrade Tension:**
+You can't do both. A scrapped Scout is gone forever (velocity gain). An
+upgraded Scout returns every shuffle with +1 Trade (compound value). The
+Artificer player must choose: lean deck or enhanced deck?
+
+**Cross-Faction Value:**
+Everyone starts with Scouts and Vipers. Other factions can splash a
+Blacksmith or Goldweaver to upgrade their starting cards without committing
+to the full Artificer strategy.
+
 **Play Pattern:**
-Early game: Scrap starting cards aggressively
-Mid game: Upgrade key cards for compound returns
-Late game: Lean deck cycles rapidly through power cards
+Early game: Decide scrap vs upgrade for each starting card
+Mid game: Scrap the rest, upgrade the keepers
+Late game: Lean deck with enhanced Scouts/Vipers cycles rapidly
 
 ---
 
