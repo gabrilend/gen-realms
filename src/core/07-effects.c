@@ -374,42 +374,74 @@ static void handle_draw(Game* game, Player* player,
 
 /* {{{ handle_discard
  * Forces the opponent to discard cards.
- * Note: In a real implementation, this would need to wait for opponent choice.
- * For now, we'll mark it as a pending action.
+ * Creates a pending action for the opponent to choose which cards to discard.
  */
 static void handle_discard(Game* game, Player* player,
                            Effect* effect, CardInstance* source) {
-    /* TODO: Implement opponent discard choice (requires action queue) */
-    /* For now, this is a stub - opponent discard requires player input */
+    if (!game || !player || !effect || effect->value <= 0) {
+        return;
+    }
+
+    /* Get opponent - in 2-player game, it's always the other player */
+    Player* opponent = game_get_opponent(game, 0);
+    if (!opponent) {
+        return;
+    }
+
+    /* Create pending discard action for opponent */
+    game_request_discard(game, opponent->id, effect->value);
 }
 /* }}} */
 
 /* {{{ handle_scrap_trade_row
  * Allows player to scrap a card from the trade row.
- * Note: Requires player choice - marks as pending.
+ * Creates a pending action for the player to choose which card to scrap.
  */
 static void handle_scrap_trade_row(Game* game, Player* player,
                                    Effect* effect, CardInstance* source) {
-    /* TODO: Implement trade row scrap choice (requires action queue) */
+    if (!game || !player || !effect) {
+        return;
+    }
+
+    int count = effect->value > 0 ? effect->value : 1;
+
+    /* Create pending scrap trade row action */
+    game_request_scrap_trade_row(game, player->id, count);
 }
 /* }}} */
 
 /* {{{ handle_scrap_hand
  * Allows player to scrap a card from their hand or discard pile.
- * Scrapping from deck grants d10 decrement (momentum shift toward draw).
+ * Creates a pending action for the player to choose which card to scrap.
+ * Note: Scrapping decrements d10 (handled in resolution).
  */
 static void handle_scrap_hand(Game* game, Player* player,
                               Effect* effect, CardInstance* source) {
-    /* TODO: Implement hand/discard scrap choice (requires action queue) */
+    if (!game || !player || !effect) {
+        return;
+    }
+
+    int count = effect->value > 0 ? effect->value : 1;
+
+    /* Create pending scrap hand/discard action */
+    game_request_scrap_hand_discard(game, player->id, count);
 }
 /* }}} */
 
 /* {{{ handle_top_deck
  * Allows player to put a card from discard on top of their deck.
+ * Creates a pending action for the player to choose which card.
  */
 static void handle_top_deck(Game* game, Player* player,
                             Effect* effect, CardInstance* source) {
-    /* TODO: Implement discard-to-top choice (requires action queue) */
+    if (!game || !player || !effect) {
+        return;
+    }
+
+    int count = effect->value > 0 ? effect->value : 1;
+
+    /* Create pending top deck action */
+    game_request_top_deck(game, player->id, count);
 }
 /* }}} */
 

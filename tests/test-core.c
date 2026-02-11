@@ -1105,6 +1105,231 @@ static void test_autodraw_module(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                    Card Manipulation Effects Tests (1-007c)                */
+/* ========================================================================== */
+
+/* {{{ test_card_manipulation_effects */
+static void test_card_manipulation_effects(void) {
+    printf("\n=== Card Manipulation Effects Tests (1-007c) ===\n");
+
+    /* Create card types */
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    scout->effects = effect_array_create(1);
+    scout->effects[0].type = EFFECT_TRADE;
+    scout->effects[0].value = 1;
+    scout->effect_count = 1;
+
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    viper->effects = effect_array_create(1);
+    viper->effects[0].type = EFFECT_COMBAT;
+    viper->effects[0].value = 1;
+    viper->effect_count = 1;
+
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    /* Create a card with discard effect */
+    CardType* thief = card_type_create("thief", "Guild Thief", 3, FACTION_WILDS, CARD_KIND_SHIP);
+    thief->effects = effect_array_create(2);
+    thief->effects[0].type = EFFECT_COMBAT;
+    thief->effects[0].value = 2;
+    thief->effects[1].type = EFFECT_DISCARD;
+    thief->effects[1].value = 1;  /* Opponent discards 1 */
+    thief->effect_count = 2;
+
+    /* Create a card with scrap trade row effect */
+    CardType* saboteur = card_type_create("saboteur", "Saboteur", 4, FACTION_WILDS, CARD_KIND_SHIP);
+    saboteur->effects = effect_array_create(1);
+    saboteur->effects[0].type = EFFECT_SCRAP_TRADE_ROW;
+    saboteur->effects[0].value = 1;
+    saboteur->effect_count = 1;
+
+    /* Create a card with scrap hand effect */
+    CardType* recycler = card_type_create("recycler", "Recycler", 2, FACTION_ARTIFICER, CARD_KIND_SHIP);
+    recycler->effects = effect_array_create(1);
+    recycler->effects[0].type = EFFECT_SCRAP_HAND;
+    recycler->effects[0].value = 1;
+    recycler->effect_count = 1;
+
+    /* Create a card with top deck effect */
+    CardType* oracle = card_type_create("oracle", "Oracle", 3, FACTION_KINGDOM, CARD_KIND_SHIP);
+    oracle->effects = effect_array_create(1);
+    oracle->effects[0].type = EFFECT_TOP_DECK;
+    oracle->effects[0].value = 1;
+    oracle->effect_count = 1;
+
+    /* Set up game */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    game_set_starting_types(game, scout, viper, explorer);
+
+    /* Create trade row with different cards */
+    CardType* trade_cards[5] = { saboteur, thief, recycler, oracle, scout };
+    game->trade_row = trade_row_create(trade_cards, 5, explorer);
+
+    game_start(game);
+    game_skip_draw_order(game);
+
+    Player* player1 = game->players[0];
+    Player* player2 = game->players[1];
+
+    /* Test pending action queue operations */
+    TEST("No pending initially", !game_has_pending_action(game));
+
+    PendingAction test_action = {
+        .type = PENDING_DISCARD,
+        .player_id = 2,
+        .count = 1,
+        .min_count = 1,
+        .resolved_count = 0,
+        .optional = false
+    };
+    game_push_pending_action(game, &test_action);
+    TEST("Pending action pushed", game_has_pending_action(game));
+
+    PendingAction* pending = game_get_pending_action(game);
+    TEST("Get pending action", pending != NULL);
+    TEST("Pending type correct", pending && pending->type == PENDING_DISCARD);
+    TEST("Pending player correct", pending && pending->player_id == 2);
+
+    game_pop_pending_action(game);
+    TEST("Pending action popped", !game_has_pending_action(game));
+
+    /* Test discard effect creates pending action */
+    effects_init();
+    Effect discard_eff = { EFFECT_DISCARD, 1, NULL };
+    effects_execute(game, player1, &discard_eff, NULL);
+
+    TEST("Discard effect creates pending", game_has_pending_action(game));
+    pending = game_get_pending_action(game);
+    TEST("Discard pending type", pending && pending->type == PENDING_DISCARD);
+    TEST("Discard for opponent", pending && pending->player_id == player2->id);
+    TEST("Discard count 1", pending && pending->count == 1);
+    TEST("Discard not optional", pending && pending->optional == false);
+
+    /* Resolve discard action - add card to opponent's hand first */
+    CardInstance* opponent_card = card_instance_create(scout);
+    deck_add_to_hand(player2->deck, opponent_card);
+    int hand_before = player2->deck->hand_count;
+    int discard_before = player2->deck->discard_count;
+
+    bool resolved = game_resolve_discard(game, opponent_card->instance_id);
+    TEST("Discard resolved", resolved);
+    TEST("Card removed from hand", player2->deck->hand_count == hand_before - 1);
+    TEST("Card added to discard", player2->deck->discard_count == discard_before + 1);
+    TEST("Pending removed after resolve", !game_has_pending_action(game));
+
+    /* Test scrap trade row effect */
+    Effect scrap_tr_eff = { EFFECT_SCRAP_TRADE_ROW, 1, NULL };
+    effects_execute(game, player1, &scrap_tr_eff, NULL);
+
+    TEST("Scrap TR creates pending", game_has_pending_action(game));
+    pending = game_get_pending_action(game);
+    TEST("Scrap TR pending type", pending && pending->type == PENDING_SCRAP_TRADE_ROW);
+    TEST("Scrap TR is optional", pending && pending->optional == true);
+
+    /* Resolve scrap trade row action */
+    resolved = game_resolve_scrap_trade_row(game, 0);
+    TEST("Scrap TR resolved", resolved);
+    TEST("TR slot now empty", game->trade_row->slots[0] == NULL);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* Test scrap hand effect */
+    Effect scrap_hand_eff = { EFFECT_SCRAP_HAND, 1, NULL };
+    effects_execute(game, player1, &scrap_hand_eff, NULL);
+
+    TEST("Scrap hand creates pending", game_has_pending_action(game));
+    pending = game_get_pending_action(game);
+    TEST("Scrap hand pending type", pending && pending->type == PENDING_SCRAP_HAND_DISCARD);
+    TEST("Scrap hand is optional", pending && pending->optional == true);
+
+    /* Add card to hand for scrapping */
+    CardInstance* scrap_target = card_instance_create(scout);
+    deck_add_to_hand(player1->deck, scrap_target);
+    char* scrap_id = strdup(scrap_target->instance_id);
+    int d10_before = player1->d10;
+
+    resolved = game_resolve_scrap_hand(game, scrap_id);
+    TEST("Scrap hand resolved", resolved);
+    TEST("D10 decremented", player1->d10 == d10_before - 1 || (d10_before == 0 && player1->d10 == 9));
+    TEST("Pending removed after scrap", !game_has_pending_action(game));
+
+    /* Test scrap from discard */
+    Effect scrap_hand_eff2 = { EFFECT_SCRAP_HAND, 1, NULL };
+    effects_execute(game, player1, &scrap_hand_eff2, NULL);
+
+    /* Add card to discard for scrapping */
+    CardInstance* discard_scrap = card_instance_create(viper);
+    deck_add_to_discard(player1->deck, discard_scrap);
+    char* discard_scrap_id = strdup(discard_scrap->instance_id);
+    int discard_count_before = player1->deck->discard_count;
+
+    resolved = game_resolve_scrap_discard(game, discard_scrap_id);
+    TEST("Scrap discard resolved", resolved);
+    TEST("Discard count reduced", player1->deck->discard_count == discard_count_before - 1);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* Test top deck effect */
+    Effect top_deck_eff = { EFFECT_TOP_DECK, 1, NULL };
+    effects_execute(game, player1, &top_deck_eff, NULL);
+
+    TEST("Top deck creates pending", game_has_pending_action(game));
+    pending = game_get_pending_action(game);
+    TEST("Top deck pending type", pending && pending->type == PENDING_TOP_DECK);
+
+    /* Add card to discard for top deck */
+    CardInstance* top_target = card_instance_create(scout);
+    deck_add_to_discard(player1->deck, top_target);
+    char* top_id = strdup(top_target->instance_id);
+    int draw_before = player1->deck->draw_pile_count;
+
+    resolved = game_resolve_top_deck(game, top_id);
+    TEST("Top deck resolved", resolved);
+    TEST("Draw pile increased", player1->deck->draw_pile_count == draw_before + 1);
+    TEST("Card on top of deck", player1->deck->draw_pile[0] == top_target);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* Test skipping optional action */
+    Effect skip_eff = { EFFECT_SCRAP_TRADE_ROW, 1, NULL };
+    effects_execute(game, player1, &skip_eff, NULL);
+    TEST("Optional pending created", game_has_pending_action(game));
+
+    bool skipped = game_skip_pending_action(game);
+    TEST("Optional skipped", skipped);
+    TEST("Pending removed after skip", !game_has_pending_action(game));
+
+    /* Test cannot skip required action */
+    game_request_discard(game, player2->id, 1);
+    skipped = game_skip_pending_action(game);
+    TEST("Required not skipped", !skipped);
+    game_clear_pending_actions(game);
+
+    /* Test draw effect (verify already working) */
+    CardInstance* draw_target = card_instance_create(scout);
+    deck_add_to_draw_pile(player1->deck, draw_target);
+    hand_before = player1->deck->hand_count;
+
+    Effect draw_eff = { EFFECT_DRAW, 1, NULL };
+    effects_execute(game, player1, &draw_eff, NULL);
+    TEST("Draw effect works", player1->deck->hand_count == hand_before + 1);
+    TEST("Draw no pending action", !game_has_pending_action(game));
+
+    /* Cleanup */
+    free(scrap_id);
+    free(discard_scrap_id);
+    free(top_id);
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+    card_type_free(thief);
+    card_type_free(saboteur);
+    card_type_free(recycler);
+    card_type_free(oracle);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
 
@@ -1123,6 +1348,7 @@ int main(void) {
     test_spawning_mechanics();
     test_effects_module();
     test_autodraw_module();
+    test_card_manipulation_effects();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

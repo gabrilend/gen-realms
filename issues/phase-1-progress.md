@@ -18,7 +18,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-007 | Card Effect System | in progress |
 | 1-007a | ↳ Effect Dispatch Infrastructure | **completed** |
 | 1-007b | ↳ Resource Effects | **completed** |
-| 1-007c | ↳ Card Manipulation Effects | pending |
+| 1-007c | ↳ Card Manipulation Effects | **completed** |
 | 1-007d | ↳ Special Effects | pending |
 | 1-007e | ↳ Upgrade and Spawn Effects | pending |
 | 1-007f | ↳ Conditional and Ally Abilities | **completed** |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | **completed** |
 | 1-013 | Phase 1 Demo | **completed** |
 
-## Completed: 19/22
+## Completed: 20/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -111,3 +111,17 @@ Completed 1-013:
 - Base zone selection (frontier/interior) on play
 - Two-player hot-seat mode
 - Files: src/demo/phase-1-demo.c, run-phase1-demo.sh
+
+### 2026-02-11: Card Manipulation Effects Complete
+Completed 1-007c:
+- Pending action system for deferred player choices
+- PendingAction struct with type, player_id, count, optional flag
+- Pending queue in Game struct (max 8 actions)
+- Resolution functions for discard, scrap, top-deck actions
+- handle_discard creates PENDING_DISCARD for opponent
+- handle_scrap_trade_row creates optional PENDING_SCRAP_TRADE_ROW
+- handle_scrap_hand creates optional PENDING_SCRAP_HAND_DISCARD
+- handle_top_deck creates optional PENDING_TOP_DECK
+- game_skip_pending_action for optional actions
+- 234 unit tests passing (42 new)
+- Files: src/core/05-game.{h,c}, src/core/07-effects.c

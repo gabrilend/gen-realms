@@ -685,3 +685,525 @@ void game_process_base_effects(Game* game, Player* player) {
     }
 }
 /* }}} */
+
+/* ========================================================================== */
+/*                          Pending Actions                                   */
+/* ========================================================================== */
+
+/* {{{ pending_action_type_to_string
+ * Returns human-readable pending action type name.
+ */
+const char* pending_action_type_to_string(PendingActionType type) {
+    switch (type) {
+        case PENDING_NONE:              return "None";
+        case PENDING_DISCARD:           return "Discard";
+        case PENDING_SCRAP_TRADE_ROW:   return "Scrap Trade Row";
+        case PENDING_SCRAP_HAND:        return "Scrap Hand";
+        case PENDING_SCRAP_DISCARD:     return "Scrap Discard";
+        case PENDING_SCRAP_HAND_DISCARD: return "Scrap Hand/Discard";
+        case PENDING_TOP_DECK:          return "Top Deck";
+        case PENDING_COPY_SHIP:         return "Copy Ship";
+        case PENDING_DESTROY_BASE:      return "Destroy Base";
+        case PENDING_UPGRADE:           return "Upgrade";
+        default:                        return "Unknown";
+    }
+}
+/* }}} */
+
+/* {{{ game_has_pending_action
+ * Returns true if there are pending actions waiting for resolution.
+ */
+bool game_has_pending_action(Game* game) {
+    if (!game) {
+        return false;
+    }
+    return game->pending_count > 0;
+}
+/* }}} */
+
+/* {{{ game_get_pending_action
+ * Returns the current pending action (first in queue), or NULL if none.
+ */
+PendingAction* game_get_pending_action(Game* game) {
+    if (!game || game->pending_count == 0) {
+        return NULL;
+    }
+    return &game->pending_actions[0];
+}
+/* }}} */
+
+/* {{{ game_push_pending_action
+ * Adds a pending action to the queue.
+ */
+void game_push_pending_action(Game* game, PendingAction* action) {
+    if (!game || !action || game->pending_count >= MAX_PENDING_ACTIONS) {
+        return;
+    }
+
+    game->pending_actions[game->pending_count] = *action;
+    game->pending_count++;
+}
+/* }}} */
+
+/* {{{ game_pop_pending_action
+ * Removes the first pending action from the queue.
+ */
+void game_pop_pending_action(Game* game) {
+    if (!game || game->pending_count == 0) {
+        return;
+    }
+
+    /* Shift remaining actions down */
+    for (int i = 0; i < game->pending_count - 1; i++) {
+        game->pending_actions[i] = game->pending_actions[i + 1];
+    }
+    game->pending_count--;
+}
+/* }}} */
+
+/* {{{ game_clear_pending_actions
+ * Removes all pending actions.
+ */
+void game_clear_pending_actions(Game* game) {
+    if (!game) {
+        return;
+    }
+    game->pending_count = 0;
+}
+/* }}} */
+
+/* {{{ game_request_discard
+ * Creates a pending action for player to discard cards.
+ * Used by opponent discard effects.
+ */
+void game_request_discard(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_DISCARD,
+        .player_id = player_id,
+        .count = count,
+        .min_count = count,  /* Must discard exactly this many */
+        .resolved_count = 0,
+        .optional = false,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_scrap_trade_row
+ * Creates a pending action to scrap from trade row.
+ */
+void game_request_scrap_trade_row(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_SCRAP_TRADE_ROW,
+        .player_id = player_id,
+        .count = count,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_scrap_hand
+ * Creates a pending action to scrap from hand.
+ */
+void game_request_scrap_hand(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_SCRAP_HAND,
+        .player_id = player_id,
+        .count = count,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_scrap_discard
+ * Creates a pending action to scrap from discard pile.
+ */
+void game_request_scrap_discard(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_SCRAP_DISCARD,
+        .player_id = player_id,
+        .count = count,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_scrap_hand_discard
+ * Creates a pending action to scrap from hand or discard.
+ */
+void game_request_scrap_hand_discard(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_SCRAP_HAND_DISCARD,
+        .player_id = player_id,
+        .count = count,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_top_deck
+ * Creates a pending action to put a card from discard on top of deck.
+ */
+void game_request_top_deck(Game* game, int player_id, int count) {
+    if (!game || player_id < 1 || count <= 0) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_TOP_DECK,
+        .player_id = player_id,
+        .count = count,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_resolve_discard
+ * Resolves a discard action by discarding the specified card from hand.
+ * Returns true if successfully discarded.
+ */
+bool game_resolve_discard(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_DISCARD) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Find card in hand */
+    CardInstance* card = deck_find_in_hand(player->deck, card_instance_id);
+    if (!card) {
+        return false;
+    }
+
+    /* Discard the card */
+    if (!deck_discard_from_hand(player->deck, card)) {
+        return false;
+    }
+
+    /* Update resolved count */
+    pending->resolved_count++;
+
+    /* If all required discards done, pop the action */
+    if (pending->resolved_count >= pending->count) {
+        game_pop_pending_action(game);
+    }
+
+    return true;
+}
+/* }}} */
+
+/* {{{ game_resolve_scrap_trade_row
+ * Resolves a scrap trade row action.
+ * Returns true if successfully scrapped.
+ */
+bool game_resolve_scrap_trade_row(Game* game, int slot) {
+    if (!game || !game->trade_row) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_SCRAP_TRADE_ROW) {
+        return false;
+    }
+
+    /* Validate slot */
+    if (slot < 0 || slot >= TRADE_ROW_SLOTS) {
+        return false;
+    }
+
+    /* Scrap the card (remove from game) */
+    CardInstance* scrapped = trade_row_scrap(game->trade_row, slot);
+    if (!scrapped) {
+        return false;
+    }
+
+    /* Free the scrapped card */
+    card_instance_free(scrapped);
+
+    /* Update resolved count */
+    pending->resolved_count++;
+
+    /* If all scraps done, pop the action */
+    if (pending->resolved_count >= pending->count) {
+        game_pop_pending_action(game);
+    }
+
+    return true;
+}
+/* }}} */
+
+/* {{{ game_resolve_scrap_hand
+ * Resolves a scrap hand action.
+ * Returns true if successfully scrapped.
+ */
+bool game_resolve_scrap_hand(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || (pending->type != PENDING_SCRAP_HAND &&
+                     pending->type != PENDING_SCRAP_HAND_DISCARD)) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Find card in hand */
+    CardInstance* card = deck_find_in_hand(player->deck, card_instance_id);
+    if (!card) {
+        return false;
+    }
+
+    /* Scrap the card */
+    CardInstance* scrapped = deck_scrap_from_hand(player->deck, card);
+    if (!scrapped) {
+        return false;
+    }
+
+    /* Scrapping decrements d10 */
+    player_d10_decrement(player);
+
+    /* Free the scrapped card */
+    card_instance_free(scrapped);
+
+    /* Update resolved count */
+    pending->resolved_count++;
+
+    /* If all scraps done, pop the action */
+    if (pending->resolved_count >= pending->count) {
+        game_pop_pending_action(game);
+    }
+
+    return true;
+}
+/* }}} */
+
+/* {{{ game_resolve_scrap_discard
+ * Resolves a scrap discard action.
+ * Returns true if successfully scrapped.
+ */
+bool game_resolve_scrap_discard(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || (pending->type != PENDING_SCRAP_DISCARD &&
+                     pending->type != PENDING_SCRAP_HAND_DISCARD)) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Find card in discard */
+    CardInstance* card = deck_find_in_discard(player->deck, card_instance_id);
+    if (!card) {
+        return false;
+    }
+
+    /* Scrap the card */
+    CardInstance* scrapped = deck_scrap_from_discard(player->deck, card);
+    if (!scrapped) {
+        return false;
+    }
+
+    /* Scrapping decrements d10 */
+    player_d10_decrement(player);
+
+    /* Free the scrapped card */
+    card_instance_free(scrapped);
+
+    /* Update resolved count */
+    pending->resolved_count++;
+
+    /* If all scraps done, pop the action */
+    if (pending->resolved_count >= pending->count) {
+        game_pop_pending_action(game);
+    }
+
+    return true;
+}
+/* }}} */
+
+/* {{{ game_resolve_top_deck
+ * Resolves a top deck action - puts card from discard on top of deck.
+ * Returns true if successfully moved.
+ */
+bool game_resolve_top_deck(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_TOP_DECK) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Find card in discard */
+    CardInstance* card = deck_find_in_discard(player->deck, card_instance_id);
+    if (!card) {
+        return false;
+    }
+
+    /* Remove from discard and put on top of deck */
+    CardInstance* removed = deck_scrap_from_discard(player->deck, card);
+    if (!removed) {
+        return false;
+    }
+
+    /* Put on top of draw pile */
+    if (!deck_put_on_top(player->deck, removed)) {
+        /* If failed, put back in discard */
+        deck_add_to_discard(player->deck, removed);
+        return false;
+    }
+
+    /* Update resolved count */
+    pending->resolved_count++;
+
+    /* If all done, pop the action */
+    if (pending->resolved_count >= pending->count) {
+        game_pop_pending_action(game);
+    }
+
+    return true;
+}
+/* }}} */
+
+/* {{{ game_skip_pending_action
+ * Skips the current pending action if it's optional.
+ * Returns true if successfully skipped.
+ */
+bool game_skip_pending_action(Game* game) {
+    if (!game) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending) {
+        return false;
+    }
+
+    /* Check if action can be skipped */
+    if (!pending->optional && pending->resolved_count < pending->min_count) {
+        return false;  /* Cannot skip - must complete minimum */
+    }
+
+    /* Remove the pending action */
+    game_pop_pending_action(game);
+    return true;
+}
+/* }}} */
