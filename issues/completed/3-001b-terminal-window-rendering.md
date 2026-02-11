@@ -1,7 +1,7 @@
 # 3-001b: Terminal Window Rendering
 
 ## Current Behavior
-No rendering functions for terminal windows.
+Terminal window rendering functions are implemented using Track A core structures.
 
 ## Intended Behavior
 Implement rendering functions for each UI panel:
@@ -122,8 +122,44 @@ Implement rendering functions for each UI panel:
 - 3-001a: Terminal UI Initialization
 
 ## Acceptance Criteria
-- [ ] Hand window shows all cards with faction colors
-- [ ] Trade row shows cards with costs
-- [ ] Base window shows both players' bases
-- [ ] Status bar shows all game state info
-- [ ] Narrative window scrolls properly
+- [x] Hand window shows all cards with faction colors
+- [x] Trade row shows cards with costs
+- [x] Base window shows both players' bases
+- [x] Status bar shows all game state info
+- [x] Narrative window scrolls properly
+
+## Implementation Notes (2026-02-10)
+
+### Files Created
+- `src/client/02-terminal-render.h` - Header with all render function declarations
+- `src/client/02-terminal-render.c` - Implementation of all rendering functions
+
+### Rendering Functions Implemented
+```c
+terminal_render()            // Master render calling all sub-renderers
+terminal_render_status()     // Turn info, authority, d10/d4, trade/combat
+terminal_render_hand()       // Player's hand with faction colors
+terminal_render_trade_row()  // 5 slots + Explorer, with costs and affordability
+terminal_render_bases()      // Both players' bases with defense values
+terminal_render_narrative()  // Scrollable narrative text
+terminal_render_input()      // Input prompt line
+terminal_render_card()       // Single card with index and bonuses
+terminal_render_card_list()  // Compact list for small windows
+terminal_render_effects()    // Effect summary string
+```
+
+### Additional Features
+1. Narrative buffer management (NarrativeBuffer struct) with scrolling
+2. Effect formatting for display (+2T, +3C, Draw 2, etc.)
+3. Affordability highlighting (dim cards player can't buy)
+4. Upgrade bonus display (+xC +xT on upgraded cards)
+5. Outpost indicator on base cards
+6. Scroll indicators (^ and v) for narrative
+
+### Integration with Track A
+Uses core structures from:
+- `01-card.h` (CardInstance, CardType, Faction, Effect)
+- `02-deck.h` (Deck with hand, played, bases)
+- `03-player.h` (Player with authority, trade, combat, d10/d4)
+- `04-trade-row.h` (TradeRow with slots)
+- `05-game.h` (Game, GamePhase)

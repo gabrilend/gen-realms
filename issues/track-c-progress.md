@@ -9,7 +9,7 @@ Track C implements terminal and browser client interfaces for Symbeline Realms.
 It can be developed with mock gamestate data, with protocol integration after
 the GAMMA checkpoint.
 
-## Current Status: Pre-Alpha (Parallel Start)
+## Current Status: Alpha → Beta (Rendering Core)
 
 ### Completed Issues
 
@@ -18,23 +18,19 @@ the GAMMA checkpoint.
 | 3-003 | Wasm build configuration | 2026-02-10 |
 | 3-001a | Terminal UI initialization | 2026-02-10 |
 | 3-004a | Canvas infrastructure | 2026-02-10 |
+| 3-001b | Terminal window rendering | 2026-02-10 |
+| 3-004b | Card rendering (Canvas) | 2026-02-10 |
 
 ### In Progress
 
 None currently.
 
-### Pending (Pre-Alpha)
-
-None - Pre-Alpha starting issues complete.
-
 ### Pending (Alpha → Beta: Rendering Core)
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 3-001b | Terminal window rendering | 3-001a |
-| 3-001c | Terminal formatting | 3-001b |
-| 3-004b | Card rendering (Canvas) | 3-004a, 1-001* |
-| 3-004c | Game zones (Canvas) | 3-004b |
+| 3-001c | Terminal formatting | 3-001b ✓ |
+| 3-004c | Game zones (Canvas) | 3-004b ✓ |
 
 ### Pending (Beta → Gamma: Input Systems)
 
@@ -84,6 +80,16 @@ Expected deliverables when Track C is complete:
 - Set up terminal UI with ncurses and faction colors
 - Built canvas layout system with demo mode for testing without Wasm
 - All Pre-Alpha starting issues (3-003, 3-001a, 3-004a) are now complete
+
+### 2026-02-10: Alpha-Beta Rendering
+- Implemented terminal window rendering (3-001b) with full Track A integration
+  - Status bar, hand, trade row, bases, narrative windows
+  - Faction color coding, effect formatting, scroll support
+- Implemented canvas card rendering (3-004b)
+  - Full card visuals with faction colors and effects
+  - Cost badges, upgrade indicators, defense shields
+  - Hover/selection states, face-down card backs
+- Demo mode now shows realistic card rendering
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering

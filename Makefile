@@ -21,6 +21,10 @@ NCURSES_LIBS = -lncurses
 # Install: xbps-install libwebsockets-devel
 WEBSOCKET_LIBS = -lwebsockets
 
+# libssh for SSH server
+# Install: xbps-install libssh-devel
+SSH_LIBS = -lssh -lpthread
+
 # Math library for cJSON
 MATH_LIBS = -lm
 
@@ -39,6 +43,7 @@ SERVER_BIN = $(BIN_DIR)/symbeline-server
 TEST_TERMINAL_BIN = $(BIN_DIR)/test-terminal
 TEST_CONFIG_BIN = $(BIN_DIR)/test-config
 TEST_HTTP_BIN = $(BIN_DIR)/test-http
+TEST_SSH_BIN = $(BIN_DIR)/test-ssh
 # }}}
 
 # {{{ source files
@@ -56,10 +61,11 @@ CORE_SOURCES = \
 	$(CORE_DIR)/06-combat.c \
 	$(CORE_DIR)/07-effects.c
 
-# Network sources (Track B: 2-001, 2-002)
+# Network sources (Track B: 2-001, 2-002, 2-004)
 NET_SOURCES = \
 	$(NET_DIR)/01-config.c \
-	$(NET_DIR)/02-http.c
+	$(NET_DIR)/02-http.c \
+	$(NET_DIR)/03-ssh.c
 
 # cJSON library source
 CJSON_SOURCES = \
@@ -81,7 +87,14 @@ TEST_CONFIG_SOURCES = \
 
 TEST_HTTP_SOURCES = \
 	tests/test-http.c \
-	$(NET_SOURCES) \
+	$(NET_DIR)/01-config.c \
+	$(NET_DIR)/02-http.c \
+	$(CJSON_SOURCES)
+
+TEST_SSH_SOURCES = \
+	tests/test-ssh.c \
+	$(NET_DIR)/01-config.c \
+	$(NET_DIR)/03-ssh.c \
 	$(CJSON_SOURCES)
 # }}}
 
@@ -94,6 +107,7 @@ TEST_TERMINAL_OBJECTS = $(TEST_TERMINAL_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_CORE_OBJECTS = $(TEST_CORE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_CONFIG_OBJECTS = $(TEST_CONFIG_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_HTTP_OBJECTS = $(TEST_HTTP_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_SSH_OBJECTS = $(TEST_SSH_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
 # {{{ output binaries
@@ -101,7 +115,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server test test-core test-terminal test-config dirs
+.PHONY: all clean terminal server test test-core test-terminal test-config test-http test-ssh dirs
 
 all: dirs terminal
 
@@ -149,6 +163,13 @@ test-http: dirs $(TEST_HTTP_BIN)
 
 $(TEST_HTTP_BIN): $(TEST_HTTP_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(WEBSOCKET_LIBS) $(MATH_LIBS)
+
+# SSH tests (Track B: 2-004, requires libssh)
+test-ssh: dirs $(TEST_SSH_BIN)
+	./$(TEST_SSH_BIN)
+
+$(TEST_SSH_BIN): $(TEST_SSH_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(SSH_LIBS) $(MATH_LIBS)
 
 # Object file compilation
 $(BUILD_DIR)/%.o: %.c

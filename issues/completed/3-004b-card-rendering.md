@@ -4,7 +4,7 @@
 3-004: Browser Canvas Renderer
 
 ## Current Behavior
-No card rendering exists.
+Card rendering is implemented with faction colors, effects, and interaction states.
 
 ## Intended Behavior
 Card rendering system that:
@@ -106,10 +106,60 @@ Card rendering system that:
 - 3-004a: Canvas Infrastructure
 
 ## Acceptance Criteria
-- [ ] Cards render with faction colors
-- [ ] Name and cost displayed
-- [ ] Placeholder art area shown
-- [ ] Effects rendered with icons
-- [ ] Upgrade badges visible
-- [ ] Hover/selection states work
-- [ ] Face-down cards show card back
+- [x] Cards render with faction colors
+- [x] Name and cost displayed
+- [x] Placeholder art area shown
+- [x] Effects rendered with icons
+- [x] Upgrade badges visible
+- [x] Hover/selection states work
+- [x] Face-down cards show card back
+
+## Implementation Notes (2026-02-10)
+
+### Files Created
+- `assets/web/card-renderer.js` - Complete card rendering module
+
+### Card Renderer API (window.cardRenderer)
+```javascript
+renderCard(ctx, card, x, y, options)  // Main render function
+renderCost(ctx, cost, x, y, scale)    // Gold coin cost badge
+renderEffects(ctx, effects, x, y, w, scale)  // Effect icons
+renderUpgradeBadges(ctx, card, x, y, w, scale)  // +bonus indicators
+renderDefense(ctx, defense, isOutpost, x, y, scale)  // Base defense
+renderCardBack(ctx, x, y, w, h, r, scale)  // Face-down card
+```
+
+### Card Data Structure Expected
+```javascript
+{
+    name: 'Card Name',
+    cost: 3,
+    faction: 'merchant' | 'wilds' | 'kingdom' | 'artificer' | 'neutral',
+    kind: 'ship' | 'base' | 'unit',
+    effects: [{ type: 'trade', value: 2 }, ...],
+    allyEffects: [...],       // Optional
+    defense: 5,               // For bases
+    isOutpost: true,          // For bases
+    attackBonus: 1,           // Upgrades
+    tradeBonus: 1,            // Upgrades
+    authorityBonus: 0         // Upgrades
+}
+```
+
+### Visual Features
+1. Rounded card frames with faction-specific colors
+2. Gold coin badge for cost in top-right corner
+3. Placeholder art area with faction symbol (⚖ ⚔ 👑 ⚙ ◆)
+4. Effect summary with colored values (+T, +C, +A, D#)
+5. Upgrade badges as colored circles with bonus values
+6. Defense hexagon for outposts, circle for regular bases
+7. Shadow glow on hover/selection
+8. Face-down cards with decorative pattern
+
+### Demo Mode Enhanced
+Updated index.html demo mode to use card renderer:
+- 5 sample trade row cards (one per faction)
+- 5 hand cards with selection indicator
+- Base card in player bases area
+- Face-down card in opponent area
+- Narrative text panel with sample story
