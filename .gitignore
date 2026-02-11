@@ -1,0 +1,30 @@
+# Build artifacts
+build/
+bin/
+
+# Local dependencies (compiled from source)
+libs/local/
+libs/src/
+
+# Temporary files
+*.o
+*.a
+*.so
+*.dylib
+tmp/
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+*.log
+core
+vgcore.*

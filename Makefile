@@ -11,22 +11,58 @@
 
 # {{{ configuration
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -std=c11 -g
+CFLAGS_BASE = -Wall -Wextra -pedantic -std=c11 -g
 LDFLAGS =
 
 # ncurses library for terminal client
 NCURSES_LIBS = -lncurses
 
-# libwebsockets for HTTP/WebSocket server
-# Install: xbps-install libwebsockets-devel
-WEBSOCKET_LIBS = -lwebsockets
-
-# libssh for SSH server
-# Install: xbps-install libssh-devel
-SSH_LIBS = -lssh -lpthread
-
 # Math library for cJSON
 MATH_LIBS = -lm
+# }}}
+
+# {{{ dependency detection
+# Check for local dependencies first, fall back to system
+LOCAL_DEPS_PREFIX = libs/local
+
+# libwebsockets detection
+ifneq ($(wildcard $(LOCAL_DEPS_PREFIX)/lib/libwebsockets.a),)
+    # Use local libwebsockets (static)
+    WEBSOCKET_CFLAGS = -I$(LOCAL_DEPS_PREFIX)/include
+    WEBSOCKET_LIBS = $(LOCAL_DEPS_PREFIX)/lib/libwebsockets.a
+    WEBSOCKET_SOURCE = local
+else ifneq ($(shell pkg-config --exists libwebsockets 2>/dev/null && echo yes),)
+    # Use system libwebsockets via pkg-config
+    WEBSOCKET_CFLAGS = $(shell pkg-config --cflags libwebsockets)
+    WEBSOCKET_LIBS = $(shell pkg-config --libs libwebsockets)
+    WEBSOCKET_SOURCE = system-pkgconfig
+else
+    # Fallback to simple -l flag (may fail if not installed)
+    WEBSOCKET_CFLAGS =
+    WEBSOCKET_LIBS = -lwebsockets
+    WEBSOCKET_SOURCE = system-fallback
+endif
+
+# libssh detection
+ifneq ($(wildcard $(LOCAL_DEPS_PREFIX)/lib/libssh.a),)
+    # Use local libssh (static, needs OpenSSL)
+    SSH_CFLAGS = -I$(LOCAL_DEPS_PREFIX)/include
+    SSH_LIBS = $(LOCAL_DEPS_PREFIX)/lib/libssh.a -lcrypto -lpthread
+    SSH_SOURCE = local
+else ifneq ($(shell pkg-config --exists libssh 2>/dev/null && echo yes),)
+    # Use system libssh via pkg-config
+    SSH_CFLAGS = $(shell pkg-config --cflags libssh)
+    SSH_LIBS = $(shell pkg-config --libs libssh) -lpthread
+    SSH_SOURCE = system-pkgconfig
+else
+    # Fallback to simple -l flag
+    SSH_CFLAGS =
+    SSH_LIBS = -lssh -lpthread
+    SSH_SOURCE = system-fallback
+endif
+
+# Combine flags
+CFLAGS = $(CFLAGS_BASE) $(WEBSOCKET_CFLAGS) $(SSH_CFLAGS)
 
 # Directories
 SRC_DIR = src
@@ -153,7 +189,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket dirs
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -259,4 +295,37 @@ release: all
 # Check for memory leaks (requires valgrind)
 memcheck: test
 	valgrind --leak-check=full ./$(TEST_TERMINAL_BIN)
+# }}}
+
+# {{{ dependency targets
+# Install all dependencies from source
+deps:
+	./scripts/install-deps.sh
+
+# Force reinstall all dependencies
+deps-force:
+	./scripts/install-deps.sh --force
+
+# Show detected dependency sources
+deps-info:
+	@echo "Dependency Detection"
+	@echo "===================="
+	@echo ""
+	@echo "libwebsockets:"
+	@echo "  Source:  $(WEBSOCKET_SOURCE)"
+	@echo "  CFLAGS:  $(WEBSOCKET_CFLAGS)"
+	@echo "  LIBS:    $(WEBSOCKET_LIBS)"
+	@echo ""
+	@echo "libssh:"
+	@echo "  Source:  $(SSH_SOURCE)"
+	@echo "  CFLAGS:  $(SSH_CFLAGS)"
+	@echo "  LIBS:    $(SSH_LIBS)"
+	@echo ""
+	@echo "To install local dependencies:"
+	@echo "  make deps"
+
+# Remove locally installed dependencies
+clean-deps:
+	rm -rf libs/local libs/src
+	@echo "Local dependencies removed"
 # }}}
