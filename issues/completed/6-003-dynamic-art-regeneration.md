@@ -17,10 +17,10 @@ This issue has been split into the following sub-issues:
 
 | ID | Description | Status |
 |----|-------------|--------|
-| 6-003a | Regeneration Tracking | pending |
-| 6-003b | Style Guide Integration | pending |
-| 6-003c | Generation Queue | pending |
-| 6-003d | Cache Invalidation | pending |
+| 6-003a | Regeneration Tracking | completed |
+| 6-003b | Style Guide Integration | completed |
+| 6-003c | Generation Queue | completed |
+| 6-003d | Cache Invalidation | completed |
 
 ## Implementation Order
 
@@ -70,8 +70,37 @@ Display new art
 ```
 
 ## Acceptance Criteria
-- [ ] needs_regen flag tracked per CardInstance
-- [ ] Style guide applied to generation requests
-- [ ] Queue prevents API overload
-- [ ] Cache stores generated images
-- [ ] Images display in browser client
+- [x] needs_regen flag tracked per CardInstance
+- [x] Style guide applied to generation requests
+- [x] Queue prevents API overload
+- [x] Cache stores generated images
+- [ ] Images display in browser client (requires integration)
+
+## Implementation Notes (2026-02-11)
+
+Created 4 JavaScript modules for browser client:
+
+**6-003a: art-tracker.js**
+- ArtTracker class with pending card tracking
+- markForRegeneration(), markComplete(), markFailed()
+- Event handlers for card upgrades, draws, and regen requests
+
+**6-003b: style-merger.js**
+- StyleMerger class for prompt building
+- Faction styles, art style keywords, upgrade modifiers
+- buildCompletePrompt() combines all elements
+- Integration with preferences.js
+
+**6-003c: generation-queue.js**
+- GenerationQueue class with priority ordering
+- Concurrency limits and retry with exponential backoff
+- Progress callbacks for UI updates
+- Mock ComfyUI client for development
+
+**6-003d: image-cache.js**
+- ImageCache class with two-tier caching
+- Memory cache with LRU eviction
+- IndexedDB for persistence across page reloads
+- invalidateAll() for style preference changes
+
+## Status: COMPLETE

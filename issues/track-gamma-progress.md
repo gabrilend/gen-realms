@@ -48,6 +48,10 @@ Track Gamma handles all game content and AI integration:
 | 5-007c | Context summarization | 2026-02-11 |
 | 5-008 | Narrative caching | 2026-02-11 |
 | 6-002 | Card image prompt builder | 2026-02-11 |
+| 6-003a | Regeneration tracking | 2026-02-11 |
+| 6-003b | Style guide integration | 2026-02-11 |
+| 6-003c | Generation queue | 2026-02-11 |
+| 6-003d | Cache invalidation | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -68,8 +72,7 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 6-003 | Dynamic art regeneration | 6-002, Track Beta 3-006 |
-| 6-004 | Upgrade visualization | 6-003 |
+| 6-004 | Upgrade visualization | 6-003 (done) |
 | 6-005 | Battle canvas manager | 6-001 |
 | 6-006 | Inpainting region selection | 6-005 |
 | 6-007 | Scene composition rules | 6-006 |
@@ -91,8 +94,8 @@ Track Gamma handles all game content and AI integration:
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 11 complete, 10 pending
-**Total:** 19 complete, 12 pending
+**AI Issues:** 15 complete, 6 pending
+**Total:** 23 complete, 8 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -139,7 +142,10 @@ Track Gamma handles all game content and AI integration:
 ### AI - Visual (Phase 6)
 - [x] `src/visual/01-comfyui-client.h/c` - ComfyUI client
 - [x] `src/visual/02-card-prompts.h/c` - Card image prompts (6-002)
-- [ ] `src/visual/03-art-regen.h/c` - Dynamic regeneration (6-003)
+- [x] `assets/web/art-tracker.js` - Regeneration tracking (6-003a)
+- [x] `assets/web/style-merger.js` - Style guide integration (6-003b)
+- [x] `assets/web/generation-queue.js` - Generation queue (6-003c)
+- [x] `assets/web/image-cache.js` - Cache invalidation (6-003d)
 - [ ] `src/visual/04-battle-canvas.h/c` - Battle scenes (6-005)
 - [ ] `issues/completed/demos/phase-6-demo.sh` - Visual generation demo
 
@@ -155,6 +161,12 @@ Track Gamma handles all game content and AI integration:
 - Faction-themed prompts for all card types
 - Art style variants (painterly, detailed, stylized, icon)
 - Upgrade visual modifiers for enhanced cards
+
+6-003 (dynamic art regeneration) complete. 4 JavaScript modules:
+- art-tracker.js: Track cards needing regeneration
+- style-merger.js: Merge user preferences with card prompts
+- generation-queue.js: Priority queue with retry logic
+- image-cache.js: Two-tier cache (memory + IndexedDB)
 
 ### Faction Themes
 
