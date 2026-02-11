@@ -23,12 +23,12 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 | 2-005c | ↳ Server to Client Generation | COMPLETE |
 | 2-005d | ↳ Validation and Error Handling | COMPLETE |
 | 2-006 | Connection Manager | COMPLETE |
-| 2-007 | Game Session Management | pending |
+| 2-007 | Game Session Management | COMPLETE |
 | 2-008 | Hidden Information Handling | pending |
 | 2-009 | Input Validation | pending |
 | 2-010 | Phase 2 Demo | pending |
 
-## Completed: 14/18
+## Completed: 15/18
 
 ## Technology Stack
 - libwebsockets for HTTP/WebSocket server
@@ -37,6 +37,21 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 - Unified connection manager for transport-agnostic game logic
 
 ## Recent Progress
+
+### 2-007: Game Session Management (COMPLETE)
+Implemented session management for multiplayer game coordination:
+- SessionRegistry tracks multiple concurrent game sessions
+- WAITING -> PLAYING -> FINISHED lifecycle states
+- Players can create, join, leave, and ready-up in sessions
+- Host authority (host leaving WAITING session destroys it)
+- Spectator support with configurable allowance
+- Lobby listing functions for joinable/spectatable sessions
+- Integration with Game module for starting games
+
+Files created:
+- src/net/07-sessions.h - Session types and API
+- src/net/07-sessions.c - Full implementation
+- tests/test-sessions.c - 23 unit tests (all pass)
 
 ### 2-006: Connection Manager (COMPLETE)
 Implemented a unified connection registry that abstracts over both WebSocket and SSH connections. Key features:

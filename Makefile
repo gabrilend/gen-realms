@@ -85,6 +85,7 @@ TEST_SERIALIZE_BIN = $(BIN_DIR)/test-serialize
 TEST_PROTOCOL_BIN = $(BIN_DIR)/test-protocol
 TEST_WEBSOCKET_BIN = $(BIN_DIR)/test-websocket
 TEST_CONNECTIONS_BIN = $(BIN_DIR)/test-connections
+TEST_SESSIONS_BIN = $(BIN_DIR)/test-sessions
 # }}}
 
 # {{{ source files
@@ -172,6 +173,12 @@ TEST_WEBSOCKET_SOURCES = \
 TEST_CONNECTIONS_SOURCES = \
 	tests/test-connections.c \
 	$(NET_DIR)/06-connections.c
+
+# Session manager tests (needs core game module)
+TEST_SESSIONS_SOURCES = \
+	tests/test-sessions.c \
+	$(NET_DIR)/07-sessions.c \
+	$(CORE_SOURCES)
 # }}}
 
 # {{{ object files
@@ -188,6 +195,7 @@ TEST_SERIALIZE_OBJECTS = $(TEST_SERIALIZE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_PROTOCOL_OBJECTS = $(TEST_PROTOCOL_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_WEBSOCKET_OBJECTS = $(TEST_WEBSOCKET_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_CONNECTIONS_OBJECTS = $(TEST_CONNECTIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_SESSIONS_OBJECTS = $(TEST_SESSIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
@@ -196,7 +204,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections dirs deps deps-force deps-info clean-deps
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -286,6 +294,13 @@ test-connections: dirs $(TEST_CONNECTIONS_BIN)
 	./$(TEST_CONNECTIONS_BIN)
 
 $(TEST_CONNECTIONS_BIN): $(TEST_CONNECTIONS_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^
+
+# Session manager tests (Track B: 2-007)
+test-sessions: dirs $(TEST_SESSIONS_BIN)
+	./$(TEST_SESSIONS_BIN)
+
+$(TEST_SESSIONS_BIN): $(TEST_SESSIONS_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 # Object file compilation
