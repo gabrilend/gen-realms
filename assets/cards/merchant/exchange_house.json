@@ -10,7 +10,7 @@
     { "type": "add_trade", "value": 2 },
     { "type": "add_coin", "value": 1 }
   ],
-  "forecast": 5,
+  "forecast": true,
   "flavor": "Before the day begins, the ledgers speak of what is to come.",
   "art_prompt": "grand exchange building with counting houses, merchants studying ledgers at dawn, medieval fantasy"
 }

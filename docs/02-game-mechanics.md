@@ -231,34 +231,38 @@ rewards building a dedicated Merchant deck.
 
 #### Forecast
 
-High-level Merchant bases can "forecast" your next hand. The `forecast`
-property reveals how many draw effects exist on the top N cards of your
-deck—but not which cards they are.
+High-level Merchant bases reveal your actual hand size for next turn.
+Not which cards—just the count.
+
+**How It Works:**
+If you normally draw 5 cards, but the first card has "draw a card",
+you'll actually draw 6. Forecast shows "6". It follows the draw chain
+to its conclusion and tells you the final count.
 
 **Example:**
 ```
-Exchange House (forecast: 5)
-At turn start: "Your top 5 cards contain 2 draw effects."
-This means: if you draw those 5 cards, you'll get 2 bonus draws.
+Normal draw: 5 cards
+Card 1 has "draw 1" → now drawing 6
+Card 6 has "draw 1" → now drawing 7
+Forecast shows: "7"
 ```
 
 **Forecast Bases:**
-| Base | Cost | Forecast Depth |
-|------|------|----------------|
-| Exchange House | 5 | Top 5 cards |
-| Guild Observatory | 7 | Top 8 cards |
+| Base | Cost | Effect |
+|------|------|--------|
+| Exchange House | 5 | Shows next hand size |
+| Guild Observatory | 7 | Shows next hand size |
 
 **Strategic Value:**
-- Plan your turn knowing draw potential
-- Decide whether to recruit (Kingdom) or charge (Wilds) based on forecast
-- Information advantage without revealing exact cards
-- Synergizes with draw order choice (see above)
+- Know exactly how many cards you'll see next turn
+- Plan purchases: "I'll have 7 cards, so I can afford to spend big now"
+- Decide when to charge (Wilds) or recruit (Kingdom)
+- Simple, actionable number—not probabilities
 
 **Design Intent:**
-Merchants trade in information. They don't fight with beasts or faith—
-they predict. Knowing "I'll draw 3 extra cards next turn" lets you plan
-acquisitions, saves, and attacks. The observatory doesn't show futures,
-it shows probabilities.
+Merchants trade in certainty. The forecast isn't a guess—it's a ledger
+entry for tomorrow. Knowing "7 cards next turn" lets you commit fully
+this turn, confident in what's coming.
 
 ### The Wilds: Frontier & The Charge
 

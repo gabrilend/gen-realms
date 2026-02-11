@@ -116,9 +116,9 @@
       "description": "If true, this card's draw effects resolve at start of turn (before draw order selection). Creates pre-turn card flow."
     },
     "forecast": {
-      "type": "integer",
-      "minimum": 1,
-      "description": "MERCHANT ONLY: At turn start, reveals how many draw effects exist on top N cards of deck. Information advantage without card knowledge."
+      "type": "boolean",
+      "default": false,
+      "description": "MERCHANT ONLY: At turn start, reveals your actual hand size for next turn (follows draw chains to conclusion). Simple count, not which cards."
     },
     "frontier_leader": {
       "type": "boolean",

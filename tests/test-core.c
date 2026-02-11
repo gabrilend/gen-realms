@@ -205,7 +205,7 @@ static void test_deck_module(void) {
     CardInstance* base = card_instance_create(base_type);
     deck_add_to_hand(deck, base);
     deck_play_from_hand(deck, base);
-    TEST("Base goes to base zone", deck->base_count == 1);
+    TEST("Base goes to base zone", deck_total_base_count(deck) == 1);
     TEST("Base not in played zone", deck->played_count == 0);
 
     /* Cleanup */
@@ -459,7 +459,7 @@ static void test_game_module(void) {
         action->card_instance_id = strdup(card->instance_id);
         bool result = game_process_action(game, action);
         TEST("Play card action", result);
-        TEST("Card in played zone", p1->deck->played_count > 0 || p1->deck->base_count > 0);
+        TEST("Card in played zone", p1->deck->played_count > 0 || deck_total_base_count(p1->deck) > 0);
         action_free(action);
     }
 
@@ -553,7 +553,7 @@ static void test_combat_module(void) {
     /* Test attack base */
     attacked = combat_attack_base(game, 1, outpost, 4);
     TEST("Attack base succeeds", attacked);
-    TEST("Base destroyed", defender->deck->base_count == 0);
+    TEST("Base destroyed", deck_total_base_count(defender->deck) == 0);
     TEST("Base in discard", defender->deck->discard_count == 1);
 
     /* Test can attack player now */

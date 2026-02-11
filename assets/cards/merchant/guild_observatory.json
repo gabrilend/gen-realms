@@ -13,7 +13,7 @@
   "ally_effects": [
     { "type": "draw_card", "value": 1 }
   ],
-  "forecast": 8,
+  "forecast": true,
   "flavor": "From the highest tower, one sees not stars but futures.",
   "art_prompt": "merchant guild tower with astronomical instruments repurposed for market prediction, ledgers and star charts, medieval fantasy"
 }
