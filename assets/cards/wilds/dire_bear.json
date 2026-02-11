@@ -5,7 +5,7 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 5 }
+    { "type": "add_combat", "value": 4 }
   ],
   "ally_effects": [
     { "type": "draw_card", "value": 1 }

@@ -5,11 +5,11 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 4 },
+    { "type": "add_combat", "value": 3 },
     { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 4 }
+    { "type": "add_combat", "value": 2 }
   ],
   "flavor": "The alpha does not lead. The alpha inspires.",
   "art_prompt": "massive dire wolf with pack behind it, howling at moon, medieval fantasy"

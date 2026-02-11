@@ -179,38 +179,49 @@ This balances persistent value against tempo.
 
 ### The Wilds: Pack Stacking
 
-**Unique Rule:** Wilds ally effects trigger *once per ally in play*, not just once.
+**Unique Rule:** Wilds ally effects trigger *once per OTHER ally in play*.
 
 Standard ally rules (all other factions):
-- 0 allies: No ally effect
-- 1+ allies: Ally effect triggers once
+- 0 other allies: No ally effect
+- 1+ other allies: Ally effect triggers once
 
 Wilds pack rules:
-- 0 allies: No ally effect
-- 1 ally: Ally effect triggers 1x
-- 2 allies: Ally effect triggers 2x
-- 3 allies: Ally effect triggers 3x
+- 0 other allies: No ally effect
+- 1 other ally: Ally effect triggers 1x per card
+- 2 other allies: Ally effect triggers 2x per card
+- 3 other allies: Ally effect triggers 3x per card
 - etc.
 
-**Example - Wolf Scout (ally: +2 Combat):**
+**Formula:** Total = n × (base + ally × (n-1)) where n = number of Wilds cards
+
+**Example - Wolf Scout (+1 Combat base, +1 Combat ally):**
 ```
-1 Wolf Scout alone:           2 Combat (base only)
-2 Wolf Scouts:                8 Combat (2+2 base, +2+2 ally triggers)
-3 Wolf Scouts:                18 Combat (2+2+2 base, +2x2 +2x2 +2x2 ally)
-4 Wolf Scouts:                32 Combat (exponential growth!)
+1 Wolf Scout:   1×(1 + 1×0) = 1  Combat
+2 Wolf Scouts:  2×(1 + 1×1) = 4  Combat
+3 Wolf Scouts:  3×(1 + 1×2) = 9  Combat
+4 Wolf Scouts:  4×(1 + 1×3) = 16 Combat
+```
+
+This produces **n² growth** - balanced exponential scaling.
+
+**Mixed Pack Example (Wolf Scout + Pack Hunter + Beastcaller):**
+```
+Wolf Scout:    1 base + 1×2 ally = 3 Combat
+Pack Hunter:   2 base + 1×2 ally = 4 Combat
+Beastcaller:   2 base + 1×2 ally = 4 Combat, Draw 2
+Total: 11 Combat + 2 cards drawn
 ```
 
 **Design Intent:**
 The pack grows stronger with each member. A lone wolf is weak, but a
-coordinated pack is devastating. This creates high-risk, high-reward
-gameplay—Wilds players must commit fully to the faction or their cards
-underperform. When the pack achieves critical mass, damage output
-becomes exponential.
+coordinated pack is devastating. The n² curve ensures growth is
+meaningful but not game-breaking—it takes 4 cards to reach 16 damage,
+not 32.
 
 **Thematic Justification:**
 Each creature's ally ability represents "one more of that totem joining
-the hunt." When you have 3 allies, your Wolf Scout howls and 3 wolves
-answer the call.
+the hunt." When you have 2 other allies, your Wolf Scout howls and 2
+wolves answer the call, stacking the bonus twice.
 
 ### Artificer Order: Scrap-Draw Chain
 

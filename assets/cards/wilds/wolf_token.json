@@ -5,7 +5,10 @@
   "faction": "wilds",
   "card_type": "unit",
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 }
   ],
   "scrap_effects": [
     { "type": "draw_card", "value": 1 }

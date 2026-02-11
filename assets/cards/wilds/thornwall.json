@@ -7,7 +7,7 @@
   "defense": 4,
   "is_outpost": true,
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 1 }
   ],
   "ally_effects": [
     { "type": "add_combat", "value": 1 }

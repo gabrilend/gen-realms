@@ -9,7 +9,7 @@
     { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 3 }
+    { "type": "add_combat", "value": 2 }
   ],
   "flavor": "She speaks, and the wild answers.",
   "art_prompt": "tribal druid with antler headdress, surrounded by spirits, medieval fantasy"

@@ -5,11 +5,11 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 8 },
+    { "type": "add_combat", "value": 6 },
     { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 4 }
+    { "type": "add_combat", "value": 3 }
   ],
   "flavor": "When the first trees grew, it was already ancient.",
   "art_prompt": "colossal beast of living forest, eyes like stars, storms swirling, medieval fantasy"

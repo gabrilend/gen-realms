@@ -6,9 +6,7 @@
   "card_type": "base",
   "defense": 5,
   "is_outpost": false,
-  "effects": [
-    { "type": "add_combat", "value": 1 }
-  ],
+  "effects": [],
   "spawns": "wolf_token",
   "flavor": "From these ancient roots, the pack is born eternal.",
   "art_prompt": "mystical forest clearing with spirit wolves, glowing mushrooms, medieval fantasy"

@@ -4,13 +4,13 @@
   "cost": 6,
   "faction": "wilds",
   "card_type": "base",
-  "defense": 7,
+  "defense": 6,
   "is_outpost": false,
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 4 },
+    { "type": "add_combat", "value": 2 },
     { "type": "draw_card", "value": 1 }
   ],
   "flavor": "All wild things hear its call.",

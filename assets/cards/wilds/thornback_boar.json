@@ -5,10 +5,10 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 4 }
+    { "type": "add_combat", "value": 3 }
   ],
   "scrap_effects": [
-    { "type": "add_combat", "value": 3 }
+    { "type": "add_combat", "value": 2 }
   ],
   "flavor": "The thorns protect. The tusks destroy.",
   "art_prompt": "wild boar with thorny spines along its back, charging through underbrush, medieval fantasy"
