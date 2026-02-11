@@ -1,7 +1,9 @@
 # 6-001: ComfyUI API Client
 
+## Status: COMPLETED
+
 ## Current Behavior
-No image generation capability exists.
+ComfyUI API client implemented with workflow submission, polling, and image retrieval.
 
 ## Intended Behavior
 An HTTP client for ComfyUI API that:
@@ -94,8 +96,45 @@ An HTTP client for ComfyUI API that:
 ```
 
 ## Acceptance Criteria
-- [ ] Connects to ComfyUI server
-- [ ] Submits workflow successfully
-- [ ] Polls and detects completion
-- [ ] Retrieves generated images
-- [ ] Handles errors gracefully
+- [x] Connects to ComfyUI server
+- [x] Submits workflow successfully
+- [x] Polls and detects completion
+- [x] Retrieves generated images
+- [x] Handles errors gracefully
+
+## Implementation Notes
+
+### Files Created
+- `src/visual/01-comfyui-client.h` - Type definitions and function prototypes
+- `src/visual/01-comfyui-client.c` - Implementation with libcurl and cJSON
+- `tests/test-comfyui.c` - Unit tests (12 tests, all passing)
+
+### Key Decisions
+- Used numbered filename prefix (01-) for reading order per project conventions
+- Added ComfyUIStatus enum for clear status tracking
+- Implemented polling with configurable interval and max attempts
+- Used separate functions for submit, poll, and wait-for-completion patterns
+- Image data returned as raw bytes (PNG format from ComfyUI)
+
+### API Functions
+- `comfyui_config_create()` - Creates config with defaults
+- `comfyui_init()` / `comfyui_cleanup()` - Global initialization
+- `comfyui_submit_workflow()` - Submit workflow, get prompt_id
+- `comfyui_get_status()` - Poll for job status
+- `comfyui_wait_for_completion()` - Submit and poll until done
+- `comfyui_get_image()` - Retrieve generated image bytes
+
+### Test Coverage
+- Config creation and defaults
+- Endpoint URL formatting
+- Init/cleanup cycle
+- NULL argument handling
+- Connection refused error handling
+- Response/config memory safety
+
+### Note on WebSocket Support
+Real-time progress via WebSocket mentioned in spec but deferred.
+Polling approach is sufficient for initial implementation.
+WebSocket can be added later for improved UX.
+
+Completed: 2026-02-10

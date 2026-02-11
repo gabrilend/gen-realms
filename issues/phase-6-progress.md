@@ -3,13 +3,13 @@
 ## Goal
 Integrate image generation for dynamic card art, battle scene visualization, and progressive inpainting effects.
 
-## Status: Not Started
+## Status: In Progress
 
 ## Issues
 
 | ID | Description | Status |
 |----|-------------|--------|
-| 6-001 | ComfyUI API Client | pending |
+| 6-001 | ComfyUI API Client | completed |
 | 6-002 | Card Image Prompt Builder | pending |
 | 6-003 | Dynamic Art Regeneration | pending |
 | 6-003a | ↳ Regeneration Tracking | pending |
@@ -24,7 +24,7 @@ Integrate image generation for dynamic card art, battle scene visualization, and
 | 6-009 | Image Caching/Persistence | pending |
 | 6-010 | Phase 6 Demo | pending |
 
-## Completed: 0/14
+## Completed: 1/14
 
 ## Technology Stack
 - ComfyUI API for Stable Diffusion
