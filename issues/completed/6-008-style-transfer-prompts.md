@@ -114,8 +114,53 @@ Prompt engineering to maintain consistent fantasy aesthetic:
 | Artificer | Gears, constructs, runes | Bronze, copper, blue |
 
 ## Acceptance Criteria
-- [ ] Faction styles defined completely
-- [ ] Base style applied to all images
-- [ ] Negative prompts suppress unwanted elements
-- [ ] Output maintains fantasy aesthetic
-- [ ] Multi-faction cards blend styles
+- [x] Faction styles defined completely
+- [x] Base style applied to all images
+- [x] Negative prompts suppress unwanted elements
+- [x] Output maintains fantasy aesthetic
+- [x] Multi-faction cards blend styles
+
+## Implementation Notes
+
+Implemented as `assets/web/style-transfer.js`:
+
+### Complete Faction Style Definitions
+Each faction has complete style definition including:
+- `keywords` - Positive prompt additions
+- `negative` - Things to avoid
+- `colorPalette` - Array of hex color values
+- `colorNames` - Human-readable color names
+- `visualMotifs` - Key visual elements
+- `environmentHints` - Scene/location suggestions
+- `lightingStyle` - Lighting direction
+- `referenceImage` - Path to style reference
+
+### Factions Defined
+- **Merchant** (Trade Federation): Gold, purple, white, navy - ships, coins, banners
+- **Wilds** (The Wilds): Green, brown, amber, red - beasts, forests, claws
+- **Kingdom** (The Kingdom): Silver, blue, crimson, white - knights, castles, swords
+- **Artificer** (The Artificers): Bronze, copper, blue, purple - gears, constructs, runes
+- **Neutral** (Unaligned): Grey, silver, indigo, white - symbols, portals, mist
+
+### Art Style Presets
+- `painterly` - Traditional oil painting style (cfg 7.5, 30 steps)
+- `detailed` - Intricate rendering (cfg 8.0, 35 steps)
+- `stylized` - Bold graphic novel aesthetic (cfg 7.0, 28 steps)
+- `icon` - Simplified iconic style (cfg 6.5, 25 steps)
+- `cinematic` - Epic movie poster quality (cfg 8.5, 35 steps)
+
+### Key Functions
+- `blendFactionStyles(factions, weights)` - Multi-faction style blending
+- `buildStylePrompt(card, options)` - Complete styled prompt generation
+- `validateStyleConsistency(prompt, expectedFaction)` - Style validation
+- `loadReferenceImage(faction)` - Load reference images
+- `generateColorCSS()` - Generate CSS custom properties
+
+### Integration
+Works alongside `style-merger.js` which handles:
+- User preference merging
+- Art regeneration triggering
+- Queue integration
+
+## Completion Date
+2026-02-11

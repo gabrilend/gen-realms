@@ -114,8 +114,42 @@ Composition rules that govern element placement:
 | Background | SKY | 0 | Always behind |
 
 ## Acceptance Criteria
-- [ ] Elements placed in correct zones
-- [ ] Player sides consistent (left/right)
-- [ ] No overlapping elements
-- [ ] Z-layers render correctly
-- [ ] Composition visually balanced
+- [x] Elements placed in correct zones
+- [x] Player sides consistent (left/right)
+- [x] No overlapping elements
+- [x] Z-layers render correctly
+- [x] Composition visually balanced
+
+## Implementation Notes
+
+Implemented as `assets/web/scene-composition.js`:
+
+### SceneComposition Class
+- Z-layer constants (BACKGROUND=0, BASE=1, FORCES=2, ACTION=3, OVERLAY=4)
+- Zone definitions with normalized 0-1 coordinates
+- Element tracking per zone with density management
+
+### Key Functions
+- `getZoneForPlayer(playerId, elementType)` - Maps player+type to zone
+- `suggestPosition(zoneName, elementSize)` - Non-overlapping placement
+- `_calculateOverlap(a, b)` - Rectangle intersection calculation
+- `addElement()/removeElement()` - Element tracking
+- `getSortedElements()` - Z-layer sorted for rendering
+- `buildPromptForZone()` - Composition-aware prompt additions
+
+### Zone Layout
+```
++--------------------------------------------------+
+|                      SKY (z=0)                    |
++----------+------------------+--------------------+
+|          |                  |                    |
+| P1_FORCES|     CENTER       |    P2_FORCES      |
+|  (z=2)   |     (z=3)        |     (z=2)         |
++----------+------------------+--------------------+
+| P1_BASE  |                  |       P2_BASE     |
+|  (z=1)   |                  |        (z=1)      |
++----------+------------------+--------------------+
+```
+
+## Completion Date
+2026-02-11

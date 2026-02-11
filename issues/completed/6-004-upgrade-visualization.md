@@ -93,8 +93,32 @@ A system to visualize card upgrades and enhancements:
 | Combo | Multi-colored energy trails |
 
 ## Acceptance Criteria
-- [ ] Ally activation shows visually
-- [ ] Empowered state has distinct look
-- [ ] Scrap animation plays on removal
-- [ ] Multiple upgrades can combine
-- [ ] Effects render performantly
+- [x] Ally activation shows visually
+- [x] Empowered state has distinct look
+- [x] Scrap animation plays on removal
+- [x] Multiple upgrades can combine
+- [x] Effects render performantly
+
+## Implementation Notes (2026-02-11)
+
+Created `assets/web/upgrade-viz.js`:
+
+**UpgradeViz class:**
+- addEffect() / removeEffect() / clearEffects()
+- renderGlow() - Pulsing glow around cards
+- spawnParticles() - Visual particle effects
+- render() - Main render loop
+
+**Particle system:**
+- Sparkle particles for ally bonus
+- Flame particles for empowered state
+- Dust particles for scrap effect
+- Crosshair for targeting
+- Energy trails for combos
+
+**Integration helpers:**
+- applyAllyBonus(), applyEmpowered(), applyScrapped()
+- applyTargeted(), removeTargeted()
+- applyUpgradeEffects() - Auto-detect from card state
+
+## Status: COMPLETE

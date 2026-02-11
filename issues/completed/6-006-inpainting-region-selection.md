@@ -113,8 +113,32 @@ This issue has been split into sub-issues for manageable implementation:
 - 6-006c: Region Priority Queue
 
 ## Acceptance Criteria
-- [ ] Events map to correct regions (6-006b)
-- [ ] Priority queue works correctly (6-006c)
-- [ ] Unfilled regions selected first (6-006c)
-- [ ] Masks generated for inpainting (6-006c)
-- [ ] Dependencies respected (bg first) (6-006c)
+- [x] Events map to correct regions (6-006b)
+- [x] Priority queue works correctly (6-006c)
+- [x] Unfilled regions selected first (6-006c)
+- [x] Masks generated for inpainting (6-006c)
+- [x] Dependencies respected (bg first) (6-006c)
+
+## Implementation Notes (2026-02-11)
+
+Created `assets/web/region-selector.js`:
+
+**RegionSelector class:**
+- queueEvent() - Queue game events for region generation
+- getNext() / peek() - Get next task from priority queue
+- getMask() - Generate inpainting mask
+- queueAllUnfilled() - Queue all remaining regions
+
+**Event mapping:**
+- game_start -> SKY (priority 100)
+- card_played -> P1/P2_FORCES (priority 60)
+- base_played -> P1/P2_BASE (priority 80)
+- attack_player -> CENTER (priority 90)
+- game_over -> CENTER (priority 100)
+
+**Priority calculation:**
+- Base priority from event type
+- Order bonus (background first)
+- Prerequisite penalty (unfilled dependencies)
+
+## Status: COMPLETE

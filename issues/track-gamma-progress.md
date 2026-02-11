@@ -52,6 +52,13 @@ Track Gamma handles all game content and AI integration:
 | 6-003b | Style guide integration | 2026-02-11 |
 | 6-003c | Generation queue | 2026-02-11 |
 | 6-003d | Cache invalidation | 2026-02-11 |
+| 6-004 | Upgrade visualization | 2026-02-11 |
+| 6-005 | Battle canvas manager | 2026-02-11 |
+| 6-006a | Event-to-region mapping | 2026-02-11 |
+| 6-006b | Priority queue | 2026-02-11 |
+| 6-006c | Mask generation | 2026-02-11 |
+| 6-007 | Scene composition rules | 2026-02-11 |
+| 6-008 | Style transfer prompts | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -72,12 +79,7 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 6-004 | Upgrade visualization | 6-003 (done) |
-| 6-005 | Battle canvas manager | 6-001 |
-| 6-006 | Inpainting region selection | 6-005 |
-| 6-007 | Scene composition rules | 6-006 |
-| 6-008 | Style transfer prompts | 6-002 |
-| 6-009 | Image caching/persistence | 6-004 |
+| 6-009 | Image caching/persistence | 6-004 (done) |
 | 6-010 | Phase 6 Demo | 6-009, 5-010 |
 
 ## Checkpoint Status
@@ -94,8 +96,8 @@ Track Gamma handles all game content and AI integration:
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 15 complete, 6 pending
-**Total:** 23 complete, 8 pending
+**AI Issues:** 22 complete, 4 pending
+**Total:** 30 complete, 6 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -146,27 +148,51 @@ Track Gamma handles all game content and AI integration:
 - [x] `assets/web/style-merger.js` - Style guide integration (6-003b)
 - [x] `assets/web/generation-queue.js` - Generation queue (6-003c)
 - [x] `assets/web/image-cache.js` - Cache invalidation (6-003d)
-- [ ] `src/visual/04-battle-canvas.h/c` - Battle scenes (6-005)
+- [x] `assets/web/upgrade-viz.js` - Upgrade visualization (6-004)
+- [x] `assets/web/battle-canvas.js` - Battle canvas manager (6-005)
+- [x] `assets/web/region-selector.js` - Inpainting region selection (6-006)
+- [x] `assets/web/scene-composition.js` - Scene composition rules (6-007)
+- [x] `assets/web/style-transfer.js` - Style transfer prompts (6-008)
 - [ ] `issues/completed/demos/phase-6-demo.sh` - Visual generation demo
 
 ## Notes
 
-### 2026-02-11: Current Sprint
-5-008 (narrative caching) complete. 20 unit tests passing.
-- LRU eviction for cache entries
-- TTL expiration support
-- Event signature generation for cache keys
+### 2026-02-11: Visual Pipeline Complete
+Completed entire visual generation pipeline (6-003 through 6-008):
 
-6-002 (card image prompt builder) complete. 24 unit tests passing.
-- Faction-themed prompts for all card types
-- Art style variants (painterly, detailed, stylized, icon)
-- Upgrade visual modifiers for enhanced cards
-
-6-003 (dynamic art regeneration) complete. 4 JavaScript modules:
+**6-003 (dynamic art regeneration)** - 4 JavaScript modules:
 - art-tracker.js: Track cards needing regeneration
 - style-merger.js: Merge user preferences with card prompts
 - generation-queue.js: Priority queue with retry logic
 - image-cache.js: Two-tier cache (memory + IndexedDB)
+
+**6-004 (upgrade visualization)** - upgrade-viz.js:
+- Particle effects for ally_active, empowered, scrapped, targeted
+- Glow rendering with pulsing animation
+- Canvas-based overlay system
+
+**6-005 (battle canvas manager)** - battle-canvas.js:
+- Region-based canvas with 6 defined zones
+- Undo/redo history stack (max 50 states)
+- Mask generation for inpainting
+- Export to PNG/JPEG
+
+**6-006 (inpainting region selection)** - region-selector.js:
+- Event-to-region mapping (game_start, card_played, attack, etc.)
+- Priority queue with dependency-aware ordering
+- Region generation order: sky → bases → forces → center
+
+**6-007 (scene composition rules)** - scene-composition.js:
+- Z-layer management (BACKGROUND=0 through OVERLAY=4)
+- Element placement with overlap detection
+- Zone density tracking
+- Composition-aware prompt building
+
+**6-008 (style transfer prompts)** - style-transfer.js:
+- Complete faction style definitions with color palettes
+- 5 art style presets (painterly, detailed, stylized, icon, cinematic)
+- Multi-faction style blending
+- Style consistency validation
 
 ### Faction Themes
 
@@ -185,7 +211,7 @@ Track Gamma handles all game content and AI integration:
 - 6-003 needs 3-006 (style preferences) for art regeneration
 - Phase demos (5-010, 6-010) need 3-010 (Phase 3 Demo)
 
-### Next Steps After 5-008
-1. 6-002 (card image prompts) - can start immediately
-2. 6-005 (battle canvas) - can start immediately
-3. 5-006 (trade row logic) - blocked on Track Alpha 1-004
+### Next Steps
+1. 6-009 (image caching/persistence) - can start immediately
+2. 5-006 (trade row logic) - blocked on Track Alpha 1-004
+3. Phase demos (5-010, 6-010) - blocked on respective dependencies

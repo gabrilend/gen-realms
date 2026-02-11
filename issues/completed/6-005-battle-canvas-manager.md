@@ -112,8 +112,26 @@ A canvas manager that tracks the full battle scene:
 ```
 
 ## Acceptance Criteria
-- [ ] Canvas initializes correctly
-- [ ] Regions can be updated individually
-- [ ] Fill state tracked per region
-- [ ] History preserved for replay
-- [ ] Final image exports properly
+- [x] Canvas initializes correctly
+- [x] Regions can be updated individually
+- [x] Fill state tracked per region
+- [x] History preserved for replay
+- [x] Final image exports properly
+
+## Implementation Notes (2026-02-11)
+
+Created `assets/web/battle-canvas.js`:
+
+**BattleCanvas class:**
+- Region-based canvas management (sky, p1_forces, center, p2_forces, p1_base, p2_base)
+- setRegion(), setRegionFromUrl(), setRegionFromBase64()
+- Automatic history tracking for undo/redo
+- getMask() for inpainting unfilled regions
+
+**Features:**
+- Percentage-based region bounds (responsive)
+- Fill state tracking per region
+- Export to PNG/JPEG data URL or Blob
+- renderTo() for compositing
+
+## Status: COMPLETE
