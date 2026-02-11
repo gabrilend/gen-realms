@@ -19,7 +19,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 ### Alpha → Beta (Prompt Infrastructure)
 | ID | Description | Status | Dependencies |
 |----|-------------|--------|--------------|
-| 5-002 | Prompt Network Structure | pending | 5-001 |
+| 5-002 | Prompt Network Structure | completed | 5-001 |
 | 5-003 | World State Prompt | pending | 5-002 |
 | 6-002 | Card Image Prompt Builder | pending | 6-001, 4-001 |
 | 6-008 | Style Transfer Prompts | pending | 6-002 |
@@ -50,7 +50,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 | 6-009 | Image Caching/Persistence | pending | 6-004 |
 | 6-010 | Phase 6 Demo | pending | 6-009, 5-010 |
 
-## Completed Issues: 2/20
+## Completed Issues: 3/20
 
 ## Deliverables Progress
 
@@ -58,7 +58,9 @@ This track enables AI-driven game narration and dynamic card art generation.
 - [x] `src/llm/01-api-client.h` - API client header
 - [x] `src/llm/01-api-client.c` - API client implementation
 - [x] `tests/test-llm.c` - Unit tests (9 passing)
-- [ ] Prompt network structure
+- [x] `src/llm/02-prompts.h` - Prompt network header
+- [x] `src/llm/02-prompts.c` - Prompt templates and interpolation
+- [x] `tests/test-prompts.c` - Unit tests (15 passing)
 - [ ] Context window management
 - [ ] Narrative caching
 
