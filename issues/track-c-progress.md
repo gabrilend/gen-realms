@@ -32,6 +32,8 @@ the GAMMA checkpoint.
 | 3-006b | Preferences UI panel | 2026-02-11 |
 | 3-008b | Card movement animations | 2026-02-11 |
 | 3-008c | Attack/damage effects | 2026-02-11 |
+| 3-006c | File-based export/import | 2026-02-11 |
+| 3-007 | Draw order interface | 2026-02-11 |
 
 ### In Progress
 
@@ -49,8 +51,6 @@ All Beta-Gamma input system issues completed.
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 3-006c | Preferences export/import | 3-006a |
-| 3-007 | Draw order interface | 3-005, 2-005* |
 | 3-010 | Phase 3 Demo | All above, 2-010 |
 
 ## Checkpoint Requirements
@@ -193,6 +193,21 @@ Expected deliverables when Track C is complete:
   - Authority change tick animation
   - Turn change overlay announcement
   - Resource gain indicators (trade/combat)
+- Implemented file-based export/import (3-006c)
+  - Download preferences as JSON file
+  - Upload/import from JSON file
+  - Clipboard copy as alternative
+  - Validation with string length limits
+  - Merge with existing preferences
+  - Success/error message display
+- Implemented draw order interface (3-007)
+  - draw-order.js with full-screen overlay
+  - Click-to-select card ordering
+  - Selection badge showing order number
+  - Hover/selection visual feedback
+  - Confirm and Default Order buttons
+  - Auto-confirm when all cards selected
+  - Keyboard: D to demo, Escape to cancel
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering

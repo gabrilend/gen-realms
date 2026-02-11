@@ -70,6 +70,9 @@
     <!-- Preferences UI -->
     <script src="preferences-ui.js"></script>
 
+    <!-- Draw order selection UI -->
+    <script src="draw-order.js"></script>
+
     <!-- Input handling -->
     <script src="input-handler.js"></script>
 
@@ -245,6 +248,48 @@
                 window.preferencesUI.toggle();
             });
 
+            /* Wire up draw order UI click handling */
+            canvas.addEventListener('click', function(e) {
+                if (window.drawOrderUI.isActive()) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    /* Check buttons first, then cards */
+                    if (!window.drawOrderUI.handleButtonClick(x, y)) {
+                        window.drawOrderUI.handleClick(x, y);
+                    }
+                }
+            });
+
+            canvas.addEventListener('mousemove', function(e) {
+                if (window.drawOrderUI.isActive()) {
+                    const rect = canvas.getBoundingClientRect();
+                    window.drawOrderUI.handleMouseMove(
+                        e.clientX - rect.left,
+                        e.clientY - rect.top
+                    );
+                }
+            });
+
+            /* Add 'D' key to trigger draw order demo */
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'd' || e.key === 'D') {
+                    if (!window.drawOrderUI.isActive() && !e.ctrlKey && !e.metaKey) {
+                        /* Demo: show draw order UI with 5 cards */
+                        window.drawOrderUI.show(5, function(order) {
+                            window.narrative.addAction('Draw order set: ' +
+                                order.map(function(i) { return i + 1; }).join(', '));
+                        }, function() {
+                            window.narrative.addSystem('Draw order cancelled');
+                        });
+                    }
+                }
+                if (e.key === 'Escape' && window.drawOrderUI.isActive()) {
+                    window.drawOrderUI.cancel();
+                }
+            });
+
             /* Initialize narrative with demo entries */
             window.narrative.add(
                 'The merchant fleet arrives at the frontier station, their holds filled with exotic goods from distant worlds.'
@@ -359,6 +404,9 @@
 
                 /* Render visual effects (on top of card animations) */
                 window.effects.render(ctx, canvas.width, canvas.height);
+
+                /* Render draw order UI (on top of everything when active) */
+                window.drawOrderUI.render(ctx, canvas.width, canvas.height);
             }
 
             window.canvasLayout.startRenderLoop(renderDemo);

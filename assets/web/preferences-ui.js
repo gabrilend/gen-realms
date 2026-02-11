@@ -112,9 +112,13 @@
                 </div>
 
                 <div class="pref-footer">
-                    <button id="pref-export" class="btn-small">Export Settings</button>
-                    <button id="pref-import" class="btn-small">Import Settings</button>
+                    <button id="pref-export-file" class="btn-small">Download File</button>
+                    <button id="pref-export-clipboard" class="btn-small">Copy to Clipboard</button>
+                    <button id="pref-import-file" class="btn-small">Import File</button>
+                    <input type="file" id="pref-import-input" accept=".json" style="display:none">
                 </div>
+
+                <div id="pref-message" class="pref-message hidden"></div>
             </div>
             <!-- }}} -->
         `;
@@ -158,14 +162,24 @@
             window.preferencesUI.close();
         });
 
-        /* Export button */
-        panel.querySelector('#pref-export').addEventListener('click', function() {
-            window.preferencesUI.exportSettings();
+        /* Export to file button */
+        panel.querySelector('#pref-export-file').addEventListener('click', function() {
+            window.preferencesUI.exportToFile();
         });
 
-        /* Import button */
-        panel.querySelector('#pref-import').addEventListener('click', function() {
-            window.preferencesUI.importSettings();
+        /* Export to clipboard button */
+        panel.querySelector('#pref-export-clipboard').addEventListener('click', function() {
+            window.preferencesUI.exportToClipboard();
+        });
+
+        /* Import from file button */
+        panel.querySelector('#pref-import-file').addEventListener('click', function() {
+            panel.querySelector('#pref-import-input').click();
+        });
+
+        /* File input change handler */
+        panel.querySelector('#pref-import-input').addEventListener('change', function(e) {
+            window.preferencesUI.importFromFile(e);
         });
 
         /* Close on Escape key */
@@ -309,12 +323,61 @@
         },
         /* }}} */
 
-        /* {{{ exportSettings
-         * Export settings to clipboard or file.
+        /* {{{ showMessage
+         * Show a temporary message in the panel.
          */
-        exportSettings: function() {
+        showMessage: function(text, isError) {
+            const msgEl = state.panel ? state.panel.querySelector('#pref-message') : null;
+            if (!msgEl) return;
+
+            msgEl.textContent = text;
+            msgEl.className = 'pref-message' + (isError ? ' error' : ' success');
+            msgEl.classList.remove('hidden');
+
+            /* Auto-hide after 3 seconds */
+            setTimeout(function() {
+                msgEl.classList.add('hidden');
+            }, 3000);
+        },
+        /* }}} */
+
+        /* {{{ exportToFile
+         * Export settings as downloadable JSON file.
+         */
+        exportToFile: function() {
             if (!window.preferences) {
-                console.error('Preferences system not available');
+                this.showMessage('Preferences system not available', true);
+                return;
+            }
+
+            const prefs = window.preferences.load();
+
+            /* Remove internal version field for cleaner export */
+            const exportable = { ...prefs };
+            delete exportable.version;
+
+            const json = JSON.stringify(exportable, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'symbeline-preferences.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            URL.revokeObjectURL(url);
+            this.showMessage('Settings downloaded');
+        },
+        /* }}} */
+
+        /* {{{ exportToClipboard
+         * Export settings to clipboard.
+         */
+        exportToClipboard: function() {
+            if (!window.preferences) {
+                this.showMessage('Preferences system not available', true);
                 return;
             }
 
@@ -322,32 +385,121 @@
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(json).then(function() {
-                    alert('Settings copied to clipboard');
+                    window.preferencesUI.showMessage('Settings copied to clipboard');
                 }).catch(function(err) {
                     console.error('Failed to copy:', err);
-                    prompt('Copy these settings:', json);
+                    window.preferencesUI.showMessage('Copy failed - check console', true);
                 });
             } else {
-                prompt('Copy these settings:', json);
+                /* Fallback for older browsers */
+                const textarea = document.createElement('textarea');
+                textarea.value = json;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    this.showMessage('Settings copied to clipboard');
+                } catch (err) {
+                    this.showMessage('Copy failed', true);
+                }
+                document.body.removeChild(textarea);
             }
         },
         /* }}} */
 
-        /* {{{ importSettings
-         * Import settings from clipboard or prompt.
+        /* {{{ importFromFile
+         * Import settings from file input.
          */
-        importSettings: function() {
-            const json = prompt('Paste settings JSON:');
-            if (!json) return;
+        importFromFile: function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            if (window.preferences && window.preferences.import(json)) {
-                const prefs = window.preferences.load();
-                populateFromPrefs(prefs);
-                applyPreferences(prefs);
-                alert('Settings imported successfully');
-            } else {
-                alert('Failed to import settings - invalid format');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    const validated = window.preferencesUI.validateImportedPrefs(imported);
+
+                    if (validated) {
+                        /* Merge with current preferences */
+                        const current = window.preferences ? window.preferences.load() : {};
+                        const merged = { ...current, ...validated };
+
+                        if (window.preferences) {
+                            window.preferences.save(merged);
+                        }
+
+                        populateFromPrefs(merged);
+                        applyPreferences(merged);
+                        window.preferencesUI.showMessage('Settings imported successfully');
+                    } else {
+                        window.preferencesUI.showMessage('No valid settings found in file', true);
+                    }
+                } catch (err) {
+                    console.error('Import error:', err);
+                    window.preferencesUI.showMessage('Invalid JSON file: ' + err.message, true);
+                }
+            };
+
+            reader.onerror = function() {
+                window.preferencesUI.showMessage('Failed to read file', true);
+            };
+
+            reader.readAsText(file);
+
+            /* Reset file input so same file can be selected again */
+            event.target.value = '';
+        },
+        /* }}} */
+
+        /* {{{ validateImportedPrefs
+         * Validate and sanitize imported preferences.
+         */
+        validateImportedPrefs: function(data) {
+            if (typeof data !== 'object' || data === null) {
+                return null;
             }
+
+            const validated = {};
+            const MAX_STRING_LENGTH = 500;
+
+            /* String fields with length limit */
+            if (typeof data.styleGuide === 'string') {
+                validated.styleGuide = data.styleGuide.substring(0, MAX_STRING_LENGTH);
+            }
+            if (typeof data.negativePrompts === 'string') {
+                validated.negativePrompts = data.negativePrompts.substring(0, MAX_STRING_LENGTH);
+            }
+
+            /* Enum fields */
+            const validFrameStyles = ['ornate-gold', 'simple-border', 'faction-colored'];
+            if (validFrameStyles.includes(data.cardFrameStyle)) {
+                validated.cardFrameStyle = data.cardFrameStyle;
+            }
+
+            const validFonts = ['serif', 'sans-serif', 'monospace'];
+            if (validFonts.includes(data.narrativeFont)) {
+                validated.narrativeFont = data.narrativeFont;
+            }
+
+            /* Numeric fields with range */
+            if (typeof data.animationSpeed === 'number' &&
+                data.animationSpeed >= 0.5 && data.animationSpeed <= 2.0) {
+                validated.animationSpeed = data.animationSpeed;
+            }
+
+            /* Boolean fields */
+            const booleanFields = [
+                'showUpgradeBadges', 'showFactionColors',
+                'reduceMotion', 'highContrast', 'largeText'
+            ];
+            booleanFields.forEach(function(field) {
+                if (typeof data[field] === 'boolean') {
+                    validated[field] = data[field];
+                }
+            });
+
+            return Object.keys(validated).length > 0 ? validated : null;
         },
         /* }}} */
 
