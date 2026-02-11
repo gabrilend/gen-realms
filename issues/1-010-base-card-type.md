@@ -2,39 +2,107 @@
 
 ## Current Behavior
 No base card type exists. All cards are treated as ships that leave play.
+Bases are currently stored in a single `bases` array in Deck.
 
 ## Intended Behavior
-C-based base card handling that:
+C-based base card handling with **frontier/interior placement choice**:
+
+### Core Base Mechanics
 - Stays in play across turns (until destroyed)
 - Has defense value (must be attacked to destroy)
-- May be an "outpost" (must be destroyed before player)
 - Effects trigger each turn (not just when played)
 - Effects activate the turn AFTER being played (deployment delay)
-- Tracked separately from played ships in Deck struct
 - Tracks current damage taken
+
+### Frontier/Interior Zones (replaces outpost concept)
+When playing a base, the player chooses to place it in either zone:
+
+**Frontier Zone:**
+- Exposed position, attacked first
+- ALL frontier bases must be destroyed before interior can be targeted
+- Art generation uses "exposed, battle-ready, weathered" themes
+- Thematically: forward camps, watchtowers, front-line fortifications
+- Strategic: sacrifice these to protect interior
+
+**Interior Zone:**
+- Protected position, attacked last
+- Cannot be targeted while any frontier base exists
+- Art generation uses "secure, established, ornate" themes
+- Thematically: castles, guild halls, deep sanctuaries
+- Strategic: place high-value bases here for protection
+
+### Combat Targeting Priority
+1. Frontier bases (all must be destroyed first)
+2. Interior bases (only targetable when frontier is empty)
+3. Player authority (only when no bases remain)
+
+### Art Generation Impact
+The placement zone affects the ComfyUI prompt:
+```
+Frontier: "exposed forward camp, battle-worn, edge of wilderness, temporary fortification"
+Interior: "fortified stronghold, protected walls, ornate banners, established seat of power"
+```
+
+**Key design point:** Same base card type placed in different zones = visually distinct art.
+A "Tower" placed on frontier looks like a wooden watchtower; placed in interior looks like a stone castle tower.
 
 ## Suggested Implementation Steps
 
-1. CardType already has base properties from 1-001:
+1. Add placement enum to CardInstance:
    ```c
-   // In CardType:
-   int defense;       // health for bases
-   bool is_outpost;   // must destroy before player
+   typedef enum {
+       ZONE_NONE = 0,      // Not placed (ships, hand cards)
+       ZONE_FRONTIER,      // Exposed, attacked first
+       ZONE_INTERIOR       // Protected, attacked last
+   } BasePlacement;
    ```
-2. Add to CardInstance for tracking:
+
+2. Modify CardInstance (from 1-001):
    ```c
    // Add to CardInstance:
-   bool deployed;     // true after first full turn
-   int damage_taken;  // for bases, tracks damage
+   BasePlacement placement;  // Where base is placed
+   bool deployed;            // true after first full turn
+   int damage_taken;         // tracks damage for bases
    ```
-3. Deck already has `in_play_bases` array from 1-002
-4. Implement `void deck_play_base(Deck* deck, CardInstance* base)`
-5. Implement `void deck_remove_base(Deck* deck, CardInstance* base)`
-6. Modify `deck_end_turn()` to NOT discard bases
+
+3. Split Deck base storage into two zones:
+   ```c
+   // Replace single bases array with:
+   CardInstance** frontier_bases;
+   int frontier_base_count;
+   int frontier_base_capacity;
+
+   CardInstance** interior_bases;
+   int interior_base_count;
+   int interior_base_capacity;
+   ```
+
+4. Implement placement functions:
+   ```c
+   bool deck_play_base_to_frontier(Deck* deck, CardInstance* base);
+   bool deck_play_base_to_interior(Deck* deck, CardInstance* base);
+   ```
+
+5. Update combat targeting (in 06-combat.c):
+   ```c
+   int combat_get_valid_targets(Game* game, CombatTarget* out, int max) {
+       // Check frontier bases first (all must be destroyed)
+       // Then interior bases (only if frontier empty)
+       // Finally player (only if no bases remain)
+   }
+   ```
+
+6. Add helper for art prompt generation:
+   ```c
+   const char* base_placement_art_modifier(BasePlacement placement);
+   // Returns "frontier" or "interior" theme keywords
+   ```
+
 7. Implement deployment delay in turn start:
    ```c
    void game_deploy_bases(Game* game, Player* player) {
-       for each base in player->deck->in_play_bases {
+       // Process both frontier and interior bases
+       for each base in frontier_bases + interior_bases {
            if (!base->deployed) {
                base->deployed = true;
            } else {
@@ -43,7 +111,16 @@ C-based base card handling that:
        }
    }
    ```
-8. Integrate with combat (outpost priority check)
+
+8. Update game action to include placement choice:
+   ```c
+   typedef struct {
+       ActionType type;
+       // ... existing fields ...
+       BasePlacement base_placement;  // For ACTION_PLAY_CARD when card is base
+   } Action;
+   ```
+
 9. Write tests in `tests/test-base.c`
 
 ## Related Documents
@@ -60,6 +137,11 @@ C-based base card handling that:
 - [ ] Bases stay in play after turn ends
 - [ ] Bases do not trigger effects on first turn (deployment delay)
 - [ ] Deployed bases trigger effects each turn
-- [ ] Outposts block direct player attacks
+- [ ] Player can choose frontier or interior placement when playing a base
+- [ ] Frontier bases must all be destroyed before interior can be targeted
+- [ ] Interior bases cannot be attacked while frontier bases exist
+- [ ] Player authority only targetable when no bases remain
 - [ ] Destroyed bases go to owner's discard pile
 - [ ] Base damage tracking works correctly
+- [ ] Placement zone stored on CardInstance for art generation
+- [ ] base_placement_art_modifier() returns zone-specific prompt keywords

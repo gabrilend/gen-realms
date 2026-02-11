@@ -85,3 +85,9 @@ Additionally, a CardInstance struct for tracking individual card copies with upg
 - Added upgrade support via card_instance_apply_upgrade()
 - Added total_combat/trade/authority helpers for upgrade calculation
 - 20 tests passing in tests/test-core.c
+
+## Future Changes (1-010)
+When implementing Base Card Type (1-010), CardType.is_outpost will be REMOVED.
+Instead, CardInstance will gain a BasePlacement field (ZONE_FRONTIER, ZONE_INTERIOR).
+The placement zone is chosen at play time, not defined on the card type.
+See 1-010-base-card-type.md for full details.

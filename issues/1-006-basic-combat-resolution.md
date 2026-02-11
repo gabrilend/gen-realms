@@ -7,9 +7,12 @@ No combat system exists. Attack values cannot damage opponents.
 A C-based combat system that:
 - Accumulates combat power from played cards
 - Allows attacking opponent's authority
-- Allows attacking opponent's bases (outposts first)
+- Allows attacking opponent's bases (frontier first, then interior - see 1-010)
 - Tracks damage dealt this turn
 - Handles base destruction
+
+**Note:** Current implementation uses outpost priority. Will be refactored to
+frontier/interior zones when 1-010 (Base Card Type) is implemented.
 
 ## Suggested Implementation Steps
 
@@ -47,10 +50,11 @@ A C-based combat system that:
 ## Acceptance Criteria
 - [x] Combat functions compile without errors
 - [x] Combat power correctly reduces opponent authority
-- [x] Cannot attack player while outposts exist
+- [x] Cannot attack player while outposts exist (to be refactored for frontier/interior in 1-010)
 - [x] Base destruction removes base from play and to discard
 - [x] Combat power tracked per player per turn
 - [ ] Combat actions generate events for narrative hooks (Phase 5)
+- [ ] Refactor for frontier/interior zones (see 1-010) - frontier must all be destroyed before interior
 
 ## Implementation Notes (2026-02-10)
 - Created src/core/06-combat.{h,c}

@@ -78,3 +78,9 @@ A deck management system in C that handles:
 - Bases automatically routed to base zone on play
 - Scrap functions return card to caller for cleanup
 - 21 tests passing in tests/test-core.c
+
+## Future Changes (1-010)
+When implementing Base Card Type (1-010), the single `bases` array will be split into:
+- `frontier_bases[]` - Exposed zone, must all be destroyed first
+- `interior_bases[]` - Protected zone, only targetable when frontier is empty
+See 1-010-base-card-type.md for full details.
