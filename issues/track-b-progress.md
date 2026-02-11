@@ -91,6 +91,24 @@ Track B implements the network layer enabling multi-client connections. It inclu
   - 21 protocol error codes with human-readable messages
   - Integration with 1-012 gamestate serialization
 
+### 2-003: WebSocket Handler
+- **Status:** COMPLETE
+- **Completed:** 2026-02-11
+- **Files Created:**
+  - `src/net/05-websocket.h` - WebSocket API and structures
+  - `src/net/05-websocket.c` - Full implementation (~450 lines)
+  - `tests/test-websocket.c` - Unit tests
+- **Features Implemented:**
+  - WSContext for connection pool management (64 max connections)
+  - WSConnection per-connection state with player/game association
+  - Protocol callback handling ESTABLISHED, RECEIVE, WRITEABLE, CLOSED
+  - Integration with 04-protocol for message parsing/dispatch
+  - HTTP server modified to include WebSocket protocol
+  - ws_send() and ws_broadcast() for message delivery
+  - ws_broadcast_gamestate() for player-specific filtered state
+  - Player join/leave notifications
+- **Dependencies:** Requires `libwebsockets-devel` package
+
 ## In Progress Issues
 
 (None currently)
@@ -103,8 +121,8 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ### Alpha → Beta
 - ~~2-005*: Protocol implementation~~ - COMPLETE
-- 2-003: WebSocket handler - Depends on 2-002, 2-005 (UNBLOCKED)
-- 2-006: Connection manager - Depends on 2-003, 2-004
+- ~~2-003: WebSocket handler~~ - COMPLETE
+- 2-006: Connection manager - Depends on 2-003, 2-004 (UNBLOCKED)
 
 ### Beta → Gamma
 - 2-007: Game session management - Depends on 2-006

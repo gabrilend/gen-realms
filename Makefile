@@ -47,6 +47,7 @@ TEST_HTTP_BIN = $(BIN_DIR)/test-http
 TEST_SSH_BIN = $(BIN_DIR)/test-ssh
 TEST_SERIALIZE_BIN = $(BIN_DIR)/test-serialize
 TEST_PROTOCOL_BIN = $(BIN_DIR)/test-protocol
+TEST_WEBSOCKET_BIN = $(BIN_DIR)/test-websocket
 # }}}
 
 # {{{ source files
@@ -119,6 +120,16 @@ TEST_PROTOCOL_SOURCES = \
 	$(CORE_SOURCES) \
 	$(CORE_DIR)/09-serialize.c \
 	$(CJSON_SOURCES)
+
+TEST_WEBSOCKET_SOURCES = \
+	tests/test-websocket.c \
+	$(NET_DIR)/05-websocket.c \
+	$(NET_DIR)/04-protocol.c \
+	$(NET_DIR)/02-http.c \
+	$(NET_DIR)/01-config.c \
+	$(CORE_SOURCES) \
+	$(CORE_DIR)/09-serialize.c \
+	$(CJSON_SOURCES)
 # }}}
 
 # {{{ object files
@@ -133,6 +144,7 @@ TEST_HTTP_OBJECTS = $(TEST_HTTP_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SSH_OBJECTS = $(TEST_SSH_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SERIALIZE_OBJECTS = $(TEST_SERIALIZE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_PROTOCOL_OBJECTS = $(TEST_PROTOCOL_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_WEBSOCKET_OBJECTS = $(TEST_WEBSOCKET_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
@@ -141,7 +153,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol dirs
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket dirs
 
 all: dirs terminal
 
@@ -218,6 +230,13 @@ test-protocol: dirs $(TEST_PROTOCOL_BIN)
 
 $(TEST_PROTOCOL_BIN): $(TEST_PROTOCOL_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
+
+# WebSocket tests (Track B: 2-003, requires libwebsockets)
+test-websocket: dirs $(TEST_WEBSOCKET_BIN)
+	./$(TEST_WEBSOCKET_BIN)
+
+$(TEST_WEBSOCKET_BIN): $(TEST_WEBSOCKET_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(WEBSOCKET_LIBS) $(MATH_LIBS)
 
 # Object file compilation
 $(BUILD_DIR)/%.o: %.c

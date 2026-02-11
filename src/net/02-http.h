@@ -17,6 +17,9 @@
 /* Forward declaration to avoid libwebsockets header dependency */
 struct lws_context;
 
+/* Forward declaration for WebSocket context */
+struct WSContext;
+
 /* {{{ HTTP Server Structures */
 
 /* HTTP server instance */
@@ -25,6 +28,7 @@ typedef struct {
     const ServerConfig* config;     /* Reference to server config */
     char* web_root;                 /* Path to assets/web/ directory */
     bool running;                   /* Server running flag */
+    struct WSContext* ws_context;   /* Optional WebSocket context */
 } HttpServer;
 
 /* MIME type entry for file extension mapping */
@@ -44,6 +48,16 @@ typedef struct {
  * Returns NULL on failure.
  */
 HttpServer* http_server_create(const ServerConfig* config, const char* web_root);
+
+/*
+ * http_server_create_with_websocket
+ * Creates an HTTP server with WebSocket support.
+ * The ws_context is used for WebSocket connection management.
+ * Returns NULL on failure.
+ */
+HttpServer* http_server_create_with_websocket(const ServerConfig* config,
+                                              const char* web_root,
+                                              struct WSContext* ws_context);
 
 /*
  * http_server_start
@@ -80,6 +94,13 @@ void http_server_destroy(HttpServer* server);
  * Returns true if server is currently running.
  */
 bool http_server_is_running(const HttpServer* server);
+
+/*
+ * http_server_get_ws_context
+ * Returns the WebSocket context if server was created with WebSocket support.
+ * Returns NULL if no WebSocket support.
+ */
+struct WSContext* http_server_get_ws_context(const HttpServer* server);
 
 /* }}} */
 

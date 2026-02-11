@@ -1,7 +1,23 @@
 # 2-003: WebSocket Handler
 
+## Status
+**COMPLETE** - 2026-02-11
+
 ## Current Behavior
-No WebSocket capability exists.
+WebSocket handler fully implemented in `src/net/05-websocket.c/h`:
+- WSContext for connection pool management (64 max connections)
+- WSConnection per-connection state with player/game association
+- Protocol callback handling ESTABLISHED, RECEIVE, WRITEABLE, CLOSED
+- Integration with 04-protocol for message parsing/dispatch
+- HTTP server modified to include WebSocket protocol
+
+## Files Created
+- `src/net/05-websocket.h` - WebSocket API and structures
+- `src/net/05-websocket.c` - Full implementation (~450 lines)
+- `tests/test-websocket.c` - Unit tests (requires libwebsockets)
+
+## Previous Behavior
+No WebSocket capability existed.
 
 ## Intended Behavior
 A WebSocket handler using libwebsockets that:
@@ -60,8 +76,12 @@ A WebSocket handler using libwebsockets that:
 ```
 
 ## Acceptance Criteria
-- [ ] WebSocket connections establish
-- [ ] JSON messages parse correctly
-- [ ] Actions dispatch to game engine
-- [ ] Gamestate broadcasts to all players
-- [ ] Disconnections handled gracefully
+- [x] WebSocket connections establish (callback_game handles LWS_CALLBACK_ESTABLISHED)
+- [x] JSON messages parse correctly (ws_handle_message uses protocol_parse)
+- [x] Actions dispatch to game engine (protocol_dispatch routes to handlers)
+- [x] Gamestate broadcasts to all players (ws_broadcast_gamestate)
+- [x] Disconnections handled gracefully (LWS_CALLBACK_CLOSED with player_left notification)
+
+## Build Notes
+Requires `libwebsockets-devel` package. Install with: `xbps-install libwebsockets-devel`
+Tests can be run with `make test-websocket` once library is installed.

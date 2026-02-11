@@ -10,6 +10,7 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include "02-http.h"
+#include "05-websocket.h"
 #include "../../libs/cJSON.h"
 #include <libwebsockets.h>
 #include <stdio.h>
@@ -100,6 +101,16 @@ typedef struct {
     size_t file_size;
     size_t bytes_sent;
 } HttpSessionData;
+/* }}} */
+
+/* {{{ LwsUserData
+ * Wrapper struct stored in lws context user data.
+ * Allows both HTTP and WebSocket callbacks to access their data.
+ */
+typedef struct {
+    HttpServer* server;
+    WSContext* ws_context;
+} LwsUserData;
 /* }}} */
 
 /* {{{ build_file_path
@@ -256,7 +267,8 @@ static int send_404(struct lws* wsi) {
 static int callback_http(struct lws* wsi, enum lws_callback_reasons reason,
                         void* user, void* in, size_t len) {
     HttpSessionData* session = (HttpSessionData*)user;
-    HttpServer* server = (HttpServer*)lws_context_user(lws_get_context(wsi));
+    LwsUserData* lws_user = (LwsUserData*)lws_context_user(lws_get_context(wsi));
+    HttpServer* server = lws_user ? lws_user->server : NULL;
 
     switch (reason) {
         case LWS_CALLBACK_HTTP: {
@@ -405,6 +417,14 @@ static const struct lws_protocols protocols[] = {
 
 /* {{{ http_server_create */
 HttpServer* http_server_create(const ServerConfig* config, const char* web_root) {
+    return http_server_create_with_websocket(config, web_root, NULL);
+}
+/* }}} */
+
+/* {{{ http_server_create_with_websocket */
+HttpServer* http_server_create_with_websocket(const ServerConfig* config,
+                                              const char* web_root,
+                                              WSContext* ws_context) {
     if (config == NULL) {
         return NULL;
     }
@@ -417,6 +437,7 @@ HttpServer* http_server_create(const ServerConfig* config, const char* web_root)
     server->config = config;
     server->running = false;
     server->context = NULL;
+    server->ws_context = ws_context;
 
     /* Set web root */
     if (web_root != NULL) {
@@ -434,6 +455,9 @@ HttpServer* http_server_create(const ServerConfig* config, const char* web_root)
 }
 /* }}} */
 
+/* Static storage for lws user data (persists across context lifetime) */
+static LwsUserData lws_user_data;
+
 /* {{{ http_server_start */
 bool http_server_start(HttpServer* server) {
     if (server == NULL || server->running) {
@@ -444,9 +468,27 @@ bool http_server_start(HttpServer* server) {
     memset(&info, 0, sizeof(info));
 
     info.port = server->config->game_port;
-    info.protocols = protocols;
-    info.user = server;
     info.options = LWS_SERVER_OPTION_HTTP_HEADERS_SECURITY_BEST_PRACTICES_ENFORCE;
+
+    /* Set up user data wrapper */
+    lws_user_data.server = server;
+    lws_user_data.ws_context = server->ws_context;
+    info.user = &lws_user_data;
+
+    /* Build protocols array - HTTP and optionally WebSocket */
+    if (server->ws_context != NULL) {
+        /* Create combined protocols array: HTTP + WebSocket + NULL terminator */
+        static struct lws_protocols combined_protocols[3];
+        combined_protocols[0] = protocols[0];  /* HTTP protocol */
+        const struct lws_protocols* ws_proto = ws_get_protocol();
+        combined_protocols[1] = *ws_proto;     /* WebSocket protocol */
+        combined_protocols[2].name = NULL;     /* Terminator */
+        combined_protocols[2].callback = NULL;
+
+        info.protocols = combined_protocols;
+    } else {
+        info.protocols = protocols;
+    }
 
     server->context = lws_create_context(&info);
     if (server->context == NULL) {
@@ -457,6 +499,9 @@ bool http_server_start(HttpServer* server) {
     server->running = true;
     printf("HTTP server started on port %d\n", server->config->game_port);
     printf("Serving files from: %s\n", server->web_root);
+    if (server->ws_context != NULL) {
+        printf("WebSocket support enabled\n");
+    }
 
     return true;
 }
@@ -504,5 +549,14 @@ bool http_server_is_running(const HttpServer* server) {
         return false;
     }
     return server->running;
+}
+/* }}} */
+
+/* {{{ http_server_get_ws_context */
+WSContext* http_server_get_ws_context(const HttpServer* server) {
+    if (server == NULL) {
+        return NULL;
+    }
+    return server->ws_context;
 }
 /* }}} */
