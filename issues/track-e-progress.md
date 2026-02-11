@@ -21,7 +21,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 |----|-------------|--------|--------------|
 | 5-002 | Prompt Network Structure | completed | 5-001 |
 | 5-003 | World State Prompt | completed | 5-002 |
-| 6-002 | Card Image Prompt Builder | pending | 6-001, 4-001 |
+| 6-002 | Card Image Prompt Builder | completed | 6-001, 4-001 |
 | 6-008 | Style Transfer Prompts | pending | 6-002 |
 
 ### Beta → Gamma (Context Management)
@@ -50,7 +50,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 | 6-009 | Image Caching/Persistence | pending | 6-004 |
 | 6-010 | Phase 6 Demo | pending | 6-009, 5-010 |
 
-## Completed Issues: 8/20
+## Completed Issues: 9/20
 
 ## Deliverables Progress
 
@@ -83,7 +83,9 @@ This track enables AI-driven game narration and dynamic card art generation.
 - [x] `src/visual/01-comfyui-client.h` - ComfyUI client header
 - [x] `src/visual/01-comfyui-client.c` - ComfyUI client implementation
 - [x] `tests/test-comfyui.c` - Unit tests (12 passing)
-- [ ] Card image prompt builder
+- [x] `src/visual/02-card-prompts.h` - Card prompt builder header
+- [x] `src/visual/02-card-prompts.c` - Card prompt builder implementation
+- [x] `tests/test-card-prompts.c` - Unit tests (24 passing)
 - [ ] Dynamic art regeneration
 - [ ] Battle canvas manager
 
@@ -116,9 +118,11 @@ Core prompt system for LLM narrative generation complete (5-002 through 5-005):
 Total: 77 unit tests passing across prompt modules.
 
 ### Next Steps
-Phase 5 has two parallel paths available:
-1. 5-007 (Context Window Management) - manages token limits
-2. 5-008 (Narrative Caching) - caches generated narratives
+Phase 5 LLM infrastructure complete (5-001 through 5-008).
+Phase 6 visual pipeline in progress (6-002 complete).
 
-5-006 (Trade Row Selection Logic) requires 1-004 from Track A.
-Phase 6 issues (6-002+) require 4-001 from Track D.
+Available next:
+- 6-003 (Dynamic Art Regeneration) - depends on 6-002 (done), 3-006 (done)
+- 6-005 (Battle Canvas Manager) - depends on 6-001 (done)
+- 6-008 (Style Transfer Prompts) - depends on 6-002 (done)
+- 5-006 (Trade Row Selection) - blocked on Track Alpha 1-004

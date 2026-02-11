@@ -177,7 +177,7 @@ Content can proceed independently; AI integration uses Track Alpha mechanics.
 | 4-008   | Upgrade effect cards           | COMPLETE  |
 | 5-002   | Prompt network structure       | COMPLETE  |
 | 5-003   | World state prompt             | COMPLETE  |
-| 6-002   | Card image prompt builder      | pending   |
+| 6-002   | Card image prompt builder      | COMPLETE  |
 | 6-008   | Style transfer prompts         | pending   |
 
 ### Beta → Gamma (Context Management)

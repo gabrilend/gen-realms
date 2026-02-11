@@ -12,13 +12,13 @@ Track Gamma handles all game content and AI integration:
 - ComfyUI visual generation
 - Context management and caching
 
-## Current Status: Context Management Complete, Caching In Progress
+## Current Status: Visual Pipeline In Progress
 
 ### In Progress
 
 | Issue | Description | Status | Developer |
 |-------|-------------|--------|-----------|
-| 5-008 | Narrative caching | in_progress | Active |
+| - | - | - | - |
 
 ### Completed Issues (Content - was Track D)
 
@@ -46,6 +46,8 @@ Track Gamma handles all game content and AI integration:
 | 5-007a | Context manager structure | 2026-02-11 |
 | 5-007b | Context entry management | 2026-02-11 |
 | 5-007c | Context summarization | 2026-02-11 |
+| 5-008 | Narrative caching | 2026-02-11 |
+| 6-002 | Card image prompt builder | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -66,7 +68,6 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 6-002 | Card image prompt builder | 6-001, 4-001 |
 | 6-003 | Dynamic art regeneration | 6-002, Track Beta 3-006 |
 | 6-004 | Upgrade visualization | 6-003 |
 | 6-005 | Battle canvas manager | 6-001 |
@@ -90,8 +91,8 @@ Track Gamma handles all game content and AI integration:
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 9 complete, 12 pending (5-008 in progress)
-**Total:** 17 complete, 14 pending
+**AI Issues:** 11 complete, 10 pending
+**Total:** 19 complete, 12 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -101,14 +102,16 @@ Track Gamma handles all game content and AI integration:
 - High Kingdom: 14 cards
 - Artificer Order: 15 cards
 
-**Unit Tests Passing:** 191 total
+**Unit Tests Passing:** 170 total
 - LLM client: 9
 - Prompts: 15
 - World state: 12
 - Force description: 18
 - Event narration: 23
 - Context manager: 37
+- Narrative cache: 20
 - ComfyUI client: 12
+- Card prompts: 24
 
 ## Deliverables
 
@@ -130,12 +133,12 @@ Track Gamma handles all game content and AI integration:
 - [x] `src/llm/04-force-description.h/c` - Faction descriptions
 - [x] `src/llm/05-event-narration.h/c` - Event narration
 - [x] `src/llm/06-context-manager.h/c` - Context window management
-- [ ] `src/llm/07-narrative-cache.h/c` - Caching (5-008)
+- [x] `src/llm/07-narrative-cache.h/c` - Caching (5-008)
 - [ ] `issues/completed/demos/phase-5-demo.sh` - AI-narrated game
 
 ### AI - Visual (Phase 6)
 - [x] `src/visual/01-comfyui-client.h/c` - ComfyUI client
-- [ ] `src/visual/02-card-prompts.h/c` - Card image prompts (6-002)
+- [x] `src/visual/02-card-prompts.h/c` - Card image prompts (6-002)
 - [ ] `src/visual/03-art-regen.h/c` - Dynamic regeneration (6-003)
 - [ ] `src/visual/04-battle-canvas.h/c` - Battle scenes (6-005)
 - [ ] `issues/completed/demos/phase-6-demo.sh` - Visual generation demo
@@ -143,8 +146,15 @@ Track Gamma handles all game content and AI integration:
 ## Notes
 
 ### 2026-02-11: Current Sprint
-5-008 (narrative caching) in development. This will improve LLM efficiency
-by avoiding redundant generation for similar game events.
+5-008 (narrative caching) complete. 20 unit tests passing.
+- LRU eviction for cache entries
+- TTL expiration support
+- Event signature generation for cache keys
+
+6-002 (card image prompt builder) complete. 24 unit tests passing.
+- Faction-themed prompts for all card types
+- Art style variants (painterly, detailed, stylized, icon)
+- Upgrade visual modifiers for enhanced cards
 
 ### Faction Themes
 
