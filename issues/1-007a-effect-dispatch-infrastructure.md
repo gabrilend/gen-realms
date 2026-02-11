@@ -97,9 +97,21 @@ The foundational effect system infrastructure that:
 - 1-003: Player State Management (Player struct)
 
 ## Acceptance Criteria
-- [ ] EffectType enum defined with all types
-- [ ] Effect struct defined
-- [ ] Dispatch table compiles
-- [ ] effects_execute routes to correct handler
-- [ ] Event callback system works
-- [ ] Stub handlers for all effect types exist
+- [x] EffectType enum defined with all types
+- [x] Effect struct defined
+- [x] Dispatch table compiles
+- [x] effects_execute routes to correct handler
+- [x] Event callback system works
+- [x] Stub handlers for all effect types exist
+
+## Implementation Notes (2026-02-10)
+- Created src/core/07-effects.{h,c}
+- EffectHandler function pointer type
+- EffectEventFunc callback type for Phase 5 narrative hooks
+- Dispatch table with designated initializers for O(1) routing
+- effects_execute() validates and routes to handlers
+- effects_execute_card() runs primary + ally effects
+- effects_execute_scrap() runs scrap effects
+- Event callback registration/unregistration
+- EffectContext for tracking stateful effects (next_ship_free, etc.)
+- 20 tests passing

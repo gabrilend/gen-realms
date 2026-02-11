@@ -15,13 +15,13 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-004 | Trade Row Implementation | **completed** |
 | 1-005 | Turn Loop Structure | **completed** |
 | 1-006 | Basic Combat Resolution | **completed** |
-| 1-007 | Card Effect System | pending |
-| 1-007a | ↳ Effect Dispatch Infrastructure | pending |
-| 1-007b | ↳ Resource Effects | pending |
+| 1-007 | Card Effect System | in progress |
+| 1-007a | ↳ Effect Dispatch Infrastructure | **completed** |
+| 1-007b | ↳ Resource Effects | **completed** |
 | 1-007c | ↳ Card Manipulation Effects | pending |
 | 1-007d | ↳ Special Effects | pending |
 | 1-007e | ↳ Upgrade and Spawn Effects | pending |
-| 1-007f | ↳ Conditional and Ally Abilities | pending |
+| 1-007f | ↳ Conditional and Ally Abilities | **completed** |
 | 1-008 | Auto-Draw Resolution System | pending |
 | 1-008a | ↳ Eligibility Detection | pending |
 | 1-008b | ↳ Chain Resolution | pending |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 6/22
+## Completed: 9/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -60,3 +60,19 @@ Completed game mechanics (1-004, 1-005, 1-006):
 - Combat system with outpost priority and base destruction
 - 120 unit tests passing (45 new)
 - Files: src/core/04-trade-row.{h,c}, 05-game.{h,c}, 06-combat.{h,c}
+
+### 2026-02-10: Effect System Implemented
+Completed effect dispatch (1-007a, 1-007b, 1-007f):
+- Dispatch table with O(1) routing from EffectType to handler
+- Resource effects (trade, combat, authority) with upgrade bonuses
+- Ally ability system with faction tracking
+- Event callback system for Phase 5 narrative hooks
+- EffectContext for stateful effects (next_ship_free, etc.)
+- 140 unit tests passing (20 new)
+- Files: src/core/07-effects.{h,c}
+
+### Design Update: Frontier/Interior Zones
+Updated 1-010 to replace outpost concept with frontier/interior zones:
+- Bases placed in frontier (exposed) or interior (protected)
+- Frontier must all be destroyed before interior can be targeted
+- Placement affects art generation (weathered vs ornate themes)

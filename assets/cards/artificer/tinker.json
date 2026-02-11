@@ -5,10 +5,11 @@
   "faction": "artificer",
   "card_type": "ship",
   "effects": [
-    { "type": "add_trade", "value": 2 }
+    { "type": "add_trade", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true }
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true },
+    { "type": "draw_card", "value": 1, "requires_previous": true }
   ],
   "flavor": "Broken is just another word for potential.",
   "art_prompt": "gnomish tinker with tools and half-built contraption, cluttered workbench, medieval fantasy"

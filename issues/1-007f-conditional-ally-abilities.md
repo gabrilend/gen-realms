@@ -112,9 +112,17 @@ Systems for handling conditional effects:
 - 1-001: Card Data Structure (faction field)
 
 ## Acceptance Criteria
-- [ ] Ally abilities trigger with matching faction in play
-- [ ] Ally abilities do not trigger without match
-- [ ] Scrap abilities execute when card is scrapped
-- [ ] Scrapped cards removed from game (not to discard)
-- [ ] Choice effects present options to player
-- [ ] Chosen effect executes correctly
+- [x] Ally abilities trigger with matching faction in play
+- [x] Ally abilities do not trigger without match
+- [x] Scrap abilities execute when card is scrapped
+- [ ] Scrapped cards removed from game (not to discard) - needs game_scrap_card()
+- [ ] Choice effects present options to player - needs action queue
+- [ ] Chosen effect executes correctly - needs action queue
+
+## Implementation Notes (2026-02-10)
+- effects_execute_card() checks ally conditions via player_has_faction_ally()
+- Faction is marked via player_mark_faction_played() after executing primary effects
+- Second card of same faction triggers ally effects
+- effects_execute_scrap() runs scrap effects before card removal
+- Choice effects deferred to action queue implementation
+- Tests verify ally ability triggering logic

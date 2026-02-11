@@ -1,7 +1,7 @@
 /* test-core.c - Tests for core game logic modules
  *
  * Tests card creation, deck management, player state, trade row,
- * game loop, and combat for issues 1-001 through 1-006.
+ * game loop, combat, and effects for issues 1-001 through 1-007.
  * Run with: make test
  */
 
@@ -14,6 +14,7 @@
 #include "../src/core/04-trade-row.h"
 #include "../src/core/05-game.h"
 #include "../src/core/06-combat.h"
+#include "../src/core/07-effects.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -568,6 +569,183 @@ static void test_combat_module(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                         Effect Tests (1-007)                               */
+/* ========================================================================== */
+
+/* Static counter for callback testing */
+static int s_callback_fire_count = 0;
+static EffectType s_last_effect_type = EFFECT_TRADE;
+
+/* {{{ test_effect_callback
+ * Test callback function that tracks invocations.
+ */
+static void test_effect_callback(Game* game, Player* player,
+                                  CardInstance* source, Effect* effect,
+                                  void* context) {
+    (void)game; (void)player; (void)source; (void)context;
+    s_callback_fire_count++;
+    if (effect) {
+        s_last_effect_type = effect->type;
+    }
+}
+/* }}} */
+
+/* {{{ test_effects_module */
+static void test_effects_module(void) {
+    printf("\n=== Effects Module Tests (1-007) ===\n");
+
+    /* Initialize effect system */
+    effects_init();
+    TEST("Effects init succeeds", true);
+
+    /* Create a game for testing */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    game_set_starting_types(game, scout, viper, explorer);
+    game_start(game);
+    game_skip_draw_order(game);
+
+    Player* player = game->players[0];
+    player_reset_turn(player);
+
+    /* Test resource effects */
+    Effect trade_effect = { EFFECT_TRADE, 5, NULL };
+    effects_execute(game, player, &trade_effect, NULL);
+    TEST("Trade effect adds trade", player->trade == 5);
+
+    Effect combat_effect = { EFFECT_COMBAT, 3, NULL };
+    effects_execute(game, player, &combat_effect, NULL);
+    TEST("Combat effect adds combat", player->combat == 3);
+
+    int auth_before = player->authority;
+    Effect auth_effect = { EFFECT_AUTHORITY, 2, NULL };
+    effects_execute(game, player, &auth_effect, NULL);
+    TEST("Authority effect heals", player->authority == auth_before + 2);
+
+    /* Test upgrade bonuses apply through effects */
+    CardType* test_card = card_type_create("test", "Test Card", 1, FACTION_MERCHANT, CARD_KIND_SHIP);
+    test_card->effects = effect_array_create(1);
+    test_card->effects[0].type = EFFECT_TRADE;
+    test_card->effects[0].value = 2;
+    test_card->effect_count = 1;
+
+    CardInstance* inst = card_instance_create(test_card);
+    inst->trade_bonus = 3;  /* Upgrade bonus */
+
+    player->trade = 0;
+    Effect trade_with_upgrade = { EFFECT_TRADE, 2, NULL };
+    effects_execute(game, player, &trade_with_upgrade, inst);
+    TEST("Upgrade bonus applied to effect", player->trade == 5);  /* 2 base + 3 bonus */
+
+    /* Test d10 effects */
+    player->d10 = 5;
+    Effect d10_up = { EFFECT_D10_UP, 2, NULL };
+    effects_execute(game, player, &d10_up, NULL);
+    TEST("D10 up effect", player->d10 == 7);
+
+    Effect d10_down = { EFFECT_D10_DOWN, 1, NULL };
+    effects_execute(game, player, &d10_down, NULL);
+    TEST("D10 down effect", player->d10 == 6);
+
+    /* Test callback registration */
+    s_callback_fire_count = 0;
+    effects_register_callback(test_effect_callback, NULL);
+
+    Effect callback_test = { EFFECT_TRADE, 1, NULL };
+    effects_execute(game, player, &callback_test, NULL);
+    TEST("Callback fired", s_callback_fire_count == 1);
+    TEST("Callback received effect", s_last_effect_type == EFFECT_TRADE);
+
+    effects_execute(game, player, &callback_test, NULL);
+    TEST("Callback fired again", s_callback_fire_count == 2);
+
+    effects_unregister_callback(test_effect_callback);
+    effects_execute(game, player, &callback_test, NULL);
+    TEST("Callback unregistered", s_callback_fire_count == 2);
+
+    /* Test effects_execute_all */
+    player->trade = 0;
+    player->combat = 0;
+    Effect multi_effects[2] = {
+        { EFFECT_TRADE, 3, NULL },
+        { EFFECT_COMBAT, 2, NULL }
+    };
+    effects_execute_all(game, player, multi_effects, 2, NULL);
+    TEST("Execute all - trade", player->trade == 3);
+    TEST("Execute all - combat", player->combat == 2);
+
+    /* Test draw effect */
+    /* Add cards to draw pile first */
+    for (int i = 0; i < 5; i++) {
+        CardInstance* card = card_instance_create(scout);
+        deck_add_to_draw_pile(player->deck, card);
+    }
+    deck_shuffle(player->deck);
+    int hand_before = player->deck->hand_count;
+    Effect draw_effect = { EFFECT_DRAW, 2, NULL };
+    effects_execute(game, player, &draw_effect, NULL);
+    TEST("Draw effect draws cards", player->deck->hand_count == hand_before + 2);
+
+    /* Test effects_execute_card with ally abilities */
+    CardType* ally_card = card_type_create("merchant", "Merchant", 2,
+                                            FACTION_MERCHANT, CARD_KIND_SHIP);
+    ally_card->effects = effect_array_create(1);
+    ally_card->effects[0].type = EFFECT_TRADE;
+    ally_card->effects[0].value = 2;
+    ally_card->effect_count = 1;
+
+    ally_card->ally_effects = effect_array_create(1);
+    ally_card->ally_effects[0].type = EFFECT_TRADE;
+    ally_card->ally_effects[0].value = 3;
+    ally_card->ally_effect_count = 1;
+
+    CardInstance* merchant1 = card_instance_create(ally_card);
+    CardInstance* merchant2 = card_instance_create(ally_card);
+
+    player_reset_turn(player);
+    player->trade = 0;
+
+    /* First merchant - no ally yet */
+    effects_execute_card(game, player, merchant1);
+    TEST("First card - primary effect only", player->trade == 2);
+
+    /* Second merchant - ally trigger */
+    effects_execute_card(game, player, merchant2);
+    TEST("Second card - ally effect triggers", player->trade == 7);  /* 2 + (2+3) */
+
+    /* Test context management */
+    EffectContext* ctx = effects_get_context(player);
+    TEST("Context returned", ctx != NULL);
+
+    Effect free_ship = { EFFECT_ACQUIRE_FREE, 5, NULL };
+    effects_execute(game, player, &free_ship, NULL);
+    TEST("Next ship free set", ctx && ctx->next_ship_free == true);
+    TEST("Free ship max cost set", ctx && ctx->free_ship_max_cost == 5);
+
+    effects_reset_context(player);
+    TEST("Context reset", ctx && ctx->next_ship_free == false);
+
+    /* Cleanup */
+    effects_clear_callbacks();
+    card_instance_free(inst);
+    card_instance_free(merchant1);
+    card_instance_free(merchant2);
+    card_type_free(test_card);
+    card_type_free(ally_card);
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
 
@@ -582,6 +760,7 @@ int main(void) {
     test_trade_row_module();
     test_game_module();
     test_combat_module();
+    test_effects_module();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

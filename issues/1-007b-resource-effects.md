@@ -62,8 +62,15 @@ Effect handlers for basic resource modifications:
 - 1-003: Player State Management (trade_pool, combat_pool, authority fields)
 
 ## Acceptance Criteria
-- [ ] Trade effects add to trade pool
-- [ ] Combat effects add to combat pool
-- [ ] Authority effects modify authority
-- [ ] Upgrade bonuses from CardInstance applied correctly
-- [ ] Tests pass for all resource effects
+- [x] Trade effects add to trade pool
+- [x] Combat effects add to combat pool
+- [x] Authority effects modify authority
+- [x] Upgrade bonuses from CardInstance applied correctly
+- [x] Tests pass for all resource effects
+
+## Implementation Notes (2026-02-10)
+- handle_trade() adds effect->value + source->trade_bonus
+- handle_combat() adds effect->value + source->attack_bonus
+- handle_authority() adds effect->value + source->authority_bonus
+- handle_d10_up/down() adjust deck flow tracker
+- Tests verify upgrade bonuses apply correctly

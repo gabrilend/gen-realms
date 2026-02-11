@@ -38,7 +38,7 @@
     "ally_effects": {
       "type": "array",
       "items": { "$ref": "#/definitions/effect" },
-      "description": "Effects triggered when another card of same faction is in play"
+      "description": "Effects triggered when another card of same faction is in play. WILDS FACTION SPECIAL: Ally effects trigger once per ally in play (stacking). See docs/02-game-mechanics.md for details."
     },
     "scrap_effects": {
       "type": "array",
@@ -118,6 +118,11 @@
           "type": "boolean",
           "default": false,
           "description": "If true, player may choose not to use this effect"
+        },
+        "requires_previous": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this effect only triggers if the previous effect in the array was executed (for conditional chains like scrap-then-draw)"
         }
       }
     }

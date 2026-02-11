@@ -175,7 +175,76 @@ This balances persistent value against tempo.
 | Star Empire | High Kingdom | Authority, Disruption |
 | Machine Cult | Artificer Order | Scrap, Upgrades |
 
-### Artificer Order Special: Upgrades
+## Faction-Specific Mechanics
+
+### The Wilds: Pack Stacking
+
+**Unique Rule:** Wilds ally effects trigger *once per ally in play*, not just once.
+
+Standard ally rules (all other factions):
+- 0 allies: No ally effect
+- 1+ allies: Ally effect triggers once
+
+Wilds pack rules:
+- 0 allies: No ally effect
+- 1 ally: Ally effect triggers 1x
+- 2 allies: Ally effect triggers 2x
+- 3 allies: Ally effect triggers 3x
+- etc.
+
+**Example - Wolf Scout (ally: +2 Combat):**
+```
+1 Wolf Scout alone:           2 Combat (base only)
+2 Wolf Scouts:                8 Combat (2+2 base, +2+2 ally triggers)
+3 Wolf Scouts:                18 Combat (2+2+2 base, +2x2 +2x2 +2x2 ally)
+4 Wolf Scouts:                32 Combat (exponential growth!)
+```
+
+**Design Intent:**
+The pack grows stronger with each member. A lone wolf is weak, but a
+coordinated pack is devastating. This creates high-risk, high-reward
+gameplay—Wilds players must commit fully to the faction or their cards
+underperform. When the pack achieves critical mass, damage output
+becomes exponential.
+
+**Thematic Justification:**
+Each creature's ally ability represents "one more of that totem joining
+the hunt." When you have 3 allies, your Wolf Scout howls and 3 wolves
+answer the call.
+
+### Artificer Order: Scrap-Draw Chain
+
+**Unique Rule:** When an Artificer card scraps from your hand, you
+immediately draw a card to replace it.
+
+This makes deck-thinning card-neutral:
+- You lose a card from hand (the scrapped card)
+- You gain a card from deck (the draw)
+- Net result: Same hand size, but your deck is now smaller and better
+
+**Cards with Scrap-Draw:**
+- Tinker (ally effect): Scrap from hand → Draw 1
+- Arcane Workshop (base effect): Scrap from hand → Draw 1
+
+**Note:** Scrapping from *discard pile* (like Recycler) does NOT trigger
+a draw, since you're not losing a card from hand.
+
+**Design Intent:**
+Artificers should feel rewarded for deck-thinning, not punished. Without
+the draw, scrapping from hand feels bad (you lose card advantage). With
+the draw, it feels like transmutation—bad card becomes good card.
+
+**Implementation:**
+Effects use `requires_previous: true` to indicate the draw only happens
+if the scrap was executed:
+```json
+"effects": [
+  { "type": "scrap_hand_or_discard", "target": "hand", "optional": true },
+  { "type": "draw_card", "value": 1, "requires_previous": true }
+]
+```
+
+### Artificer Order: Permanent Upgrades
 
 The Artificer Order specializes in permanent upgrades:
 - Blacksmith: +1 Attack to a card in discard

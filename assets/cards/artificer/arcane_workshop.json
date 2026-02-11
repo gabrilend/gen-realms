@@ -4,13 +4,11 @@
   "cost": 3,
   "faction": "artificer",
   "card_type": "base",
-  "defense": 4,
+  "defense": 3,
   "is_outpost": false,
   "effects": [
-    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true }
-  ],
-  "ally_effects": [
-    { "type": "draw_card", "value": 1 }
+    { "type": "scrap_hand_or_discard", "value": 1, "target": "hand", "optional": true },
+    { "type": "draw_card", "value": 1, "requires_previous": true }
   ],
   "flavor": "Old becomes new. Weak becomes strong.",
   "art_prompt": "cluttered magical workshop with floating tools, arcane machinery, medieval fantasy"

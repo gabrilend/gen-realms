@@ -46,14 +46,15 @@ TEST_HTTP_BIN = $(BIN_DIR)/test-http
 TERMINAL_SOURCES = \
 	$(CLIENT_DIR)/01-terminal.c
 
-# Core game sources (Track A: 1-001 through 1-006)
+# Core game sources (Track A: 1-001 through 1-007)
 CORE_SOURCES = \
 	$(CORE_DIR)/01-card.c \
 	$(CORE_DIR)/02-deck.c \
 	$(CORE_DIR)/03-player.c \
 	$(CORE_DIR)/04-trade-row.c \
 	$(CORE_DIR)/05-game.c \
-	$(CORE_DIR)/06-combat.c
+	$(CORE_DIR)/06-combat.c \
+	$(CORE_DIR)/07-effects.c
 
 # Network sources (Track B: 2-001, 2-002)
 NET_SOURCES = \
