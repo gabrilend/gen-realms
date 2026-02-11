@@ -74,8 +74,37 @@ A JSON serialization system that:
 ```
 
 ## Acceptance Criteria
-- [ ] Game state serializes to valid JSON
-- [ ] Player-specific views hide appropriate info
-- [ ] Card instances include all display-relevant fields
-- [ ] Deserialization parses client actions
-- [ ] Round-trip tests pass
+- [x] Game state serializes to valid JSON
+- [x] Player-specific views hide appropriate info
+- [x] Card instances include all display-relevant fields
+- [x] Deserialization parses client actions
+- [x] Round-trip tests pass
+
+## Implementation Notes (2026-02-11)
+
+### Files Created
+- `src/core/09-serialize.h` - API declarations for serialization
+- `src/core/09-serialize.c` - Implementation (~500 lines)
+- `tests/test-serialize.c` - Comprehensive tests (113 tests, all passing)
+
+### Key Functions Implemented
+- `serialize_game_for_player()` - Player-specific view (hides opponent hands)
+- `serialize_game_full()` - Full game state for debugging
+- `serialize_card_instance()` - Card with all upgrades and visual state
+- `serialize_card_type()` - Card type definitions
+- `serialize_player_public()` - Opponent view (counts only)
+- `serialize_player_private()` - Own player view (full hand, resources)
+- `serialize_trade_row()` - Trade row with explorer
+- `deserialize_action()` - Parse client input to Action struct
+- `game_state_to_string()` / `game_state_to_string_pretty()` - Utility functions
+
+### JSON Structure
+The serialized game state follows the format specified in the issue, with:
+- `turn`, `phase`, `active_player` for game state
+- `you` object with full private player info
+- `opponents` array with public info only
+- `trade_row` with slots and explorer availability
+
+### Dependencies
+- Uses cJSON library (libs/cJSON.c) for JSON construction
+- Integrates with all core modules (1-001 through 1-008)

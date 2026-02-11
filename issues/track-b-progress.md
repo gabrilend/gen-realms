@@ -13,7 +13,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ## Current Status
 
-**Checkpoint Progress:** Alpha complete, waiting for BETA checkpoint (1-012) for protocol work
+**Checkpoint Progress:** Alpha complete, BETA checkpoint (1-012) now available - protocol work unblocked!
 
 ## Completed Issues
 
@@ -82,7 +82,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 - ~~2-004*: SSH server integration~~ - COMPLETE (all sub-issues)
 
 ### Alpha → Beta
-- 2-005*: Protocol implementation - Depends on 1-012 (BETA checkpoint)
+- 2-005*: Protocol implementation - UNBLOCKED (1-012 complete)
 - 2-003: WebSocket handler - Depends on 2-002, 2-005
 - 2-006: Connection manager - Depends on 2-003, 2-004
 
