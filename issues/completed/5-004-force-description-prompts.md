@@ -1,7 +1,9 @@
 # 5-004: Force Description Prompts
 
+## Status: COMPLETED
+
 ## Current Behavior
-No faction/force descriptions generated.
+Force description system generates thematic descriptions with faction themes and caching.
 
 ## Intended Behavior
 Prompts that generate thematic descriptions for:
@@ -79,8 +81,39 @@ foundations of the contested realm."
 ```
 
 ## Acceptance Criteria
-- [ ] Force descriptions generate correctly
-- [ ] Faction themes reflected
-- [ ] Card descriptions are dramatic
-- [ ] Base descriptions included
-- [ ] Descriptions cached appropriately
+- [x] Force descriptions generate correctly
+- [x] Faction themes reflected
+- [x] Card descriptions are dramatic
+- [x] Base descriptions included
+- [x] Descriptions cached appropriately
+
+## Implementation Notes
+
+### Files Created
+- `src/llm/04-force-description.h` - Force description interface
+- `src/llm/04-force-description.c` - Implementation with faction themes
+- `tests/test-force-desc.c` - Unit tests (18 tests, all passing)
+
+### Key Features
+- FactionTheme struct with adjectives, nouns, verbs for each faction
+- ForceDescCache with circular buffer for description caching
+- Prompt builders for player forces, cards played, bases, attacks
+- Faction dominance detection from played cards
+- Force summarization for narrative context
+
+### Faction Themes Defined
+- Neutral: versatile, adaptable (scouts, explorers)
+- Merchant: gilded, prosperous (caravans, trade ships)
+- Wilds: primal, savage (beasts, dire wolves)
+- Kingdom: noble, valiant (knights, banners)
+- Artificer: arcane, mechanical (constructs, gears)
+
+### Test Coverage
+- Cache creation, set/get, update, circular buffer
+- Faction theme retrieval
+- Faction adjective/noun random selection
+- Dominant faction detection
+- Force summarization
+- Prompt building (player, card, base, attack)
+
+Completed: 2026-02-11
