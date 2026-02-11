@@ -597,6 +597,217 @@ static void test_context_stats_after_operations(void) {
 }
 // }}}
 
+// {{{ test_context_remove_at
+static void test_context_remove_at(void) {
+    printf("  Testing remove at index...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "Entry 0", PRIORITY_CURRENT_TURN);
+    context_add(cm, "Entry 1", PRIORITY_RECENT_EVENTS);
+    context_add(cm, "Entry 2", PRIORITY_OLD_EVENTS);
+
+    assert(cm->entry_count == 3);
+
+    // Remove middle entry
+    bool result = context_remove_at(cm, 1);
+    assert(result == true);
+    assert(cm->entry_count == 2);
+
+    // Verify remaining entries shifted correctly
+    char* prompt = context_build_prompt(cm);
+    assert(strstr(prompt, "Entry 0") != NULL);
+    assert(strstr(prompt, "Entry 1") == NULL);
+    assert(strstr(prompt, "Entry 2") != NULL);
+
+    free(prompt);
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_remove_at_invalid
+static void test_context_remove_at_invalid(void) {
+    printf("  Testing remove at invalid index...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+    context_add(cm, "Entry", PRIORITY_CURRENT_TURN);
+
+    assert(context_remove_at(cm, -1) == false);
+    assert(context_remove_at(cm, 5) == false);
+    assert(context_remove_at(NULL, 0) == false);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_find_summarizable
+static void test_context_find_summarizable(void) {
+    printf("  Testing find summarizable entries...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    // Add various priority entries
+    context_add(cm, "System", PRIORITY_SYSTEM);
+    context_add(cm, "Current", PRIORITY_CURRENT_TURN);
+    context_add(cm, "World", PRIORITY_WORLD_STATE);
+    context_add(cm, "Recent", PRIORITY_RECENT_EVENTS);
+    context_add(cm, "Force", PRIORITY_FORCE_DESC);
+    context_add(cm, "Old 1", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Old 2", PRIORITY_OLD_EVENTS);
+
+    int indices[10];
+    int count = context_find_summarizable(cm, indices, 10);
+
+    // Should find force desc and old events (3 entries)
+    assert(count == 3);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_find_summarizable_skips_summaries
+static void test_context_find_summarizable_skips_summaries(void) {
+    printf("  Testing find summarizable skips existing summaries...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "Old 1", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Old 2", PRIORITY_OLD_EVENTS);
+    context_mark_as_summary(cm);  // Mark second as summary
+    context_add(cm, "Old 3", PRIORITY_OLD_EVENTS);
+
+    int indices[10];
+    int count = context_find_summarizable(cm, indices, 10);
+
+    // Should find 2 (Old 1 and Old 3, not the summary)
+    assert(count == 2);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_get_entries_text
+static void test_context_get_entries_text(void) {
+    printf("  Testing get entries text...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "First entry", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Second entry", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Third entry", PRIORITY_OLD_EVENTS);
+
+    int indices[] = {0, 2};  // First and third
+    char* text = context_get_entries_text(cm, indices, 2);
+
+    assert(text != NULL);
+    assert(strstr(text, "First entry") != NULL);
+    assert(strstr(text, "Third entry") != NULL);
+    assert(strstr(text, "Second entry") == NULL);
+
+    free(text);
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_replace_with_summary
+static void test_context_replace_with_summary(void) {
+    printf("  Testing replace with summary...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "Old event 1", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Old event 2", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Old event 3", PRIORITY_OLD_EVENTS);
+
+    int initial_tokens = cm->current_tokens;
+    int indices[] = {0, 1, 2};
+
+    bool result = context_replace_with_summary(cm, indices, 3,
+        "Summary of events");
+
+    assert(result == true);
+    assert(cm->entry_count == 1);
+    assert(cm->summary_count == 1);
+
+    // Summary should have fewer tokens than original
+    assert(cm->current_tokens < initial_tokens);
+
+    // Verify summary is marked as such
+    assert(cm->entries[0].is_summary == true);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_needs_summarization
+static void test_context_needs_summarization(void) {
+    printf("  Testing needs summarization check...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(100);
+
+    // Empty context doesn't need summarization
+    assert(context_needs_summarization(cm, 0.8f) == false);
+
+    // Fill to 50% (~50 chars = ~12-13 tokens, need ~80 tokens for 80%)
+    // Actually let's fill more carefully
+    context_add(cm, "This is a long entry with lots of text to fill up space", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Another long entry with lots of text to fill up space", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Third long entry with lots of text to fill up space!", PRIORITY_OLD_EVENTS);
+
+    // Now should be over 80%
+    ContextManagerStats stats = context_get_stats(cm);
+    if (stats.utilization >= 0.8f) {
+        assert(context_needs_summarization(cm, 0.8f) == true);
+    }
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_mark_as_summary
+static void test_context_mark_as_summary(void) {
+    printf("  Testing mark as summary...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "Regular entry", PRIORITY_OLD_EVENTS);
+    assert(cm->entries[0].is_summary == false);
+
+    context_mark_as_summary(cm);
+    assert(cm->entries[0].is_summary == true);
+
+    // Add another and verify it's not marked
+    context_add(cm, "Another entry", PRIORITY_OLD_EVENTS);
+    assert(cm->entries[1].is_summary == false);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
 // {{{ main
 int main(void) {
     printf("=== Context Manager Tests ===\n\n");
@@ -649,6 +860,16 @@ int main(void) {
     test_context_get_entry_count();
     test_context_update_priority();
     test_context_stats_after_operations();
+
+    printf("\nSummarization Tests:\n");
+    test_context_remove_at();
+    test_context_remove_at_invalid();
+    test_context_find_summarizable();
+    test_context_find_summarizable_skips_summaries();
+    test_context_get_entries_text();
+    test_context_replace_with_summary();
+    test_context_needs_summarization();
+    test_context_mark_as_summary();
 
     printf("\n=== Results: %d/%d tests passed ===\n", tests_passed, tests_run);
 

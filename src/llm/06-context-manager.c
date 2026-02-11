@@ -360,3 +360,134 @@ void context_update_priority(ContextManager* cm, ContextPriority old_priority,
     }
 }
 // }}}
+
+// {{{ context_remove_at
+bool context_remove_at(ContextManager* cm, int index) {
+    if (cm == NULL || index < 0 || index >= cm->entry_count) {
+        return false;
+    }
+
+    // Update token count
+    cm->current_tokens -= cm->entries[index].token_count;
+
+    // Free the entry text
+    free(cm->entries[index].text);
+
+    // Shift remaining entries down
+    for (int i = index; i < cm->entry_count - 1; i++) {
+        cm->entries[i] = cm->entries[i + 1];
+    }
+    cm->entry_count--;
+
+    // Clear the now-unused slot
+    cm->entries[cm->entry_count].text = NULL;
+    cm->entries[cm->entry_count].token_count = 0;
+
+    return true;
+}
+// }}}
+
+// {{{ context_find_summarizable
+int context_find_summarizable(ContextManager* cm, int* indices, int max_count) {
+    if (cm == NULL || indices == NULL || max_count <= 0) {
+        return 0;
+    }
+
+    int count = 0;
+
+    // Find old, low-priority, non-summary entries
+    for (int i = 0; i < cm->entry_count && count < max_count; i++) {
+        // Only summarize old events and force descriptions
+        if (cm->entries[i].priority >= PRIORITY_FORCE_DESC &&
+            !cm->entries[i].is_summary) {
+            indices[count++] = i;
+        }
+    }
+
+    return count;
+}
+// }}}
+
+// {{{ context_get_entries_text
+char* context_get_entries_text(ContextManager* cm, int* indices, int count) {
+    if (cm == NULL || indices == NULL || count <= 0) {
+        return NULL;
+    }
+
+    // Calculate total length needed
+    size_t total_len = 1;  // For null terminator
+    for (int i = 0; i < count; i++) {
+        int idx = indices[i];
+        if (idx >= 0 && idx < cm->entry_count && cm->entries[idx].text != NULL) {
+            total_len += strlen(cm->entries[idx].text) + 1;  // +1 for newline
+        }
+    }
+
+    // Allocate and build combined text
+    char* combined = malloc(total_len);
+    if (combined == NULL) {
+        return NULL;
+    }
+
+    combined[0] = '\0';
+    for (int i = 0; i < count; i++) {
+        int idx = indices[i];
+        if (idx >= 0 && idx < cm->entry_count && cm->entries[idx].text != NULL) {
+            strcat(combined, cm->entries[idx].text);
+            if (i < count - 1) {
+                strcat(combined, "\n");
+            }
+        }
+    }
+
+    return combined;
+}
+// }}}
+
+// {{{ context_replace_with_summary
+bool context_replace_with_summary(ContextManager* cm, int* indices, int count,
+                                   const char* summary) {
+    if (cm == NULL || indices == NULL || count <= 0 || summary == NULL) {
+        return false;
+    }
+
+    // Remove entries in reverse order to maintain indices
+    for (int i = count - 1; i >= 0; i--) {
+        context_remove_at(cm, indices[i]);
+    }
+
+    // Add the summary as a single entry
+    bool added = context_add(cm, summary, PRIORITY_OLD_EVENTS);
+    if (added) {
+        context_mark_as_summary(cm);
+        cm->summary_count++;
+    }
+
+    return added;
+}
+// }}}
+
+// {{{ context_needs_summarization
+bool context_needs_summarization(ContextManager* cm, float threshold) {
+    if (cm == NULL || cm->max_tokens <= 0) {
+        return false;
+    }
+
+    // Clamp threshold
+    if (threshold < 0.0f) threshold = 0.0f;
+    if (threshold > 1.0f) threshold = 1.0f;
+
+    float utilization = (float)cm->current_tokens / (float)cm->max_tokens;
+    return utilization >= threshold;
+}
+// }}}
+
+// {{{ context_mark_as_summary
+void context_mark_as_summary(ContextManager* cm) {
+    if (cm == NULL || cm->entry_count == 0) {
+        return;
+    }
+
+    cm->entries[cm->entry_count - 1].is_summary = true;
+}
+// }}}

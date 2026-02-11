@@ -138,4 +138,46 @@ void context_update_priority(ContextManager* cm, ContextPriority old_priority,
                               ContextPriority new_priority);
 // }}}
 
+// {{{ context_remove_at
+// Removes the entry at a specific index.
+// Returns true if removed, false if index is out of bounds.
+bool context_remove_at(ContextManager* cm, int index);
+// }}}
+
+// {{{ context_find_summarizable
+// Finds entries that are candidates for summarization.
+// Fills indices array with entry indices, returns count found.
+// max_count limits how many entries to find.
+int context_find_summarizable(ContextManager* cm, int* indices, int max_count);
+// }}}
+
+// {{{ context_get_entries_text
+// Concatenates text from specified entries into a single string.
+// Caller must free the returned string.
+// Returns NULL on allocation failure.
+char* context_get_entries_text(ContextManager* cm, int* indices, int count);
+// }}}
+
+// {{{ context_replace_with_summary
+// Replaces multiple entries with a single summary entry.
+// indices: Array of entry indices to remove (must be sorted ascending)
+// count: Number of indices
+// summary: The summary text to add
+// Returns true on success, false on failure.
+bool context_replace_with_summary(ContextManager* cm, int* indices, int count,
+                                   const char* summary);
+// }}}
+
+// {{{ context_needs_summarization
+// Checks if context should trigger summarization based on usage.
+// threshold: Percentage (0.0-1.0) of capacity that triggers summarization.
+// Returns true if context should be summarized.
+bool context_needs_summarization(ContextManager* cm, float threshold);
+// }}}
+
+// {{{ context_mark_as_summary
+// Marks the most recently added entry as a summary.
+void context_mark_as_summary(ContextManager* cm);
+// }}}
+
 #endif /* LLM_CONTEXT_MANAGER_H */

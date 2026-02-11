@@ -29,7 +29,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 |----|-------------|--------|--------------|
 | 5-004 | Force Description Prompts | completed | 5-003 |
 | 5-005 | Event Narration Prompts | completed | 5-004 |
-| 5-007 | Context Window Management | in-progress (5-007a,b done) | 5-005 |
+| 5-007 | Context Window Management | completed | 5-005 |
 | 5-008 | Narrative Caching | pending | 5-005 |
 
 ### Gamma → Delta (Visual Pipeline)
@@ -50,7 +50,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 | 6-009 | Image Caching/Persistence | pending | 6-004 |
 | 6-010 | Phase 6 Demo | pending | 6-009, 5-010 |
 
-## Completed Issues: 6/20
+## Completed Issues: 7/20
 
 ## Deliverables Progress
 
@@ -72,9 +72,9 @@ This track enables AI-driven game narration and dynamic card art generation.
 - [x] `tests/test-event-narration.c` - Unit tests (23 passing)
 - [x] `src/llm/06-context-manager.h` - Context manager header
 - [x] `src/llm/06-context-manager.c` - Context manager core (5-007a)
-- [x] `tests/test-context-manager.c` - Unit tests (29 passing)
+- [x] `tests/test-context-manager.c` - Unit tests (37 passing)
 - [x] Context entry management (5-007b) - add, evict, build prompt
-- [ ] Context summarization (5-007c)
+- [x] Context summarization (5-007c) - find, replace, utility functions
 - [ ] Narrative caching
 
 ### Phase 6 (Visual Generation)
