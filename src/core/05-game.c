@@ -229,6 +229,12 @@ void game_start_turn(Game* game) {
     /* Reset turn resources */
     player_reset_turn(player);
 
+    /* Deploy bases that were played last turn (they become active now) */
+    game_deploy_new_bases(game, player);
+
+    /* Process effects from deployed bases (spawning, etc.) */
+    game_process_base_effects(game, player);
+
     /* Enter draw order selection phase */
     game->phase = PHASE_DRAW_ORDER;
 }
@@ -536,6 +542,138 @@ const char* action_type_to_string(ActionType type) {
         case ACTION_SCRAP_TRADE_ROW: return "Scrap from Trade Row";
         case ACTION_END_TURN:        return "End Turn";
         default:                     return "Unknown";
+    }
+}
+/* }}} */
+
+/* ========================================================================== */
+/*                           Card Database                                    */
+/* ========================================================================== */
+
+/* {{{ game_find_card_type
+ * Looks up a card type by its ID string.
+ * Returns NULL if not found.
+ */
+CardType* game_find_card_type(Game* game, const char* id) {
+    if (!game || !id) {
+        return NULL;
+    }
+
+    for (int i = 0; i < game->card_type_count; i++) {
+        if (game->card_types[i] && game->card_types[i]->id) {
+            if (strcmp(game->card_types[i]->id, id) == 0) {
+                return game->card_types[i];
+            }
+        }
+    }
+
+    return NULL;
+}
+/* }}} */
+
+/* {{{ game_register_card_type
+ * Registers a card type in the game's card database.
+ * The game takes ownership of the card type.
+ */
+void game_register_card_type(Game* game, CardType* type) {
+    if (!game || !type) {
+        return;
+    }
+
+    /* Grow array if needed */
+    int new_count = game->card_type_count + 1;
+    CardType** new_array = realloc(game->card_types,
+                                    new_count * sizeof(CardType*));
+    if (!new_array) {
+        return;  /* Allocation failure */
+    }
+
+    game->card_types = new_array;
+    game->card_types[game->card_type_count] = type;
+    game->card_type_count = new_count;
+}
+/* }}} */
+
+/* ========================================================================== */
+/*                           Base Effects                                     */
+/* ========================================================================== */
+
+/* {{{ game_deploy_new_bases
+ * Marks newly-played bases as deployed after their first turn.
+ * Should be called at the start of the owner's turn.
+ */
+void game_deploy_new_bases(Game* game, Player* player) {
+    if (!game || !player || !player->deck) {
+        return;
+    }
+
+    /* Deploy frontier bases */
+    for (int i = 0; i < player->deck->frontier_base_count; i++) {
+        CardInstance* base = player->deck->frontier_bases[i];
+        if (base && !base->deployed) {
+            base->deployed = true;
+        }
+    }
+
+    /* Deploy interior bases */
+    for (int i = 0; i < player->deck->interior_base_count; i++) {
+        CardInstance* base = player->deck->interior_bases[i];
+        if (base && !base->deployed) {
+            base->deployed = true;
+        }
+    }
+}
+/* }}} */
+
+/* {{{ game_process_base_effects
+ * Processes turn-start effects for all deployed bases.
+ * Triggers spawning for bases with spawns_id.
+ */
+void game_process_base_effects(Game* game, Player* player) {
+    if (!game || !player || !player->deck) {
+        return;
+    }
+
+    /* Process frontier bases */
+    for (int i = 0; i < player->deck->frontier_base_count; i++) {
+        CardInstance* base = player->deck->frontier_bases[i];
+        if (!base || !base->type || !base->deployed) {
+            continue;  /* Skip undeployed bases */
+        }
+
+        /* Spawn unit if base has spawns_id */
+        if (base->type->spawns_id) {
+            CardType* unit_type = game_find_card_type(game, base->type->spawns_id);
+            if (unit_type) {
+                CardInstance* unit = card_instance_create(unit_type);
+                if (unit) {
+                    deck_add_to_discard(player->deck, unit);
+                }
+            }
+        }
+
+        /* TODO: Trigger other base effects via effects_execute() */
+    }
+
+    /* Process interior bases */
+    for (int i = 0; i < player->deck->interior_base_count; i++) {
+        CardInstance* base = player->deck->interior_bases[i];
+        if (!base || !base->type || !base->deployed) {
+            continue;  /* Skip undeployed bases */
+        }
+
+        /* Spawn unit if base has spawns_id */
+        if (base->type->spawns_id) {
+            CardType* unit_type = game_find_card_type(game, base->type->spawns_id);
+            if (unit_type) {
+                CardInstance* unit = card_instance_create(unit_type);
+                if (unit) {
+                    deck_add_to_discard(player->deck, unit);
+                }
+            }
+        }
+
+        /* TODO: Trigger other base effects via effects_execute() */
     }
 }
 /* }}} */

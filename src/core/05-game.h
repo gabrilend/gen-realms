@@ -131,6 +131,16 @@ int game_get_opponent_index(Game* game, int offset);
 GamePhase game_get_phase(Game* game);
 /* }}} */
 
+/* {{{ Card database */
+CardType* game_find_card_type(Game* game, const char* id);
+void game_register_card_type(Game* game, CardType* type);
+/* }}} */
+
+/* {{{ Base effects */
+void game_process_base_effects(Game* game, Player* player);
+void game_deploy_new_bases(Game* game, Player* player);
+/* }}} */
+
 /* {{{ Utility */
 Action* action_create(ActionType type);
 void action_free(Action* action);

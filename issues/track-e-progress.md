@@ -27,8 +27,8 @@ This track enables AI-driven game narration and dynamic card art generation.
 ### Beta → Gamma (Context Management)
 | ID | Description | Status | Dependencies |
 |----|-------------|--------|--------------|
-| 5-004 | Force Description Prompts | pending | 5-003 |
-| 5-005 | Event Narration Prompts | pending | 5-004 |
+| 5-004 | Force Description Prompts | completed | 5-003 |
+| 5-005 | Event Narration Prompts | completed | 5-004 |
 | 5-007 | Context Window Management | pending | 5-005 |
 | 5-008 | Narrative Caching | pending | 5-005 |
 
@@ -50,7 +50,7 @@ This track enables AI-driven game narration and dynamic card art generation.
 | 6-009 | Image Caching/Persistence | pending | 6-004 |
 | 6-010 | Phase 6 Demo | pending | 6-009, 5-010 |
 
-## Completed Issues: 4/20
+## Completed Issues: 6/20
 
 ## Deliverables Progress
 
@@ -64,6 +64,12 @@ This track enables AI-driven game narration and dynamic card art generation.
 - [x] `src/llm/03-world-state.h` - World state header
 - [x] `src/llm/03-world-state.c` - World state management
 - [x] `tests/test-world-state.c` - Unit tests (12 passing)
+- [x] `src/llm/04-force-description.h` - Force description header
+- [x] `src/llm/04-force-description.c` - Faction-themed descriptions
+- [x] `tests/test-force-desc.c` - Unit tests (18 passing)
+- [x] `src/llm/05-event-narration.h` - Event narration header
+- [x] `src/llm/05-event-narration.c` - Game event narration prompts
+- [x] `tests/test-event-narration.c` - Unit tests (23 passing)
 - [ ] Context window management
 - [ ] Narrative caching
 
