@@ -100,9 +100,19 @@ Both API clients (5-001, 6-001) are implemented and tested.
 - LLM client: OpenAI-compatible, retry with exponential backoff
 - ComfyUI client: Async workflow submission with polling
 
-### Next Steps
-The next issues (5-002, 6-002) can proceed once the configuration system
-dependency (2-001) is confirmed working, which it is. However, 6-002
-also needs 4-001 (Card JSON Schema) from Track D.
+### Prompt Infrastructure Completion (2026-02-11)
+Core prompt system for LLM narrative generation complete (5-002 through 5-005):
+- Prompt template system with variable interpolation
+- World state tracking with tension calculation
+- Faction-themed force descriptions with caching
+- Event narration with intensity scaling
 
-5-002 (Prompt Network Structure) can begin immediately.
+Total: 77 unit tests passing across prompt modules.
+
+### Next Steps
+Phase 5 has two parallel paths available:
+1. 5-007 (Context Window Management) - manages token limits
+2. 5-008 (Narrative Caching) - caches generated narratives
+
+5-006 (Trade Row Selection Logic) requires 1-004 from Track A.
+Phase 6 issues (6-002+) require 4-001 from Track D.
