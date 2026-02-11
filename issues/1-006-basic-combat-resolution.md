@@ -45,9 +45,19 @@ A C-based combat system that:
 - 1-005: Turn Loop Structure (combat occurs in main phase)
 
 ## Acceptance Criteria
-- [ ] Combat functions compile without errors
-- [ ] Combat power correctly reduces opponent authority
-- [ ] Cannot attack player while outposts exist
-- [ ] Base destruction removes base from play and to discard
-- [ ] Combat power tracked per player per turn
-- [ ] Combat actions generate events for narrative hooks
+- [x] Combat functions compile without errors
+- [x] Combat power correctly reduces opponent authority
+- [x] Cannot attack player while outposts exist
+- [x] Base destruction removes base from play and to discard
+- [x] Combat power tracked per player per turn
+- [ ] Combat actions generate events for narrative hooks (Phase 5)
+
+## Implementation Notes (2026-02-10)
+- Created src/core/06-combat.{h,c}
+- CombatTarget struct for valid target enumeration
+- combat_get_valid_targets() respects outpost priority
+- combat_attack_player() checks outposts, deals damage
+- combat_attack_base() destroys if damage >= defense
+- combat_destroy_base() moves to discard
+- Game over detection integrated with game loop
+- 13 tests passing

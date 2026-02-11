@@ -60,11 +60,20 @@ A C-based turn loop that manages:
 - 1-004: Trade Row Implementation
 
 ## Acceptance Criteria
-- [ ] Game struct compiles without errors
-- [ ] Game initializes with 2-4 players
-- [ ] Turn phases execute in correct order
-- [ ] Draw order selection works
-- [ ] Active player switches after end phase
-- [ ] Game ends when player authority reaches 0
-- [ ] Winner correctly identified
-- [ ] State can be serialized for network transmission
+- [x] Game struct compiles without errors
+- [x] Game initializes with 2-4 players
+- [x] Turn phases execute in correct order
+- [x] Draw order selection works
+- [x] Active player switches after end phase
+- [x] Game ends when player authority reaches 0
+- [x] Winner correctly identified
+- [ ] State can be serialized for network transmission (1-012)
+
+## Implementation Notes (2026-02-10)
+- Created src/core/05-game.{h,c}
+- Game struct contains all game state (players, trade row, phase)
+- Phases: NOT_STARTED, DRAW_ORDER, MAIN, END, GAME_OVER
+- Action system for player inputs (play, buy, attack, end turn)
+- Starting deck initialization (8 scouts, 2 vipers)
+- game_process_action() handles main phase logic
+- 16 tests passing

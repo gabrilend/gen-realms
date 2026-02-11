@@ -1,12 +1,19 @@
 /* test-core.c - Tests for core game logic modules
  *
- * Tests card creation, deck management, and player state for issues
- * 1-001, 1-002, and 1-003. Run with: make test
+ * Tests card creation, deck management, player state, trade row,
+ * game loop, and combat for issues 1-001 through 1-006.
+ * Run with: make test
  */
+
+/* Enable POSIX functions like strdup */
+#define _POSIX_C_SOURCE 200809L
 
 #include "../src/core/01-card.h"
 #include "../src/core/02-deck.h"
 #include "../src/core/03-player.h"
+#include "../src/core/04-trade-row.h"
+#include "../src/core/05-game.h"
+#include "../src/core/06-combat.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -313,6 +320,254 @@ static void test_player_module(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                        Trade Row Tests (1-004)                             */
+/* ========================================================================== */
+
+/* {{{ test_trade_row_module */
+static void test_trade_row_module(void) {
+    printf("\n=== Trade Row Module Tests (1-004) ===\n");
+
+    /* Create test card types for trade deck */
+    CardType* cards[5];
+    for (int i = 0; i < 5; i++) {
+        char id[16];
+        snprintf(id, sizeof(id), "card_%d", i);
+        cards[i] = card_type_create(id, id, i + 1, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    }
+
+    /* Create explorer type */
+    CardType* explorer = card_type_create("explorer", "Explorer", 2,
+                                          FACTION_NEUTRAL, CARD_KIND_SHIP);
+    explorer->effects = effect_array_create(1);
+    explorer->effects[0].type = EFFECT_TRADE;
+    explorer->effects[0].value = 2;
+    explorer->effect_count = 1;
+
+    /* Test trade row creation */
+    TradeRow* row = trade_row_create(cards, 5, explorer);
+    TEST("Trade row creation", row != NULL);
+    TEST("Trade row slots filled", trade_row_empty_slot_count(row) == 0);
+    TEST("Trade deck depleted by 5", trade_row_deck_remaining(row) == 0);
+
+    /* Test slot access */
+    CardInstance* slot0 = trade_row_get_slot(row, 0);
+    TEST("Slot 0 has card", slot0 != NULL);
+    int cost = trade_row_get_cost(row, 0);
+    TEST("Slot cost valid", cost >= 0);
+
+    /* Test purchase validation */
+    Player* player = player_create("Buyer", 1);
+    player->trade = 0;
+    TEST("Cannot buy with 0 trade", !trade_row_can_buy(row, 0, player));
+
+    player->trade = 10;
+    TEST("Can buy with enough trade", trade_row_can_buy(row, 0, player));
+
+    /* Test purchasing (won't refill since deck empty) */
+    int trade_before = player->trade;
+    CardInstance* bought = trade_row_buy(row, 0, player);
+    TEST("Buy returns card", bought != NULL);
+    TEST("Trade deducted", player->trade < trade_before);
+    TEST("Card in player discard", player->deck->discard_count == 1);
+    TEST("D10 incremented", player->d10 == PLAYER_STARTING_D10 + 1);
+    TEST("Slot now empty", trade_row_get_slot(row, 0) == NULL);
+
+    /* Test explorer purchase */
+    player->trade = 10;
+    TEST("Can buy explorer", trade_row_can_buy_explorer(row, player));
+    CardInstance* exp = trade_row_buy_explorer(row, player);
+    TEST("Explorer bought", exp != NULL);
+    TEST("Explorer in discard", player->deck->discard_count == 2);
+
+    /* Test scrap from trade row */
+    CardInstance* slot1 = trade_row_get_slot(row, 1);
+    if (slot1) {
+        CardInstance* scrapped = trade_row_scrap(row, 1);
+        TEST("Scrap returns card", scrapped == slot1);
+        card_instance_free(scrapped);
+    }
+
+    /* Cleanup */
+    trade_row_free(row);
+    player_free(player);
+    for (int i = 0; i < 5; i++) {
+        card_type_free(cards[i]);
+    }
+    card_type_free(explorer);
+}
+/* }}} */
+
+/* ========================================================================== */
+/*                           Game Tests (1-005)                               */
+/* ========================================================================== */
+
+/* {{{ test_game_module */
+static void test_game_module(void) {
+    printf("\n=== Game Module Tests (1-005) ===\n");
+
+    /* Test game creation */
+    Game* game = game_create(2);
+    TEST("Game creation", game != NULL);
+    TEST("Phase not started", game->phase == PHASE_NOT_STARTED);
+
+    /* Add players */
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    TEST("Players added", game->player_count == 2);
+
+    /* Create starting card types */
+    CardType* scout = card_type_create("scout", "Scout", 0,
+                                        FACTION_NEUTRAL, CARD_KIND_SHIP);
+    scout->effects = effect_array_create(1);
+    scout->effects[0].type = EFFECT_TRADE;
+    scout->effects[0].value = 1;
+    scout->effect_count = 1;
+
+    CardType* viper = card_type_create("viper", "Viper", 0,
+                                        FACTION_NEUTRAL, CARD_KIND_SHIP);
+    viper->effects = effect_array_create(1);
+    viper->effects[0].type = EFFECT_COMBAT;
+    viper->effects[0].value = 1;
+    viper->effect_count = 1;
+
+    CardType* explorer = card_type_create("explorer", "Explorer", 2,
+                                           FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    game_set_starting_types(game, scout, viper, explorer);
+
+    /* Test game start */
+    bool started = game_start(game);
+    TEST("Game starts", started);
+    TEST("Phase is draw order", game->phase == PHASE_DRAW_ORDER);
+    TEST("Turn 1", game->turn_number == 1);
+    TEST("Player 0 active", game->active_player == 0);
+
+    /* Check starting decks created */
+    Player* p1 = game->players[0];
+    TEST("P1 deck has cards", deck_total_card_count(p1->deck) == STARTING_SCOUTS + STARTING_VIPERS);
+
+    /* Test skip draw order */
+    game_skip_draw_order(game);
+    TEST("Phase is main", game->phase == PHASE_MAIN);
+    TEST("P1 hand drawn", p1->deck->hand_count == PLAYER_BASE_HAND_SIZE);
+
+    /* Test play card action */
+    if (p1->deck->hand_count > 0) {
+        CardInstance* card = p1->deck->hand[0];
+        Action* action = action_create(ACTION_PLAY_CARD);
+        action->card_instance_id = strdup(card->instance_id);
+        bool result = game_process_action(game, action);
+        TEST("Play card action", result);
+        TEST("Card in played zone", p1->deck->played_count > 0 || p1->deck->base_count > 0);
+        action_free(action);
+    }
+
+    /* Test end turn */
+    Action* end_action = action_create(ACTION_END_TURN);
+    game_process_action(game, end_action);
+    TEST("Active player switched", game->active_player == 1);
+    TEST("Phase is draw order", game->phase == PHASE_DRAW_ORDER);
+    action_free(end_action);
+
+    /* Test game over detection */
+    Player* p2 = game->players[1];
+    p2->authority = 5;
+    p1->combat = 10;
+    game->active_player = 0;
+    game->phase = PHASE_MAIN;
+
+    Action* attack = action_create(ACTION_ATTACK_PLAYER);
+    attack->amount = 5;
+    game_process_action(game, attack);
+    TEST("Game over on death", game->game_over);
+    TEST("Winner is attacker", game->winner == 0);
+    action_free(attack);
+
+    /* Cleanup */
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+}
+/* }}} */
+
+/* ========================================================================== */
+/*                          Combat Tests (1-006)                              */
+/* ========================================================================== */
+
+/* {{{ test_combat_module */
+static void test_combat_module(void) {
+    printf("\n=== Combat Module Tests (1-006) ===\n");
+
+    /* Create a game for combat testing */
+    Game* game = game_create(2);
+    game_add_player(game, "Attacker");
+    game_add_player(game, "Defender");
+
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    game_set_starting_types(game, scout, viper, explorer);
+    game_start(game);
+    game_skip_draw_order(game);
+
+    Player* attacker = game->players[0];
+    Player* defender = game->players[1];
+
+    /* Test combat available */
+    attacker->combat = 5;
+    TEST("Combat available", combat_get_available(game) == 5);
+
+    /* Test attack player (no bases) */
+    TEST("Can attack player", combat_can_attack_player(game, 1));
+    int auth_before = defender->authority;
+    bool attacked = combat_attack_player(game, 1, 3);
+    TEST("Attack succeeds", attacked);
+    TEST("Damage dealt", defender->authority == auth_before - 3);
+    TEST("Combat spent", attacker->combat == 2);
+
+    /* Reset for outpost test */
+    attacker->combat = 10;
+    game->game_over = false;
+
+    /* Create an outpost */
+    CardType* outpost_type = card_type_create("outpost", "Outpost", 3,
+                                               FACTION_KINGDOM, CARD_KIND_BASE);
+    card_type_set_base_stats(outpost_type, 4, true);
+    CardInstance* outpost = card_instance_create(outpost_type);
+    deck_add_base(defender->deck, outpost);
+
+    /* Test outpost blocking */
+    TEST("Has outpost", combat_has_outpost(game, 1));
+    TEST("Cannot attack player with outpost", !combat_can_attack_player(game, 1));
+    bool blocked = combat_attack_player(game, 1, 5);
+    TEST("Attack blocked", !blocked);
+
+    /* Test valid targets with outpost */
+    CombatTarget targets[10];
+    int target_count = combat_get_valid_targets(game, targets, 10);
+    TEST("Only outpost valid", target_count == 1 && targets[0].type == TARGET_BASE);
+
+    /* Test attack base */
+    attacked = combat_attack_base(game, 1, outpost, 4);
+    TEST("Attack base succeeds", attacked);
+    TEST("Base destroyed", defender->deck->base_count == 0);
+    TEST("Base in discard", defender->deck->discard_count == 1);
+
+    /* Test can attack player now */
+    TEST("Can attack after outpost destroyed", combat_can_attack_player(game, 1));
+
+    /* Cleanup */
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+    card_type_free(outpost_type);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
 
@@ -324,6 +579,9 @@ int main(void) {
     test_card_module();
     test_deck_module();
     test_player_module();
+    test_trade_row_module();
+    test_game_module();
+    test_combat_module();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

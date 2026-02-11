@@ -51,11 +51,19 @@ A C-based trade row system that:
 - 1-003: Player State Management (for trade currency check)
 
 ## Acceptance Criteria
-- [ ] Trade row struct compiles without errors
-- [ ] Initializes with 5 cards from shuffled deck
-- [ ] Purchase deducts trade and adds card instance to player discard
-- [ ] Empty slot refills from trade deck
-- [ ] Explorer always available for purchase
-- [ ] Cannot buy card player cannot afford
-- [ ] DM hook point works when set
-- [ ] Falls back to random selection when DM hook is NULL
+- [x] Trade row struct compiles without errors
+- [x] Initializes with 5 cards from shuffled deck
+- [x] Purchase deducts trade and adds card instance to player discard
+- [x] Empty slot refills from trade deck
+- [x] Explorer always available for purchase
+- [x] Cannot buy card player cannot afford
+- [x] DM hook point works when set
+- [x] Falls back to random selection when DM hook is NULL
+
+## Implementation Notes (2026-02-10)
+- Created src/core/04-trade-row.{h,c}
+- 5-slot marketplace with trade deck backing
+- DMSelectFunc hook for LLM card selection (Phase 5)
+- Explorer type stored separately for infinite availability
+- Buying increments d10 (deck flow momentum)
+- 16 tests passing

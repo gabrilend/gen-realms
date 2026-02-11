@@ -12,9 +12,9 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-001 | Card Data Structure | **completed** |
 | 1-002 | Deck Management System | **completed** |
 | 1-003 | Player State Management | **completed** |
-| 1-004 | Trade Row Implementation | pending |
-| 1-005 | Turn Loop Structure | pending |
-| 1-006 | Basic Combat Resolution | pending |
+| 1-004 | Trade Row Implementation | **completed** |
+| 1-005 | Turn Loop Structure | **completed** |
+| 1-006 | Basic Combat Resolution | **completed** |
 | 1-007 | Card Effect System | pending |
 | 1-007a | ↳ Effect Dispatch Infrastructure | pending |
 | 1-007b | ↳ Resource Effects | pending |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 3/22
+## Completed: 6/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -52,3 +52,11 @@ Completed foundational data structures (1-001, 1-002, 1-003):
 - Player state with d10/d4 deck flow tracker
 - 75 unit tests passing
 - Files: src/core/01-card.{h,c}, 02-deck.{h,c}, 03-player.{h,c}
+
+### 2026-02-10: Core Game Loop Complete
+Completed game mechanics (1-004, 1-005, 1-006):
+- Trade row with 5 slots, explorer, DM hook for Phase 5
+- Full game state with turn phases and player switching
+- Combat system with outpost priority and base destruction
+- 120 unit tests passing (45 new)
+- Files: src/core/04-trade-row.{h,c}, 05-game.{h,c}, 06-combat.{h,c}
