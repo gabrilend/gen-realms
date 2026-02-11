@@ -3,15 +3,15 @@
 ## Goal
 Build the foundational C game engine implementing deck-building card game mechanics with Symbeline-specific modifications. Engine compiles to native binary and WebAssembly.
 
-## Status: Not Started
+## Status: In Progress (ALPHA checkpoint reached)
 
 ## Issues
 
 | ID | Description | Status |
 |----|-------------|--------|
-| 1-001 | Card Data Structure | pending |
-| 1-002 | Deck Management System | pending |
-| 1-003 | Player State Management | pending |
+| 1-001 | Card Data Structure | **completed** |
+| 1-002 | Deck Management System | **completed** |
+| 1-003 | Player State Management | **completed** |
 | 1-004 | Trade Row Implementation | pending |
 | 1-005 | Turn Loop Structure | pending |
 | 1-006 | Basic Combat Resolution | pending |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 0/22
+## Completed: 3/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -42,3 +42,13 @@ Build the foundational C game engine implementing deck-building card game mechan
 
 ## Notes
 Phase 1 establishes the core gameplay loop before any networking or rendering. The game logic must be platform-agnostic and serialize all state to JSON for client synchronization.
+
+## Implementation Log
+
+### 2026-02-10: ALPHA Checkpoint Reached
+Completed foundational data structures (1-001, 1-002, 1-003):
+- Card/Effect/CardInstance types with upgrade support
+- Deck management with draw order choice mechanic
+- Player state with d10/d4 deck flow tracker
+- 75 unit tests passing
+- Files: src/core/01-card.{h,c}, 02-deck.{h,c}, 03-player.{h,c}

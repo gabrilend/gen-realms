@@ -74,7 +74,14 @@ Additionally, a CardInstance struct for tracking individual card copies with upg
 - docs/04-architecture-c-server.md
 
 ## Acceptance Criteria
-- [ ] Card structs compile without errors
-- [ ] Can create card instances with all required fields
-- [ ] Memory allocation/deallocation works correctly
-- [ ] Test demonstrates CardType and CardInstance creation
+- [x] Card structs compile without errors
+- [x] Can create card instances with all required fields
+- [x] Memory allocation/deallocation works correctly
+- [x] Test demonstrates CardType and CardInstance creation
+
+## Implementation Notes (2026-02-10)
+- Created src/core/01-card.h with Effect, CardType, CardInstance structs
+- Created src/core/01-card.c with create/free functions
+- Added upgrade support via card_instance_apply_upgrade()
+- Added total_combat/trade/authority helpers for upgrade calculation
+- 20 tests passing in tests/test-core.c

@@ -53,10 +53,19 @@ A C struct-based player state system that tracks:
 - 1-002: Deck Management System (player references deck)
 
 ## Acceptance Criteria
-- [ ] Player struct compiles without errors
-- [ ] New players start with correct default values (50 auth, d10=5, d4=0)
-- [ ] Resource modifications work correctly
-- [ ] Turn reset clears temporary resources but not authority
-- [ ] Player death detected when authority reaches 0
-- [ ] Hand size calculation respects d4 with minimum of 1
-- [ ] Memory management is correct
+- [x] Player struct compiles without errors
+- [x] New players start with correct default values (50 auth, d10=5, d4=0)
+- [x] Resource modifications work correctly
+- [x] Turn reset clears temporary resources but not authority
+- [x] Player death detected when authority reaches 0
+- [x] Hand size calculation respects d4 with minimum of 1
+- [x] Memory management is correct
+
+## Implementation Notes (2026-02-10)
+- Created src/core/03-player.h with Player struct
+- Created src/core/03-player.c with resource/turn management
+- d10 overflow (9->0) increments d4, underflow (0->9) decrements d4
+- player_get_hand_size() returns BASE + d4 with min 1
+- Faction tracking for ally ability triggers
+- Convenience wrappers for deck operations
+- 34 tests passing in tests/test-core.c

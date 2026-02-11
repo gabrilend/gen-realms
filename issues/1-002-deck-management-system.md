@@ -61,12 +61,20 @@ A deck management system in C that handles:
 - 1-001: Card Data Structure (CardInstance must exist)
 
 ## Acceptance Criteria
-- [ ] Deck struct compiles without errors
-- [ ] Can initialize deck with starting cards
-- [ ] Draw correctly moves cards from draw pile to hand
-- [ ] Draw order choice works (draw_at, draw_ordered)
-- [ ] Empty draw pile triggers automatic reshuffle of discard
-- [ ] Shuffle resets needs_regen flags on card instances
-- [ ] End turn correctly moves all cards to discard
-- [ ] Bases persist across turns in separate area
-- [ ] Memory management is correct (no leaks)
+- [x] Deck struct compiles without errors
+- [x] Can initialize deck with starting cards
+- [x] Draw correctly moves cards from draw pile to hand
+- [x] Draw order choice works (draw_at, draw_ordered)
+- [x] Empty draw pile triggers automatic reshuffle of discard
+- [x] Shuffle resets needs_regen flags on card instances
+- [x] End turn correctly moves all cards to discard
+- [x] Bases persist across turns in separate area
+- [x] Memory management is correct (no leaks)
+
+## Implementation Notes (2026-02-10)
+- Created src/core/02-deck.h with Deck struct and zone management
+- Created src/core/02-deck.c with all card movement operations
+- deck_draw_ordered() supports player-chosen draw sequence
+- Bases automatically routed to base zone on play
+- Scrap functions return card to caller for cleanup
+- 21 tests passing in tests/test-core.c
