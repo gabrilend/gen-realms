@@ -1,0 +1,19 @@
+{
+  "id": "elders_hollow",
+  "name": "Elder's Hollow",
+  "cost": 5,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "spawns": "wolf_token",
+  "spawn_per_ally": true,
+  "flavor": "The eldest speaks, and the forest listens.",
+  "art_prompt": "massive hollow tree with ancient druid spirit, wolves gathering in reverence, medieval fantasy"
+}

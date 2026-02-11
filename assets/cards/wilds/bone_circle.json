@@ -1,0 +1,19 @@
+{
+  "id": "bone_circle",
+  "name": "Bone Circle",
+  "cost": 4,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "effects": [],
+  "ally_effects": [
+    { "type": "draw_card", "value": 1 }
+  ],
+  "frontier_bonus": {
+    "type": "draw_on_charge",
+    "value": 1
+  },
+  "flavor": "The ancestors watch. The ancestors remember.",
+  "art_prompt": "ritual circle of ancient bones, spirit animals circling above, druidic magic, medieval fantasy"
+}

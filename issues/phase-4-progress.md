@@ -29,10 +29,10 @@ Create the actual game content with fantasy-themed cards, faction designs, and a
 | Starting cards | 2 (scout, viper) |
 | Neutral trade cards | 6 |
 | Merchant Guilds | 15 (11 ships, 3 bases, 1 token) |
-| The Wilds | 15 (11 ships, 3 bases, 1 token) |
+| The Wilds | 24 (11 ships, 11 bases, 2 tokens) |
 | High Kingdom | 15 (11 ships, 3 bases, 1 token) |
 | Artificer Order | 15 (11 ships, 3 bases, 1 token) |
-| **Total** | **68 cards** |
+| **Total** | **77 cards** |
 
 ## Notes
 Phase 4 transforms the game engine into a playable game with real content. Cards are defined in JSON with faction themes, upgrade effects, and spawning abilities. Focus on balanced faction identities and fantasy flavor.
@@ -43,6 +43,15 @@ Phase 4 transforms the game engine into a playable game with real content. Cards
 - Upgrade effect cards (blacksmith, goldweaver, enchanter) included in Artificer faction
 - Each faction has spawning bases with corresponding token units
 - The `always_available` flag marks Wandering Merchant as always purchasable
+
+## Wilds Faction Redesign (2026-02-10)
+Major redesign implemented to create unique faction identity:
+- **Effect Split**: Main effects combat/draw only; ally effects resources/heal only
+- **Frontier Mechanic**: Cards played to frontier add cost to base defense
+- **Frontier Leaders**: Trigger all frontier cards to charge into play
+- **More Bases**: 11 bases (was 3) with low defense (3-5) and utility effects
+- **New Schema Fields**: `spawn_per_ally`, `frontier_bonus`, `on_destroyed`
+- See docs/02-game-mechanics.md for full Frontier mechanic documentation
 
 ## Remaining Work
 - 4-009: Balance validator requires C implementation (Track A dependency)

@@ -1,0 +1,17 @@
+{
+  "id": "honey_cache",
+  "name": "Honey Cache",
+  "cost": 2,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 3,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_authority", "value": 2 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 1 }
+  ],
+  "flavor": "Sweetness for the strong. Strength for the patient.",
+  "art_prompt": "bear-guarded beehive in ancient tree, golden honey flowing, medieval fantasy"
+}

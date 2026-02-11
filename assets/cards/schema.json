@@ -59,6 +59,47 @@
       "type": "string",
       "description": "ID of unit card spawned each turn (bases only)"
     },
+    "spawn_per_ally": {
+      "type": "boolean",
+      "default": false,
+      "description": "WILDS ONLY: If true, spawns one unit per Wilds ally in play rather than just one"
+    },
+    "frontier_bonus": {
+      "type": "object",
+      "description": "WILDS ONLY: Special effect triggered when cards charge from this base's frontier",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Effect type applied to charging cards"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Magnitude of the bonus effect"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["on_charge", "on_play"],
+          "description": "When the bonus triggers"
+        }
+      },
+      "required": ["type", "trigger"]
+    },
+    "on_destroyed": {
+      "type": "object",
+      "description": "Effect triggered when this base is destroyed",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["trigger_charge", "draw_card", "add_combat", "spawn"],
+          "description": "Effect type when destroyed"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Magnitude of effect if applicable"
+        }
+      },
+      "required": ["type"]
+    },
     "always_available": {
       "type": "boolean",
       "default": false,

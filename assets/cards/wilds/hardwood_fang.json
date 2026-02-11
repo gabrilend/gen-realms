@@ -1,0 +1,15 @@
+{
+  "id": "hardwood_fang",
+  "name": "Hardwood Fang",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "unit",
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "Sharper than steel, and the forest grows more.",
+  "art_prompt": "carved wooden blade with wolf tooth handle, glowing with primal energy, medieval fantasy"
+}

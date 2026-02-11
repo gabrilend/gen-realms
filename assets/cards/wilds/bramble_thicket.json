@@ -1,0 +1,18 @@
+{
+  "id": "bramble_thicket",
+  "name": "Bramble Thicket",
+  "cost": 3,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": true,
+  "effects": [],
+  "ally_effects": [
+    { "type": "add_authority", "value": 1 }
+  ],
+  "on_destroyed": {
+    "type": "trigger_charge"
+  },
+  "flavor": "When the thorns fall, the beasts behind them do not.",
+  "art_prompt": "dense wall of thorny brambles with glowing eyes peering through, medieval fantasy"
+}

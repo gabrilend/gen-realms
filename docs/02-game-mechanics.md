@@ -262,6 +262,43 @@ The pack gathers at the guardhouse, strengthening its walls while
 they wait. Each beast that joins heals the tribe. Then the alpha
 howls, and they all charge together—an unstoppable wave.
 
+#### 4. Wilds Base Utilities
+
+Wilds bases have low defense (3-5) but provide unique utility effects:
+
+**Spawn Per Ally (`spawn_per_ally: true`):**
+When a base has this flag, it spawns one unit per Wilds ally in play,
+not just one unit. This makes ally-heavy builds extremely productive.
+- Claw and Tooth Mill: Spawns Hardwood Fang tokens per ally
+- Elder's Hollow: Spawns Wolf Tokens per ally
+
+**Frontier Bonus (`frontier_bonus`):**
+Some bases grant bonuses to cards that charge from their frontier:
+- Moss Garden Grove: Cards charging from here gain +1 Attack permanently
+- Bone Circle: Draw 1 card when any card charges
+
+**On Destroyed Triggers (`on_destroyed`):**
+Certain bases have effects when they're destroyed:
+- Bramble Thicket: When destroyed, triggers a charge (all frontier cards)
+
+**Base Variety:**
+| Base | Cost | Def | Type | Special Effect |
+|------|------|-----|------|----------------|
+| Moonlit Den | 2 | 3 | Outpost | Cheap protection |
+| Moss Garden Grove | 3 | 3 | Base | Frontier bonus: +1 Attack on charge |
+| Crystal Hollow | 3 | 3 | Base | +1 Trade, stacking with allies |
+| Bramble Thicket | 3 | 4 | Outpost | Trigger charge on destruction |
+| Honey Cache | 2 | 3 | Base | +2 Authority, +1 per ally |
+| Claw and Tooth Mill | 4 | 4 | Base | Spawn tokens per ally |
+| Bone Circle | 4 | 4 | Base | Draw 1 on charge |
+| Elder's Hollow | 5 | 5 | Base | Draw 1, spawn wolves per ally |
+
+**Strategic Value:**
+- Bases are common in Wilds decks, making beast cards rarer to draw
+- Lower defense encourages frontier stacking for protection
+- Utility effects reward long-game base strategies
+- Mix of outposts (must attack) and regular bases (can ignore)
+
 ### Artificer Order: Scrap-Draw Chain
 
 **Unique Rule:** When an Artificer card scraps from your hand, you

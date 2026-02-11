@@ -1,0 +1,19 @@
+{
+  "id": "claw_and_tooth_mill",
+  "name": "Claw and Tooth Mill",
+  "cost": 4,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "spawns": "hardwood_fang",
+  "spawn_per_ally": true,
+  "flavor": "From ironwood and bone, the forest forges its teeth.",
+  "art_prompt": "primitive mill carving wooden weapons from massive trees, beast-folk craftsmen, medieval fantasy"
+}

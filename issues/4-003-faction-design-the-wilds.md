@@ -74,5 +74,42 @@ Design and implement The Wilds faction with:
 **Token (1):**
 - Spirit Wolf: +2 Combat (Scrap: Draw 1)
 
-### Addendum (2026-02-10)
+### Addendum 1 (2026-02-10)
 Added **Beastcaller** (Cost 3) to bring faction to 15 cards total.
+
+### Addendum 2 (2026-02-10) - Frontier Mechanic & New Bases
+
+**Major faction redesign implemented:**
+
+1. **Effect Split**: Main effects now combat/draw only; ally effects resources/heal only
+2. **Frontier Mechanic**: Cards can be played to frontier (stacked on bases) to increase base defense
+3. **Frontier Leaders**: High-cost Wilds ships trigger all frontier cards to charge into play
+4. **New Schema Fields**: `spawn_per_ally`, `frontier_bonus`, `on_destroyed`
+
+**New Bases Added (8 total, replacing original 3):**
+
+| Base | Cost | Def | Type | Special |
+|------|------|-----|------|---------|
+| Moonlit Den | 2 | 3 | Outpost | Cheap protection |
+| Honey Cache | 2 | 3 | Base | +2 Authority, +1/ally |
+| Moss Garden Grove | 3 | 3 | Base | Frontier bonus: +1 Attack on charge |
+| Crystal Hollow | 3 | 3 | Base | +1 Trade, +1/ally |
+| Bramble Thicket | 3 | 4 | Outpost | Triggers charge when destroyed |
+| Bone Circle | 4 | 4 | Base | Draw on charge |
+| Claw and Tooth Mill | 4 | 4 | Base | Spawns Hardwood Fang per ally |
+| Elder's Hollow | 5 | 5 | Base | Draw 1, spawns wolves per ally |
+
+**New Token:**
+- Hardwood Fang: +1 Combat (Scrap: +2 Combat)
+
+**Frontier Leaders (marked with `frontier_leader: true`):**
+- Beastcaller (cost 3)
+- Forest Shaman (cost 4)
+- Alpha Pack Leader (cost 5)
+- Primal Titan (cost 7)
+
+**Design Intent:**
+- More bases means beasts are rarer to draw (valuable)
+- Low base defense (3-5) encourages frontier stacking
+- Utility effects reward strategic base acquisition
+- Pack scaling creates n² ally synergies (1,4,9,16 power curve)
