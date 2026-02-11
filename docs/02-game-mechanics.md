@@ -299,6 +299,35 @@ Certain bases have effects when they're destroyed:
 - Utility effects reward long-game base strategies
 - Mix of outposts (must attack) and regular bases (can ignore)
 
+### High Kingdom: Bury-Draw (Deck Filtering)
+
+**Unique Effect:** `bury_draw` - Put a card from hand on the bottom of
+your deck, then draw a card.
+
+Unlike scrapping (permanent removal), burying pushes unwanted cards away
+temporarily. You won't see them again until your deck reshuffles.
+
+**Strategic Value:**
+- Filter out bad draws (starting cards, situational cards)
+- Smooth your draws without shrinking your deck
+- Keep options available for later (buried cards come back)
+- Endurance playstyle: outlast opponents with better card quality
+
+**Cards with Bury-Draw:**
+| Card | Cost | When |
+|------|------|------|
+| Royal Herald | 1 | Main effect (optional) |
+| Watchtower | 2 | Main effect (optional) |
+| Battle Priest | 2 | Ally effect (optional) |
+| Blessed Guardian | 5 | Ally effect (optional) |
+
+**Design Intent:**
+The High Kingdom fights through discipline and preparation. While other
+factions burn cards permanently (Artificer) or overwhelm with numbers
+(Wilds), Kingdom players carefully manage their draw quality. Every turn,
+they push weak cards aside and draw fresh—grinding toward victory through
+superior deck consistency.
+
 ### Artificer Order: Scrap-Draw Chain
 
 **Unique Rule:** When an Artificer card scraps from your hand, you

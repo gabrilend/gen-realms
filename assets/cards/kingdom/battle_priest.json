@@ -8,7 +8,8 @@
     { "type": "add_combat", "value": 2 }
   ],
   "ally_effects": [
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 2 },
+    { "type": "bury_draw", "value": 1, "optional": true }
   ],
   "flavor": "Faith is a weapon. Conviction is armor.",
   "art_prompt": "armored priest with mace and holy symbol, battlefield blessing, medieval fantasy"

@@ -7,7 +7,8 @@
   "defense": 3,
   "is_outpost": true,
   "effects": [
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 1 },
+    { "type": "bury_draw", "value": 1, "optional": true }
   ],
   "flavor": "The first line. The last stand.",
   "art_prompt": "stone watchtower on hill, guards with crossbows, medieval fantasy"

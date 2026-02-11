@@ -5,7 +5,8 @@
   "faction": "kingdom",
   "card_type": "ship",
   "effects": [
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 1 },
+    { "type": "bury_draw", "value": 1, "optional": true }
   ],
   "ally_effects": [
     { "type": "draw_card", "value": 1 }

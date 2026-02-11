@@ -74,5 +74,26 @@ Design and implement the High Kingdom faction with:
 **Token (1):**
 - Castle Infantry: +1 Combat, Draw 1 (Scrap: +1 Authority)
 
-### Addendum (2026-02-10)
+### Addendum 1 (2026-02-10)
 Added **Banner Knight** (Cost 3) to bring faction to 15 cards total.
+
+### Addendum 2 (2026-02-10) - Bury-Draw Mechanic
+
+**New faction-defining ability added:** `bury_draw`
+- Put a card from hand on the bottom of deck, then draw a card
+- Filters bad draws without permanent removal (unlike Artificer scrap)
+- Creates "endurance" playstyle through superior deck consistency
+
+**Cards Updated with Bury-Draw:**
+| Card | Cost | When |
+|------|------|------|
+| Royal Herald | 1 | Main effect (reduced authority to 1, added bury_draw) |
+| Watchtower | 2 | Main effect (reduced authority to 1, added bury_draw) |
+| Battle Priest | 2 | Ally effect (added bury_draw) |
+| Blessed Guardian | 5 | Ally effect (added bury_draw) |
+
+**Design Intent:**
+Kingdom now has a unique mechanical identity beyond authority gain. The
+faction rewards patient, disciplined play - pushing weak cards to the
+bottom of the deck and drawing fresh, grinding toward victory through
+better card quality rather than raw power or permanent removal.

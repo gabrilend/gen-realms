@@ -9,7 +9,8 @@
     { "type": "add_authority", "value": 4 }
   ],
   "ally_effects": [
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 2 },
+    { "type": "bury_draw", "value": 1, "optional": true }
   ],
   "flavor": "While she stands, the realm endures.",
   "art_prompt": "female paladin in white armor with holy aura, cathedral, medieval fantasy"

@@ -139,7 +139,8 @@
             "upgrade_attack",
             "upgrade_trade",
             "upgrade_authority",
-            "copy_ship"
+            "copy_ship",
+            "bury_draw"
           ],
           "description": "Type of effect"
         },
