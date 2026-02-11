@@ -6,6 +6,9 @@
  * Validates required fields before returning config.
  */
 
+/* Enable POSIX functions like strdup */
+#define _POSIX_C_SOURCE 200809L
+
 #include "01-config.h"
 #include "../../libs/cJSON.h"
 #include <stdio.h>

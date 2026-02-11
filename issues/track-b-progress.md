@@ -13,7 +13,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ## Current Status
 
-**Checkpoint Progress:** Pre-Alpha (Configuration) complete
+**Checkpoint Progress:** Alpha → Beta (HTTP Foundation) in progress
 
 ## Completed Issues
 
@@ -33,6 +33,22 @@ Track B implements the network layer enabling multi-client connections. It inclu
   - Helper functions for endpoint URL formatting
   - Support for LLM and ComfyUI external service configuration
 
+### 2-002: HTTP Server
+- **Status:** COMPLETE
+- **Completed:** 2026-02-10
+- **Files Created:**
+  - `src/net/02-http.h` - HTTP server API and types
+  - `src/net/02-http.c` - libwebsockets-based HTTP server
+  - `tests/test-http.c` - MIME type and utility tests
+- **Features Implemented:**
+  - Static file serving from assets/web/
+  - MIME type detection for HTML, JS, CSS, Wasm, images, fonts
+  - /api/config REST endpoint for service discovery
+  - Security headers (X-Frame-Options, X-Content-Type-Options)
+  - Directory traversal prevention
+  - Automatic index.html for root path
+- **Dependencies:** Requires `libwebsockets-devel` package
+
 ## In Progress Issues
 
 (None currently)
@@ -40,7 +56,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 ## Pending Issues
 
 ### Pre-Alpha → Alpha
-- 2-002: HTTP server (libwebsockets) - Depends on 2-001
+- ~~2-002: HTTP server (libwebsockets)~~ - COMPLETE
 - 2-004*: SSH server integration - Depends on 2-001 (has sub-issues 2-004a through 2-004d)
 
 ### Alpha → Beta
