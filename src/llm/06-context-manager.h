@@ -104,4 +104,38 @@ void context_clear(ContextManager* cm);
 void context_clear_priority(ContextManager* cm, ContextPriority priority);
 // }}}
 
+// {{{ context_add
+// Adds a new entry to the context.
+// Automatically estimates token count and evicts lowest priority entries if needed.
+// Returns true if entry was added, false if it couldn't fit (even after eviction).
+bool context_add(ContextManager* cm, const char* text, ContextPriority priority);
+// }}}
+
+// {{{ context_evict_lowest
+// Removes the lowest priority entry from the context.
+// If multiple entries have the same priority, removes the oldest one.
+// Returns true if an entry was evicted, false if context is empty or only system entries remain.
+bool context_evict_lowest(ContextManager* cm);
+// }}}
+
+// {{{ context_build_prompt
+// Builds the final prompt string from all entries.
+// Entries are sorted by priority (highest priority first).
+// Caller must free the returned string.
+// Returns NULL on allocation failure.
+char* context_build_prompt(ContextManager* cm);
+// }}}
+
+// {{{ context_get_entry_count
+// Returns the number of entries at a specific priority level.
+int context_get_entry_count(ContextManager* cm, ContextPriority priority);
+// }}}
+
+// {{{ context_update_priority
+// Updates the priority of entries matching a text prefix.
+// Useful for demoting recent events to old events as time passes.
+void context_update_priority(ContextManager* cm, ContextPriority old_priority,
+                              ContextPriority new_priority);
+// }}}
+
 #endif /* LLM_CONTEXT_MANAGER_H */

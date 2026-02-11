@@ -302,6 +302,301 @@ static void test_priority_values(void) {
 }
 // }}}
 
+// {{{ test_context_add_basic
+static void test_context_add_basic(void) {
+    printf("  Testing basic entry addition...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    bool result = context_add(cm, "Hello World", PRIORITY_CURRENT_TURN);
+    assert(result == true);
+    assert(cm->entry_count == 1);
+    assert(cm->current_tokens > 0);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_add_multiple
+static void test_context_add_multiple(void) {
+    printf("  Testing multiple entry addition...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "System prompt", PRIORITY_SYSTEM);
+    context_add(cm, "Current turn event", PRIORITY_CURRENT_TURN);
+    context_add(cm, "World state", PRIORITY_WORLD_STATE);
+    context_add(cm, "Recent event", PRIORITY_RECENT_EVENTS);
+
+    assert(cm->entry_count == 4);
+    assert(context_get_entry_count(cm, PRIORITY_SYSTEM) == 1);
+    assert(context_get_entry_count(cm, PRIORITY_CURRENT_TURN) == 1);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_add_null
+static void test_context_add_null(void) {
+    printf("  Testing entry addition with NULL...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    assert(context_add(NULL, "text", PRIORITY_SYSTEM) == false);
+    assert(context_add(cm, NULL, PRIORITY_SYSTEM) == false);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_add_too_large
+static void test_context_add_too_large(void) {
+    printf("  Testing entry larger than window...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(10);  // Only 10 tokens
+
+    // Create text that's way more than 10 tokens (~400 chars = ~100 tokens)
+    char large_text[401];
+    memset(large_text, 'x', 400);
+    large_text[400] = '\0';
+
+    bool result = context_add(cm, large_text, PRIORITY_OLD_EVENTS);
+    assert(result == false);
+    assert(cm->entry_count == 0);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_evict_lowest
+static void test_context_evict_lowest(void) {
+    printf("  Testing lowest priority eviction...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "System", PRIORITY_SYSTEM);
+    context_add(cm, "Current", PRIORITY_CURRENT_TURN);
+    context_add(cm, "Old event", PRIORITY_OLD_EVENTS);
+
+    // Evict should remove old event first
+    bool result = context_evict_lowest(cm);
+    assert(result == true);
+    assert(cm->entry_count == 2);
+    assert(context_get_entry_count(cm, PRIORITY_OLD_EVENTS) == 0);
+    assert(context_get_entry_count(cm, PRIORITY_SYSTEM) == 1);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_evict_preserves_system
+static void test_context_evict_preserves_system(void) {
+    printf("  Testing eviction preserves system entries...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "System 1", PRIORITY_SYSTEM);
+    context_add(cm, "System 2", PRIORITY_SYSTEM);
+
+    // Cannot evict system-only context
+    bool result = context_evict_lowest(cm);
+    assert(result == false);
+    assert(cm->entry_count == 2);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_evict_on_overflow
+static void test_context_evict_on_overflow(void) {
+    printf("  Testing automatic eviction on overflow...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(15);  // Very small window (~60 chars)
+
+    // Add entries that will fill the window
+    // Each ~20 chars = ~5 tokens
+    context_add(cm, "Entry one here now", PRIORITY_CURRENT_TURN);  // ~5 tokens
+    context_add(cm, "Entry two is longer", PRIORITY_RECENT_EVENTS);  // ~5 tokens
+    context_add(cm, "Third entry here!!", PRIORITY_OLD_EVENTS);  // ~5 tokens
+
+    // Now at 15 tokens (at limit)
+    // Add entry that needs eviction
+    bool result = context_add(cm, "New important entry", PRIORITY_CURRENT_TURN);  // ~5 tokens
+    assert(result == true);
+
+    // Should have evicted the OLD_EVENTS entry
+    assert(cm->eviction_count > 0);
+    assert(context_get_entry_count(cm, PRIORITY_OLD_EVENTS) == 0);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_build_prompt_empty
+static void test_context_build_prompt_empty(void) {
+    printf("  Testing prompt build with empty context...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    char* prompt = context_build_prompt(cm);
+    assert(prompt != NULL);
+    assert(strlen(prompt) == 0);
+
+    free(prompt);
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_build_prompt_single
+static void test_context_build_prompt_single(void) {
+    printf("  Testing prompt build with single entry...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+    context_add(cm, "Hello World", PRIORITY_SYSTEM);
+
+    char* prompt = context_build_prompt(cm);
+    assert(prompt != NULL);
+    assert(strcmp(prompt, "Hello World") == 0);
+
+    free(prompt);
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_build_prompt_priority_order
+static void test_context_build_prompt_priority_order(void) {
+    printf("  Testing prompt builds in priority order...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    // Add in reverse priority order
+    context_add(cm, "Old", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Current", PRIORITY_CURRENT_TURN);
+    context_add(cm, "System", PRIORITY_SYSTEM);
+
+    char* prompt = context_build_prompt(cm);
+    assert(prompt != NULL);
+
+    // System should come first
+    assert(strstr(prompt, "System") < strstr(prompt, "Current"));
+    assert(strstr(prompt, "Current") < strstr(prompt, "Old"));
+
+    free(prompt);
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_get_entry_count
+static void test_context_get_entry_count(void) {
+    printf("  Testing entry count by priority...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "S1", PRIORITY_SYSTEM);
+    context_add(cm, "S2", PRIORITY_SYSTEM);
+    context_add(cm, "C1", PRIORITY_CURRENT_TURN);
+    context_add(cm, "O1", PRIORITY_OLD_EVENTS);
+    context_add(cm, "O2", PRIORITY_OLD_EVENTS);
+    context_add(cm, "O3", PRIORITY_OLD_EVENTS);
+
+    assert(context_get_entry_count(cm, PRIORITY_SYSTEM) == 2);
+    assert(context_get_entry_count(cm, PRIORITY_CURRENT_TURN) == 1);
+    assert(context_get_entry_count(cm, PRIORITY_OLD_EVENTS) == 3);
+    assert(context_get_entry_count(cm, PRIORITY_WORLD_STATE) == 0);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_update_priority
+static void test_context_update_priority(void) {
+    printf("  Testing priority update...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(1000);
+
+    context_add(cm, "Recent 1", PRIORITY_RECENT_EVENTS);
+    context_add(cm, "Recent 2", PRIORITY_RECENT_EVENTS);
+    context_add(cm, "Current", PRIORITY_CURRENT_TURN);
+
+    assert(context_get_entry_count(cm, PRIORITY_RECENT_EVENTS) == 2);
+    assert(context_get_entry_count(cm, PRIORITY_OLD_EVENTS) == 0);
+
+    // Demote recent events to old events
+    context_update_priority(cm, PRIORITY_RECENT_EVENTS, PRIORITY_OLD_EVENTS);
+
+    assert(context_get_entry_count(cm, PRIORITY_RECENT_EVENTS) == 0);
+    assert(context_get_entry_count(cm, PRIORITY_OLD_EVENTS) == 2);
+    assert(context_get_entry_count(cm, PRIORITY_CURRENT_TURN) == 1);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
+// {{{ test_context_stats_after_operations
+static void test_context_stats_after_operations(void) {
+    printf("  Testing statistics after operations...\n");
+    tests_run++;
+
+    ContextManager* cm = context_init(100);
+
+    context_add(cm, "Entry 1", PRIORITY_OLD_EVENTS);
+    context_add(cm, "Entry 2", PRIORITY_OLD_EVENTS);
+
+    ContextManagerStats stats = context_get_stats(cm);
+    assert(stats.total_entries == 2);
+    assert(stats.current_tokens > 0);
+    assert(stats.utilization > 0.0f);
+
+    // Force eviction
+    context_add(cm, "Long entry that needs space", PRIORITY_CURRENT_TURN);
+    context_add(cm, "Another long entry here", PRIORITY_CURRENT_TURN);
+
+    stats = context_get_stats(cm);
+    // Evictions may have occurred
+    assert(stats.current_tokens <= stats.max_tokens);
+
+    context_free(cm);
+    tests_passed++;
+    printf("    PASSED\n");
+}
+// }}}
+
 // {{{ main
 int main(void) {
     printf("=== Context Manager Tests ===\n\n");
@@ -333,6 +628,27 @@ int main(void) {
 
     printf("\nPriority Tests:\n");
     test_priority_values();
+
+    printf("\nEntry Management Tests:\n");
+    test_context_add_basic();
+    test_context_add_multiple();
+    test_context_add_null();
+    test_context_add_too_large();
+
+    printf("\nEviction Tests:\n");
+    test_context_evict_lowest();
+    test_context_evict_preserves_system();
+    test_context_evict_on_overflow();
+
+    printf("\nPrompt Building Tests:\n");
+    test_context_build_prompt_empty();
+    test_context_build_prompt_single();
+    test_context_build_prompt_priority_order();
+
+    printf("\nEntry Count Tests:\n");
+    test_context_get_entry_count();
+    test_context_update_priority();
+    test_context_stats_after_operations();
 
     printf("\n=== Results: %d/%d tests passed ===\n", tests_passed, tests_run);
 

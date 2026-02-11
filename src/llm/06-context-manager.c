@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 // {{{ Constants
 #define DEFAULT_MAX_ENTRIES 100
@@ -168,5 +169,194 @@ void context_clear_priority(ContextManager* cm, ContextPriority priority) {
     }
 
     cm->entry_count = write_idx;
+}
+// }}}
+
+// {{{ compare_entries_by_priority
+// Comparison function for qsort - sorts by priority (ascending = highest priority first)
+static int compare_entries_by_priority(const void* a, const void* b) {
+    const ContextEntry* entry_a = (const ContextEntry*)a;
+    const ContextEntry* entry_b = (const ContextEntry*)b;
+
+    // Lower priority number = higher priority, should come first
+    if (entry_a->priority != entry_b->priority) {
+        return entry_a->priority - entry_b->priority;
+    }
+
+    // Same priority: older entries (lower timestamp) come first
+    if (entry_a->added_at < entry_b->added_at) return -1;
+    if (entry_a->added_at > entry_b->added_at) return 1;
+    return 0;
+}
+// }}}
+
+// {{{ context_evict_lowest
+bool context_evict_lowest(ContextManager* cm) {
+    if (cm == NULL || cm->entry_count == 0) {
+        return false;
+    }
+
+    // Find lowest priority (highest number) non-system entry
+    int lowest_idx = -1;
+    ContextPriority lowest_priority = PRIORITY_SYSTEM;  // Start with highest priority
+    time_t oldest_time = 0;
+    bool found_candidate = false;
+
+    for (int i = 0; i < cm->entry_count; i++) {
+        // Never evict system entries
+        if (cm->entries[i].priority == PRIORITY_SYSTEM) {
+            continue;
+        }
+
+        // Found first evictable candidate or a lower priority entry
+        if (!found_candidate || cm->entries[i].priority > lowest_priority) {
+            lowest_priority = cm->entries[i].priority;
+            lowest_idx = i;
+            oldest_time = cm->entries[i].added_at;
+            found_candidate = true;
+        }
+        // Same priority: prefer to evict older entries
+        else if (cm->entries[i].priority == lowest_priority &&
+                 cm->entries[i].added_at < oldest_time) {
+            lowest_idx = i;
+            oldest_time = cm->entries[i].added_at;
+        }
+    }
+
+    // No evictable entry found
+    if (lowest_idx < 0) {
+        return false;
+    }
+
+    // Remove the entry
+    cm->current_tokens -= cm->entries[lowest_idx].token_count;
+    free(cm->entries[lowest_idx].text);
+    cm->eviction_count++;
+
+    // Shift remaining entries down
+    for (int i = lowest_idx; i < cm->entry_count - 1; i++) {
+        cm->entries[i] = cm->entries[i + 1];
+    }
+    cm->entry_count--;
+
+    // Clear the now-unused slot
+    cm->entries[cm->entry_count].text = NULL;
+    cm->entries[cm->entry_count].token_count = 0;
+
+    return true;
+}
+// }}}
+
+// {{{ context_add
+bool context_add(ContextManager* cm, const char* text, ContextPriority priority) {
+    if (cm == NULL || text == NULL) {
+        return false;
+    }
+
+    int tokens = context_estimate_tokens(text);
+
+    // Check if entry would exceed max_tokens even in an empty context
+    if (tokens > cm->max_tokens) {
+        return false;  // Entry is too large
+    }
+
+    // Evict entries until we have room
+    while (cm->current_tokens + tokens > cm->max_tokens) {
+        if (!context_evict_lowest(cm)) {
+            return false;  // Can't make room
+        }
+    }
+
+    // Check if we have room in the entries array
+    if (cm->entry_count >= cm->max_entries) {
+        // Need to evict to make room in array
+        if (!context_evict_lowest(cm)) {
+            return false;
+        }
+    }
+
+    // Add the new entry
+    ContextEntry* entry = &cm->entries[cm->entry_count];
+    entry->text = strdup(text);
+    if (entry->text == NULL) {
+        return false;  // Allocation failed
+    }
+
+    entry->token_count = tokens;
+    entry->priority = priority;
+    entry->added_at = time(NULL);
+    entry->is_summary = false;
+
+    cm->current_tokens += tokens;
+    cm->entry_count++;
+
+    return true;
+}
+// }}}
+
+// {{{ context_build_prompt
+char* context_build_prompt(ContextManager* cm) {
+    if (cm == NULL || cm->entry_count == 0) {
+        char* empty = strdup("");
+        return empty;
+    }
+
+    // Sort entries by priority (creates a stable order)
+    qsort(cm->entries, cm->entry_count, sizeof(ContextEntry),
+          compare_entries_by_priority);
+
+    // Calculate total size needed
+    size_t total_size = 1;  // For null terminator
+    for (int i = 0; i < cm->entry_count; i++) {
+        total_size += strlen(cm->entries[i].text) + 2;  // +2 for "\n\n"
+    }
+
+    // Allocate and build the prompt
+    char* prompt = malloc(total_size);
+    if (prompt == NULL) {
+        return NULL;
+    }
+
+    prompt[0] = '\0';
+    for (int i = 0; i < cm->entry_count; i++) {
+        strcat(prompt, cm->entries[i].text);
+        if (i < cm->entry_count - 1) {
+            strcat(prompt, "\n\n");
+        }
+    }
+
+    return prompt;
+}
+// }}}
+
+// {{{ context_get_entry_count
+int context_get_entry_count(ContextManager* cm, ContextPriority priority) {
+    if (cm == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 0; i < cm->entry_count; i++) {
+        if (cm->entries[i].priority == priority) {
+            count++;
+        }
+    }
+
+    return count;
+}
+// }}}
+
+// {{{ context_update_priority
+void context_update_priority(ContextManager* cm, ContextPriority old_priority,
+                              ContextPriority new_priority) {
+    if (cm == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < cm->entry_count; i++) {
+        if (cm->entries[i].priority == old_priority) {
+            cm->entries[i].priority = new_priority;
+        }
+    }
 }
 // }}}
