@@ -9,7 +9,7 @@ Track C implements terminal and browser client interfaces for Symbeline Realms.
 It can be developed with mock gamestate data, with protocol integration after
 the GAMMA checkpoint.
 
-## Current Status: Beta → Gamma (Input Systems)
+## Current Status: Gamma → Delta (Integration)
 
 ### Completed Issues
 
@@ -24,6 +24,8 @@ the GAMMA checkpoint.
 | 3-004c | Game zones (Canvas) | 2026-02-10 |
 | 3-001d | Terminal input/resize | 2026-02-10 |
 | 3-004d | Status/narrative panels | 2026-02-10 |
+| 3-002 | Terminal input system | 2026-02-11 |
+| 3-005 | Browser input handler | 2026-02-11 |
 
 ### In Progress
 
@@ -35,10 +37,7 @@ All Alpha-Beta rendering core issues completed.
 
 ### Pending (Beta → Gamma: Input Systems)
 
-| Issue | Description | Dependencies |
-|-------|-------------|--------------|
-| 3-002 | Terminal input system | 3-001d ✓ |
-| 3-005 | Browser input handler | 3-004d ✓ |
+All Beta-Gamma input system issues completed.
 
 ### Pending (Gamma → Delta: Integration)
 
@@ -125,6 +124,26 @@ Expected deliverables when Track C is complete:
   - renderNarrativePanel() with word wrapping
   - renderActionButtons() for mobile/touch support
   - Demo now shows proper status bar and narrative panel
+
+### 2026-02-11: Input Systems Complete
+- Extended terminal input system (3-002)
+  - Added draw order command parsing (d 3,1,5,2,4)
+  - Added buy wanderer command (b w)
+  - command_to_json() converts commands to protocol messages
+  - command_valid_for_phase() validates commands per game phase
+  - command_validation_error() provides helpful error messages
+  - command_complete() for tab completion
+  - terminal_show_help_for_phase() shows phase-appropriate help
+  - terminal_show_completions() displays available commands
+- Implemented browser input handler (3-005)
+  - input-handler.js with full mouse/touch support
+  - Click detection for all game zones
+  - WebSocket action sending (with demo mode fallback)
+  - Keyboard shortcuts (E=end turn, A=attack, Escape=cancel)
+  - Draw order selection UI with visual feedback
+  - Error message overlay with auto-dismiss
+  - Action buttons rendering
+  - Demo now fully interactive with game state updates
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering

@@ -349,14 +349,9 @@ bool game_process_action(Game* game, Action* action) {
                 return false;
             }
 
-            /* Check for outposts first */
-            if (opponent->deck->base_count > 0) {
-                for (int i = 0; i < opponent->deck->base_count; i++) {
-                    CardInstance* base = opponent->deck->bases[i];
-                    if (base && base->type && base->type->is_outpost) {
-                        return false;  /* Must destroy outposts first */
-                    }
-                }
+            /* Check for bases - all bases must be destroyed before player */
+            if (deck_total_base_count(opponent->deck) > 0) {
+                return false;  /* Must destroy all bases first */
             }
 
             int damage = action->amount;

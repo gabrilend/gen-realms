@@ -134,14 +134,58 @@ A "Tower" placed on frontier looks like a wooden watchtower; placed in interior 
 - 1-006: Combat (base destruction)
 
 ## Acceptance Criteria
-- [ ] Bases stay in play after turn ends
-- [ ] Bases do not trigger effects on first turn (deployment delay)
-- [ ] Deployed bases trigger effects each turn
-- [ ] Player can choose frontier or interior placement when playing a base
-- [ ] Frontier bases must all be destroyed before interior can be targeted
-- [ ] Interior bases cannot be attacked while frontier bases exist
-- [ ] Player authority only targetable when no bases remain
-- [ ] Destroyed bases go to owner's discard pile
-- [ ] Base damage tracking works correctly
-- [ ] Placement zone stored on CardInstance for art generation
-- [ ] base_placement_art_modifier() returns zone-specific prompt keywords
+- [x] Bases stay in play after turn ends
+- [ ] Bases do not trigger effects on first turn (deployment delay) - see 1-011
+- [ ] Deployed bases trigger effects each turn - see 1-011
+- [x] Player can choose frontier or interior placement when playing a base
+- [x] Frontier bases must all be destroyed before interior can be targeted
+- [x] Interior bases cannot be attacked while frontier bases exist
+- [x] Player authority only targetable when no bases remain
+- [x] Destroyed bases go to owner's discard pile
+- [x] Base damage tracking works correctly
+- [x] Placement zone stored on CardInstance for art generation
+- [x] base_placement_art_modifier() returns zone-specific prompt keywords
+
+## Implementation Notes (2026-02-10)
+
+### Changes to 01-card.h/c:
+- Added `BasePlacement` enum (ZONE_NONE, ZONE_FRONTIER, ZONE_INTERIOR)
+- Added to CardInstance: `placement`, `deployed`, `damage_taken` fields
+- Added `base_placement_to_string()` utility
+- Added `base_placement_art_modifier()` for ComfyUI prompt generation
+
+### Changes to 02-deck.h/c:
+- Split single `bases` array into `frontier_bases` and `interior_bases`
+- Added zone-specific functions:
+  - `deck_add_base_to_frontier()`, `deck_add_base_to_interior()`
+  - `deck_remove_from_frontier()`, `deck_remove_from_interior()`
+  - `deck_play_base_to_frontier()`, `deck_play_base_to_interior()`
+- Added query functions:
+  - `deck_frontier_count()`, `deck_interior_count()`
+  - `deck_total_base_count()`, `deck_has_frontier_bases()`
+- `deck_add_base()` routes based on card's placement field (defaults to frontier)
+- `deck_remove_base()` searches both zones
+
+### Changes to 06-combat.c:
+- `combat_get_valid_targets()` enforces zone priority (frontier > interior > player)
+- `combat_attack_base()` validates zone priority before allowing attack
+- Bases now accumulate damage via `damage_taken` field
+- `combat_destroy_base()` resets damage/placement on destruction
+- `combat_get_base_defense()` returns remaining defense (total - damage)
+- `combat_has_outpost()` now returns `deck_has_frontier_bases()`
+
+### Changes to 05-game.c:
+- `ACTION_ATTACK_PLAYER` now checks all bases (not just outposts)
+
+### Tests added (160 total passing):
+- Base zone tests in test-core.c covering:
+  - Default placement to frontier
+  - Explicit interior placement
+  - Combat zone priority enforcement
+  - Damage accumulation
+  - State reset on destruction
+
+### Note on deployment delay:
+The `deployed` field exists on CardInstance but the actual effect triggering
+at turn start (for bases with deployed=true) will be implemented in 1-011
+(Spawning Mechanics) which handles per-turn base processing.

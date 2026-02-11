@@ -569,6 +569,106 @@ static void test_combat_module(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                    Base Zone Tests (1-010)                                 */
+/* ========================================================================== */
+
+/* {{{ test_base_zones */
+static void test_base_zones(void) {
+    printf("\n=== Base Zone Tests (1-010) ===\n");
+
+    /* Create game */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    game_start(game);
+
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    CardType* cards[10];
+    for (int i = 0; i < 5; i++) cards[i] = scout;
+    for (int i = 5; i < 10; i++) cards[i] = viper;
+    game->trade_row = trade_row_create(cards, 10, explorer);
+
+    Player* defender = game->players[1];
+    Player* attacker = game->players[0];
+
+    /* Create bases for testing */
+    CardType* frontier_type = card_type_create("fort", "Fort", 3, FACTION_KINGDOM, CARD_KIND_BASE);
+    card_type_set_base_stats(frontier_type, 3, false);
+
+    CardType* interior_type = card_type_create("castle", "Castle", 5, FACTION_KINGDOM, CARD_KIND_BASE);
+    card_type_set_base_stats(interior_type, 5, false);
+
+    /* Test default placement goes to frontier */
+    CardInstance* base1 = card_instance_create(frontier_type);
+    deck_add_base(defender->deck, base1);
+    TEST("Base defaults to frontier", deck_frontier_count(defender->deck) == 1);
+    TEST("Interior empty", deck_interior_count(defender->deck) == 0);
+    TEST("Has frontier bases", deck_has_frontier_bases(defender->deck));
+    TEST("Placement field set", base1->placement == ZONE_FRONTIER);
+
+    /* Test explicit interior placement */
+    CardInstance* base2 = card_instance_create(interior_type);
+    base2->placement = ZONE_INTERIOR;
+    deck_add_base(defender->deck, base2);
+    TEST("Interior has base", deck_interior_count(defender->deck) == 1);
+    TEST("Total base count", deck_total_base_count(defender->deck) == 2);
+
+    /* Test combat priority - can't attack interior when frontier exists */
+    attacker->combat = 20;
+
+    bool can_attack_interior = combat_attack_base(game, 1, base2, 5);
+    TEST("Can't attack interior with frontier", !can_attack_interior);
+
+    /* Test can attack frontier */
+    bool can_attack_frontier = combat_attack_base(game, 1, base1, 3);
+    TEST("Can attack frontier", can_attack_frontier);
+    TEST("Frontier destroyed", deck_frontier_count(defender->deck) == 0);
+    TEST("Base1 in discard", defender->deck->discard_count >= 1);
+
+    /* Now can attack interior */
+    attacker->combat = 20;
+    can_attack_interior = combat_attack_base(game, 1, base2, 5);
+    TEST("Can attack interior now", can_attack_interior);
+    TEST("Interior destroyed", deck_interior_count(defender->deck) == 0);
+
+    /* Test player attackable after all bases destroyed */
+    TEST("No bases remain", deck_total_base_count(defender->deck) == 0);
+    TEST("Can attack player", combat_can_attack_player(game, 1));
+
+    /* Test damage accumulation on bases */
+    CardInstance* tough_base = card_instance_create(interior_type);  /* 5 defense */
+    deck_add_base_to_frontier(defender->deck, tough_base);
+    attacker->combat = 10;
+
+    /* First attack - partial damage */
+    combat_attack_base(game, 1, tough_base, 3);
+    TEST("Damage accumulated", tough_base->damage_taken == 3);
+    TEST("Base still alive", deck_frontier_count(defender->deck) == 1);
+    TEST("Remaining defense", combat_get_base_defense(tough_base) == 2);
+
+    /* Second attack - finish it off */
+    combat_attack_base(game, 1, tough_base, 2);
+    TEST("Base destroyed after total >= defense", deck_frontier_count(defender->deck) == 0);
+
+    /* Test reset on destruction */
+    CardInstance* discard_base = defender->deck->discard[defender->deck->discard_count - 1];
+    TEST("Damage reset on destroy", discard_base->damage_taken == 0);
+    TEST("Placement reset on destroy", discard_base->placement == ZONE_NONE);
+
+    /* Cleanup */
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+    card_type_free(frontier_type);
+    card_type_free(interior_type);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                         Effect Tests (1-007)                               */
 /* ========================================================================== */
 
@@ -760,6 +860,7 @@ int main(void) {
     test_trade_row_module();
     test_game_module();
     test_combat_module();
+    test_base_zones();
     test_effects_module();
 
     printf("\n=====================================\n");

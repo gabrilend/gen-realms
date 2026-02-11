@@ -27,13 +27,13 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-008b | ↳ Chain Resolution | pending |
 | 1-008c | ↳ Spent Flag Management | pending |
 | 1-008d | ↳ Event Emission | pending |
-| 1-009 | Deck Flow Tracker (d10/d4) | pending |
-| 1-010 | Base Card Type | pending |
+| 1-009 | Deck Flow Tracker (d10/d4) | **completed** |
+| 1-010 | Base Card Type | **completed** |
 | 1-011 | Spawning Mechanics | pending |
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 9/22
+## Completed: 11/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -71,8 +71,12 @@ Completed effect dispatch (1-007a, 1-007b, 1-007f):
 - 140 unit tests passing (20 new)
 - Files: src/core/07-effects.{h,c}
 
-### Design Update: Frontier/Interior Zones
-Updated 1-010 to replace outpost concept with frontier/interior zones:
-- Bases placed in frontier (exposed) or interior (protected)
-- Frontier must all be destroyed before interior can be targeted
-- Placement affects art generation (weathered vs ornate themes)
+### 2026-02-10: Deck Flow and Base Zones Complete
+Completed 1-009 and 1-010:
+- d10/d4 deck flow tracker integrated with trade/scrap operations
+- Frontier/interior zone system replacing outpost concept
+- Combat enforces zone priority (frontier > interior > player)
+- Bases accumulate damage across multiple attacks
+- Placement affects art generation via base_placement_art_modifier()
+- 160 unit tests passing (20 new)
+- Files: All core modules updated for new zone system
