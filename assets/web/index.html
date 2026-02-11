@@ -49,6 +49,15 @@
     <!-- Panel rendering (status bar, narrative) -->
     <script src="panel-renderer.js"></script>
 
+    <!-- Preferences storage -->
+    <script src="preferences.js"></script>
+
+    <!-- Animation system -->
+    <script src="animation.js"></script>
+
+    <!-- Narrative display -->
+    <script src="narrative.js"></script>
+
     <!-- Input handling -->
     <script src="input-handler.js"></script>
 
@@ -213,13 +222,20 @@
                 discardCount: 2
             };
 
-            /* Narrative history for demo */
-            const narrativeHistory = [
-                'The merchant fleet arrives at the frontier station, their holds filled with exotic goods from distant worlds.',
-                'Trade Envoy played. +2 Trade',
-                'The artificer guild watches with keen interest as gold changes hands.',
-                'What will you do next?'
-            ];
+            /* Load preferences and initialize systems */
+            window.preferences.load();
+            window.animation.loadFromPreferences();
+            window.narrative.loadFromPreferences();
+
+            /* Initialize narrative with demo entries */
+            window.narrative.add(
+                'The merchant fleet arrives at the frontier station, their holds filled with exotic goods from distant worlds.'
+            );
+            window.narrative.addAction('Trade Envoy played. +2 Trade');
+            window.narrative.add(
+                'The artificer guild watches with keen interest as gold changes hands.'
+            );
+            window.narrative.addSystem('What will you do next?');
 
             /* Initialize selection with one card */
             window.zoneRenderer.setSelectedCards([handCards[2]]);
@@ -227,19 +243,19 @@
             /* Initialize input handler */
             window.inputHandler.init(canvas);
 
-            /* Demo action callbacks */
+            /* Demo action callbacks using narrative system */
             window.inputHandler.onAction('play_card', function(data) {
                 const card = handCards[data.card_index];
                 if (card) {
-                    narrativeHistory.push(card.name + ' played.');
+                    window.narrative.addAction(card.name + ' played.');
                     if (card.effects && card.effects.length > 0) {
                         const eff = card.effects[0];
                         if (eff.type === 'trade') {
                             gameState.player.trade += eff.value;
-                            narrativeHistory.push('+' + eff.value + ' Trade');
+                            window.narrative.addAction('+' + eff.value + ' Trade');
                         } else if (eff.type === 'combat') {
                             gameState.player.combat += eff.value;
-                            narrativeHistory.push('+' + eff.value + ' Combat');
+                            window.narrative.addAction('+' + eff.value + ' Combat');
                         }
                     }
                 }
@@ -249,7 +265,7 @@
                 const card = tradeRowCards[data.slot_index];
                 if (card && gameState.player.trade >= card.cost) {
                     gameState.player.trade -= card.cost;
-                    narrativeHistory.push('Purchased ' + card.name + ' for ' + card.cost + ' gold.');
+                    window.narrative.addPurchase('Purchased ' + card.name + ' for ' + card.cost + ' gold.');
                 } else {
                     window.inputHandler.showError('Not enough trade!');
                 }
@@ -258,7 +274,7 @@
             window.inputHandler.onAction('attack_player', function(data) {
                 if (gameState.player.combat > 0) {
                     gameState.opponent.authority -= gameState.player.combat;
-                    narrativeHistory.push('Attacked opponent for ' + gameState.player.combat + ' damage!');
+                    window.narrative.addAttack('Attacked opponent for ' + gameState.player.combat + ' damage!');
                     gameState.player.combat = 0;
                 } else {
                     window.inputHandler.showError('No combat available!');
@@ -269,7 +285,7 @@
                 gameState.turn++;
                 gameState.player.trade = 0;
                 gameState.player.combat = 0;
-                narrativeHistory.push('Turn ended. Turn ' + gameState.turn + ' begins.');
+                window.narrative.addTurn('Turn ended. Turn ' + gameState.turn + ' begins.');
             });
 
             function renderDemo(ctx, dt, time) {
@@ -305,8 +321,8 @@
                 window.zoneRenderer.renderDiscardIndicator(ctx, gameState.discardCount,
                     layout.hand.x + layout.hand.w - 70, layout.hand.y + 90, playedCards[0]);
 
-                /* Narrative panel using panel renderer */
-                window.panelRenderer.renderNarrativePanel(ctx, narrativeHistory, layout.narrative, 0);
+                /* Narrative panel using narrative system */
+                window.narrative.render(ctx, layout.narrative);
 
                 /* Error message overlay */
                 window.inputHandler.renderError(ctx, layout.status);

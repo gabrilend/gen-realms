@@ -26,6 +26,9 @@ the GAMMA checkpoint.
 | 3-004d | Status/narrative panels | 2026-02-10 |
 | 3-002 | Terminal input system | 2026-02-11 |
 | 3-005 | Browser input handler | 2026-02-11 |
+| 3-006a | Preferences storage | 2026-02-11 |
+| 3-008a | Animation core | 2026-02-11 |
+| 3-009 | Narrative display | 2026-02-11 |
 
 ### In Progress
 
@@ -43,10 +46,11 @@ All Beta-Gamma input system issues completed.
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 3-006* | Client style preferences | 3-005 |
+| 3-006b | Preferences UI panel | 3-006a |
+| 3-006c | Preferences export/import | 3-006a |
 | 3-007 | Draw order interface | 3-005, 2-005* |
-| 3-008* | Animation system | 3-004c |
-| 3-009 | Narrative display | 3-004d |
+| 3-008b | Card movement animations | 3-008a |
+| 3-008c | Attack/damage effects | 3-008a |
 | 3-010 | Phase 3 Demo | All above, 2-010 |
 
 ## Checkpoint Requirements
@@ -144,6 +148,29 @@ Expected deliverables when Track C is complete:
   - Error message overlay with auto-dismiss
   - Action buttons rendering
   - Demo now fully interactive with game state updates
+
+### 2026-02-11: Integration Systems
+- Implemented preferences storage (3-006a)
+  - preferences.js with localStorage backend
+  - Version migration support for future upgrades
+  - Validates and clamps values to valid ranges
+  - Export/import for sharing preferences
+  - Settings: styleGuide, animationSpeed, narrativeFont, accessibility
+- Implemented animation core (3-008a)
+  - animation.js with queued animation system
+  - Easing functions: linear, easeIn/Out, shake, bounce, elastic
+  - Animation types: play_card, buy_card, attack, damage, etc.
+  - Speed control from preferences
+  - Reduce motion accessibility support
+  - Helper functions: interpolate, interpolatePoint, interpolateColor
+- Implemented narrative display (3-009)
+  - narrative.js with scrollable history
+  - Entry types: narrative, action, attack, purchase, system, turn
+  - Color-coded entries for visual distinction
+  - Word wrapping for canvas rendering
+  - Scroll up/down with auto-scroll on new entries
+  - Copy-to-clipboard for sharing stories
+  - Integration with demo mode
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering
