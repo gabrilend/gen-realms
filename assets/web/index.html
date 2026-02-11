@@ -10,7 +10,10 @@
     <div id="game-container">
         <header id="game-header">
             <h1>Symbeline Realms</h1>
-            <span id="connection-status" class="disconnected">Disconnected</span>
+            <div id="header-controls">
+                <button id="prefs-btn" title="Preferences">&#9881;</button>
+                <span id="connection-status" class="disconnected">Disconnected</span>
+            </div>
         </header>
 
         <div id="canvas-container">
@@ -57,6 +60,15 @@
 
     <!-- Narrative display -->
     <script src="narrative.js"></script>
+
+    <!-- Card animations -->
+    <script src="card-animations.js"></script>
+
+    <!-- Visual effects -->
+    <script src="effects.js"></script>
+
+    <!-- Preferences UI -->
+    <script src="preferences-ui.js"></script>
 
     <!-- Input handling -->
     <script src="input-handler.js"></script>
@@ -223,9 +235,15 @@
             };
 
             /* Load preferences and initialize systems */
-            window.preferences.load();
+            const prefs = window.preferences.load();
             window.animation.loadFromPreferences();
             window.narrative.loadFromPreferences();
+            window.cardAnimations.init();
+
+            /* Wire up preferences button */
+            document.getElementById('prefs-btn').addEventListener('click', function() {
+                window.preferencesUI.toggle();
+            });
 
             /* Initialize narrative with demo entries */
             window.narrative.add(
@@ -335,6 +353,12 @@
                     h: 35
                 };
                 window.inputHandler.renderActionButtons(ctx, buttonRegion, gameState);
+
+                /* Render card animations (on top of everything) */
+                window.cardAnimations.render(ctx);
+
+                /* Render visual effects (on top of card animations) */
+                window.effects.render(ctx, canvas.width, canvas.height);
             }
 
             window.canvasLayout.startRenderLoop(renderDemo);

@@ -29,6 +29,9 @@ the GAMMA checkpoint.
 | 3-006a | Preferences storage | 2026-02-11 |
 | 3-008a | Animation core | 2026-02-11 |
 | 3-009 | Narrative display | 2026-02-11 |
+| 3-006b | Preferences UI panel | 2026-02-11 |
+| 3-008b | Card movement animations | 2026-02-11 |
+| 3-008c | Attack/damage effects | 2026-02-11 |
 
 ### In Progress
 
@@ -46,11 +49,8 @@ All Beta-Gamma input system issues completed.
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 3-006b | Preferences UI panel | 3-006a |
 | 3-006c | Preferences export/import | 3-006a |
 | 3-007 | Draw order interface | 3-005, 2-005* |
-| 3-008b | Card movement animations | 3-008a |
-| 3-008c | Attack/damage effects | 3-008a |
 | 3-010 | Phase 3 Demo | All above, 2-010 |
 
 ## Checkpoint Requirements
@@ -171,6 +171,28 @@ Expected deliverables when Track C is complete:
   - Scroll up/down with auto-scroll on new entries
   - Copy-to-clipboard for sharing stories
   - Integration with demo mode
+- Implemented preferences UI panel (3-006b)
+  - preferences-ui.js with modal dialog
+  - Editable fields for all preference settings
+  - Save, reset, and cancel buttons
+  - Export/import buttons for sharing
+  - Keyboard navigation (Escape to close)
+  - Added gear icon button to header
+- Implemented card movement animations (3-008b)
+  - card-animations.js for canvas-based card animations
+  - Play card: hand to play area with lift effect
+  - Buy card: trade row to discard with arc
+  - Draw card: deck to hand with flip
+  - Scrap card: shrink, fade, and spin
+  - Flip card: in-place reveal animation
+- Implemented attack/damage effects (3-008c)
+  - effects.js for visual feedback
+  - Screen flash for player attacks
+  - Base shake for base attacks
+  - Floating damage/healing numbers
+  - Authority change tick animation
+  - Turn change overlay announcement
+  - Resource gain indicators (trade/combat)
 
 ### Dependencies on Other Tracks
 - Track A (1-001): Card struct needed for card rendering

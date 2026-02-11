@@ -70,6 +70,27 @@ html, body {
     color: #cc3333;
     background-color: rgba(204, 51, 51, 0.1);
 }
+
+#header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#prefs-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    font-size: 1.2em;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#prefs-btn:hover {
+    border-color: #8866cc;
+    color: #8866cc;
+}
 /* }}} */
 
 /* {{{ canvas container */
@@ -288,5 +309,261 @@ html, body {
     #game-header {
         padding: 4px 12px;
     }
+}
+/* }}} */
+
+/* {{{ preferences modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #1a1a2e;
+    border: 1px solid #444;
+    padding: 24px 32px;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: #8866cc;
+    font-weight: normal;
+    font-size: 1.3em;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 12px;
+}
+
+.pref-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #222;
+}
+
+.pref-section:last-of-type {
+    border-bottom: none;
+}
+
+.pref-section h4 {
+    color: #aaa;
+    font-size: 0.95em;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.pref-section label {
+    display: block;
+    margin-bottom: 4px;
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.pref-section textarea {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    background-color: #0d0d1a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 0.9em;
+    resize: vertical;
+}
+
+.pref-section textarea:focus {
+    outline: none;
+    border-color: #8866cc;
+}
+
+.pref-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+
+.pref-row label {
+    min-width: 120px;
+    margin-bottom: 0;
+}
+
+.pref-row select {
+    flex: 1;
+    padding: 6px 10px;
+    background-color: #0d0d1a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 0.9em;
+}
+
+.pref-row select:focus {
+    outline: none;
+    border-color: #8866cc;
+}
+
+.pref-row input[type="range"] {
+    flex: 1;
+    height: 4px;
+    background-color: #444;
+    border-radius: 2px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.pref-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background-color: #8866cc;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.pref-row input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background-color: #8866cc;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+#pref-anim-speed-value {
+    min-width: 40px;
+    text-align: right;
+    color: #8866cc;
+}
+
+.checkbox-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    min-width: auto;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.pref-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pref-buttons button {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #8866cc;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #9977dd;
+}
+
+.btn-secondary {
+    background-color: #333;
+    color: #ccc;
+}
+
+.btn-secondary:hover {
+    background-color: #444;
+}
+
+.pref-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #333;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #888;
+    font-family: inherit;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    border-color: #666;
+    color: #aaa;
+}
+/* }}} */
+
+/* {{{ accessibility modes */
+.high-contrast #game-canvas {
+    filter: contrast(1.2);
+}
+
+.high-contrast .modal-content {
+    background-color: #000;
+    border-color: #fff;
+}
+
+.high-contrast .pref-section textarea,
+.high-contrast .pref-row select {
+    background-color: #000;
+    border-color: #fff;
+    color: #fff;
+}
+
+.large-text {
+    font-size: 16px;
+}
+
+.large-text .modal-content h3 {
+    font-size: 1.5em;
+}
+
+.large-text .pref-section h4 {
+    font-size: 1.1em;
+}
+
+.large-text .pref-section label {
+    font-size: 1em;
 }
 /* }}} */
