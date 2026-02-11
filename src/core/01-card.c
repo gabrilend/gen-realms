@@ -237,6 +237,11 @@ CardInstance* card_instance_create(CardType* type) {
 
     inst->draw_effect_spent = false;
 
+    /* Base-specific state (initialized even for non-bases) */
+    inst->placement = ZONE_NONE;
+    inst->deployed = false;
+    inst->damage_taken = 0;
+
     return inst;
 }
 /* }}} */
@@ -419,6 +424,37 @@ const char* effect_type_to_string(EffectType type) {
         case EFFECT_UPGRADE_AUTH:   return "Upgrade Authority";
         case EFFECT_SPAWN:          return "Spawn";
         default:                    return "Unknown";
+    }
+}
+/* }}} */
+
+/* {{{ base_placement_to_string
+ * Returns human-readable placement zone name.
+ */
+const char* base_placement_to_string(BasePlacement placement) {
+    switch (placement) {
+        case ZONE_NONE:     return "None";
+        case ZONE_FRONTIER: return "Frontier";
+        case ZONE_INTERIOR: return "Interior";
+        default:            return "Unknown";
+    }
+}
+/* }}} */
+
+/* {{{ base_placement_art_modifier
+ * Returns art generation prompt keywords for the placement zone.
+ * Used by ComfyUI integration to generate zone-appropriate visuals.
+ */
+const char* base_placement_art_modifier(BasePlacement placement) {
+    switch (placement) {
+        case ZONE_FRONTIER:
+            return "exposed forward camp, battle-worn, edge of wilderness, "
+                   "temporary fortification, weathered";
+        case ZONE_INTERIOR:
+            return "fortified stronghold, protected walls, ornate banners, "
+                   "established seat of power, secure";
+        default:
+            return "";
     }
 }
 /* }}} */

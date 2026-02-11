@@ -299,21 +299,24 @@ Certain bases have effects when they're destroyed:
 - Utility effects reward long-game base strategies
 - Mix of outposts (must attack) and regular bases (can ignore)
 
-### High Kingdom: Bury-Draw (Deck Filtering)
+### High Kingdom: Recruit (The March Column)
 
-**Unique Effect:** `bury_draw` - Put a card from hand on the bottom of
-your deck, then draw a card.
+**Unique Effect:** `recruit` - Send a card from hand to the back of
+your deck (the march column), then draw from the front.
 
-Unlike scrapping (permanent removal), burying pushes unwanted cards away
-temporarily. You won't see them again until your deck reshuffles.
+The Kingdom's army marches in an endless 2x2 mile column of sworn
+countrymen. When you recruit, you're sending a soldier to the back
+of the line to gather more forces—peasants filling armor, squires
+seeking knights, heralds spreading the call. They'll catch up when
+the column cycles (deck reshuffles).
 
 **Strategic Value:**
-- Filter out bad draws (starting cards, situational cards)
-- Smooth your draws without shrinking your deck
-- Keep options available for later (buried cards come back)
-- Endurance playstyle: outlast opponents with better card quality
+- Filter out bad draws without losing the card permanently
+- Smooth your draws while keeping options for later
+- Build momentum: front of the column is your best troops
+- Endurance playstyle: outlast opponents through superior logistics
 
-**Cards with Bury-Draw:**
+**Cards with Recruit:**
 | Card | Cost | When |
 |------|------|------|
 | Royal Herald | 1 | Main effect (optional) |
@@ -321,12 +324,17 @@ temporarily. You won't see them again until your deck reshuffles.
 | Battle Priest | 2 | Ally effect (optional) |
 | Blessed Guardian | 5 | Ally effect (optional) |
 
+**Thematic Note:**
+Ploughshares to ploughs—when soldiers choose peace, they're building.
+When peaceful folk choose soldiery, they intend to capitalize on it.
+The recruited card isn't "buried" or discarded—it's sent to gather
+reinforcements, and will return stronger when the column cycles.
+
 **Design Intent:**
-The High Kingdom fights through discipline and preparation. While other
-factions burn cards permanently (Artificer) or overwhelm with numbers
-(Wilds), Kingdom players carefully manage their draw quality. Every turn,
-they push weak cards aside and draw fresh—grinding toward victory through
-superior deck consistency.
+The High Kingdom fights through discipline and logistics. While other
+factions burn cards permanently (Artificer) or overwhelm with pack
+tactics (Wilds), Kingdom players manage the march column—always
+ensuring the best troops are at the front, the rest gathering strength.
 
 ### Artificer Order: Scrap-Draw Chain
 

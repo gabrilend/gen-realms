@@ -41,6 +41,18 @@ typedef enum {
 } CardKind;
 /* }}} */
 
+/* {{{ BasePlacement
+ * Where a base is placed when played. Replaces the outpost concept.
+ * Frontier bases must all be destroyed before interior can be targeted.
+ * This is chosen at play time, not defined on the card type.
+ */
+typedef enum {
+    ZONE_NONE = 0,       /* Not a base / not yet placed */
+    ZONE_FRONTIER,       /* Exposed position, attacked first */
+    ZONE_INTERIOR        /* Protected position, attacked after frontier */
+} BasePlacement;
+/* }}} */
+
 /* {{{ EffectType
  * All possible effect types. Effects are triggered when cards are played,
  * when ally conditions are met, or when cards are scrapped.
@@ -151,6 +163,11 @@ typedef struct {
 
     /* Runtime state */
     bool draw_effect_spent; /* True if auto-draw already triggered */
+
+    /* Base-specific state (only used for CARD_KIND_BASE) */
+    BasePlacement placement; /* Frontier or interior zone */
+    bool deployed;           /* True after first full turn (effects active) */
+    int damage_taken;        /* Damage accumulated (destroyed when >= defense) */
 } CardInstance;
 /* }}} */
 
@@ -191,6 +208,8 @@ void card_instance_clear_regen(CardInstance* inst);
 const char* faction_to_string(Faction faction);
 const char* card_kind_to_string(CardKind kind);
 const char* effect_type_to_string(EffectType type);
+const char* base_placement_to_string(BasePlacement placement);
+const char* base_placement_art_modifier(BasePlacement placement);
 /* }}} */
 
 #endif /* SYMBELINE_CARD_H */

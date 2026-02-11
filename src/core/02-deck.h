@@ -43,10 +43,15 @@ typedef struct {
     int played_count;
     int played_capacity;
 
-    /* Bases in play - persist across turns until destroyed */
-    CardInstance** bases;
-    int base_count;
-    int base_capacity;
+    /* Frontier bases - exposed, must all be destroyed before interior */
+    CardInstance** frontier_bases;
+    int frontier_base_count;
+    int frontier_base_capacity;
+
+    /* Interior bases - protected, only attackable when frontier is empty */
+    CardInstance** interior_bases;
+    int interior_base_count;
+    int interior_base_capacity;
 } Deck;
 /* }}} */
 
@@ -64,7 +69,9 @@ bool deck_add_to_draw_pile(Deck* deck, CardInstance* card);
 bool deck_add_to_hand(Deck* deck, CardInstance* card);
 bool deck_add_to_discard(Deck* deck, CardInstance* card);
 bool deck_add_to_played(Deck* deck, CardInstance* card);
-bool deck_add_base(Deck* deck, CardInstance* card);
+bool deck_add_base_to_frontier(Deck* deck, CardInstance* card);
+bool deck_add_base_to_interior(Deck* deck, CardInstance* card);
+bool deck_add_base(Deck* deck, CardInstance* card);  /* Uses card->placement */
 /* }}} */
 
 /* {{{ Shuffle and draw operations */
@@ -78,9 +85,13 @@ int deck_draw_pile_count(Deck* deck);
 
 /* {{{ Card movement */
 bool deck_play_from_hand(Deck* deck, CardInstance* card);
+bool deck_play_base_to_frontier(Deck* deck, CardInstance* card);
+bool deck_play_base_to_interior(Deck* deck, CardInstance* card);
 bool deck_discard_from_hand(Deck* deck, CardInstance* card);
 bool deck_discard_from_played(Deck* deck, CardInstance* card);
 CardInstance* deck_remove_base(Deck* deck, CardInstance* card);
+CardInstance* deck_remove_from_frontier(Deck* deck, CardInstance* card);
+CardInstance* deck_remove_from_interior(Deck* deck, CardInstance* card);
 /* }}} */
 
 /* {{{ Turn management */
@@ -100,6 +111,10 @@ bool deck_discard_contains(Deck* deck, CardInstance* card);
 CardInstance* deck_find_in_hand(Deck* deck, const char* instance_id);
 CardInstance* deck_find_in_discard(Deck* deck, const char* instance_id);
 int deck_total_card_count(Deck* deck);
+int deck_frontier_count(Deck* deck);
+int deck_interior_count(Deck* deck);
+int deck_total_base_count(Deck* deck);
+bool deck_has_frontier_bases(Deck* deck);
 /* }}} */
 
 /* {{{ Top deck manipulation */

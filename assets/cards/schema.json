@@ -140,7 +140,7 @@
             "upgrade_trade",
             "upgrade_authority",
             "copy_ship",
-            "bury_draw"
+            "recruit"
           ],
           "description": "Type of effect"
         },

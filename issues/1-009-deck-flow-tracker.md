@@ -52,9 +52,17 @@ C functions extending the Player module that:
 - 1-004: Trade Row (buy triggers increment)
 
 ## Acceptance Criteria
-- [ ] d10 increments on card purchase
-- [ ] d10 decrements on card scrap
-- [ ] Overflow correctly grants +1 draw (d10: 9->0, d4++)
-- [ ] Underflow correctly reduces draws by 1 (d10: 0->9, d4--)
-- [ ] Hand size never goes below 1
-- [ ] d10/d4 included in gamestate protocol for display
+- [x] d10 increments on card purchase
+- [x] d10 decrements on card scrap
+- [x] Overflow correctly grants +1 draw (d10: 9->0, d4++)
+- [x] Underflow correctly reduces draws by 1 (d10: 0->9, d4--)
+- [x] Hand size never goes below 1
+- [ ] d10/d4 included in gamestate protocol for display (1-012)
+
+## Implementation Notes (2026-02-10)
+- player_d10_increment() implemented in 03-player.c
+- player_d10_decrement() implemented in 03-player.c
+- Called from trade_row_buy() and trade_row_buy_explorer()
+- Called from effect handlers (EFFECT_D10_UP, EFFECT_D10_DOWN)
+- player_get_hand_size() returns base (5) + d4 with minimum 1
+- 8 tests passing for d10/d4 overflow/underflow behavior

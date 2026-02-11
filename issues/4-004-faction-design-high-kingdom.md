@@ -77,23 +77,29 @@ Design and implement the High Kingdom faction with:
 ### Addendum 1 (2026-02-10)
 Added **Banner Knight** (Cost 3) to bring faction to 15 cards total.
 
-### Addendum 2 (2026-02-10) - Bury-Draw Mechanic
+### Addendum 2 (2026-02-10) - Recruit Mechanic (The March Column)
 
-**New faction-defining ability added:** `bury_draw`
-- Put a card from hand on the bottom of deck, then draw a card
-- Filters bad draws without permanent removal (unlike Artificer scrap)
-- Creates "endurance" playstyle through superior deck consistency
+**New faction-defining ability added:** `recruit`
+- Send a card from hand to the back of deck (the march column)
+- Draw from the front of the column
+- Card will return when deck reshuffles (column cycles)
 
-**Cards Updated with Bury-Draw:**
+**Thematic Flavor:**
+The Kingdom's army marches in an endless 2x2 mile column of sworn
+countrymen. Recruited cards are sent to gather reinforcements—peasants
+filling armor, squires seeking knights—they'll catch up when the column
+cycles. Unlike Artificer scrap (permanent removal), recruit is temporary.
+
+**Cards Updated with Recruit:**
 | Card | Cost | When |
 |------|------|------|
-| Royal Herald | 1 | Main effect (reduced authority to 1, added bury_draw) |
-| Watchtower | 2 | Main effect (reduced authority to 1, added bury_draw) |
-| Battle Priest | 2 | Ally effect (added bury_draw) |
-| Blessed Guardian | 5 | Ally effect (added bury_draw) |
+| Royal Herald | 1 | Main effect (reduced authority to 1, added recruit) |
+| Watchtower | 2 | Main effect (reduced authority to 1, added recruit) |
+| Battle Priest | 2 | Ally effect (added recruit) |
+| Blessed Guardian | 5 | Ally effect (added recruit) |
 
 **Design Intent:**
-Kingdom now has a unique mechanical identity beyond authority gain. The
-faction rewards patient, disciplined play - pushing weak cards to the
-bottom of the deck and drawing fresh, grinding toward victory through
-better card quality rather than raw power or permanent removal.
+Kingdom now has a unique mechanical identity: march column logistics.
+The faction rewards disciplined play—ensuring the best troops are at the
+front while the rest gather strength at the back. Victory through superior
+organization rather than raw power or permanent removal.

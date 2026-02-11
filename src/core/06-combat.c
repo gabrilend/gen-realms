@@ -1,8 +1,12 @@
 /* 06-combat.c - Combat resolution implementation
  *
- * Handles the combat system including target validation, outpost priority,
- * and base destruction. Combat power is accumulated during main phase and
- * spent on attacks.
+ * Handles the combat system including target validation, frontier/interior
+ * priority, and base destruction. Combat power is accumulated during main
+ * phase and spent on attacks.
+ *
+ * Attack priority: All frontier bases must be destroyed before interior
+ * bases can be targeted. All bases must be destroyed before the player
+ * can be attacked directly.
  */
 
 /* Enable POSIX functions */
@@ -18,7 +22,7 @@
 /* {{{ combat_get_valid_targets
  * Fills the output array with valid combat targets.
  * Returns the number of targets found.
- * Respects outpost priority: if outposts exist, only outposts are valid.
+ * Respects zone priority: frontier bases first, then interior, then player.
  */
 int combat_get_valid_targets(Game* game, CombatTarget* out, int max) {
     if (!game || !out || max <= 0) {
@@ -43,32 +47,43 @@ int combat_get_valid_targets(Game* game, CombatTarget* out, int max) {
             continue;
         }
 
-        bool has_outpost = combat_has_outpost(game, p);
+        bool has_frontier = deck_has_frontier_bases(opponent->deck);
+        bool has_any_bases = deck_total_base_count(opponent->deck) > 0;
 
-        /* Add bases as targets */
-        for (int b = 0; b < opponent->deck->base_count && count < max; b++) {
-            CardInstance* base = opponent->deck->bases[b];
-            if (!base || !base->type) {
-                continue;
+        /* Priority: Frontier bases first */
+        if (has_frontier) {
+            for (int b = 0; b < opponent->deck->frontier_base_count && count < max; b++) {
+                CardInstance* base = opponent->deck->frontier_bases[b];
+                if (!base || !base->type) {
+                    continue;
+                }
+
+                out[count].type = TARGET_BASE;
+                out[count].player_index = p;
+                out[count].base = base;
+                out[count].defense_remaining = base->type->defense - base->damage_taken;
+                out[count].is_outpost = true;  /* Frontier = must attack first */
+                count++;
             }
-
-            bool is_outpost = base->type->is_outpost;
-
-            /* If there are outposts, only outposts are valid */
-            if (has_outpost && !is_outpost) {
-                continue;
-            }
-
-            out[count].type = TARGET_BASE;
-            out[count].player_index = p;
-            out[count].base = base;
-            out[count].defense_remaining = base->type->defense;
-            out[count].is_outpost = is_outpost;
-            count++;
         }
+        /* If no frontier, interior bases are valid */
+        else if (has_any_bases) {
+            for (int b = 0; b < opponent->deck->interior_base_count && count < max; b++) {
+                CardInstance* base = opponent->deck->interior_bases[b];
+                if (!base || !base->type) {
+                    continue;
+                }
 
-        /* Add player as target if no outposts */
-        if (!has_outpost && count < max) {
+                out[count].type = TARGET_BASE;
+                out[count].player_index = p;
+                out[count].base = base;
+                out[count].defense_remaining = base->type->defense - base->damage_taken;
+                out[count].is_outpost = false;  /* Interior = protected */
+                count++;
+            }
+        }
+        /* If no bases at all, player is valid target */
+        else if (count < max) {
             out[count].type = TARGET_PLAYER;
             out[count].player_index = p;
             out[count].base = NULL;
@@ -83,7 +98,9 @@ int combat_get_valid_targets(Game* game, CombatTarget* out, int max) {
 /* }}} */
 
 /* {{{ combat_has_outpost
- * Returns true if the player has any outpost bases in play.
+ * Returns true if the player has any frontier bases in play.
+ * NOTE: "outpost" terminology retained for API compatibility, but now
+ * refers to frontier bases which must be destroyed first.
  */
 bool combat_has_outpost(Game* game, int player_index) {
     if (!game || player_index < 0 || player_index >= game->player_count) {
@@ -95,23 +112,26 @@ bool combat_has_outpost(Game* game, int player_index) {
         return false;
     }
 
-    for (int i = 0; i < player->deck->base_count; i++) {
-        CardInstance* base = player->deck->bases[i];
-        if (base && base->type && base->type->is_outpost) {
-            return true;
-        }
-    }
-
-    return false;
+    return deck_has_frontier_bases(player->deck);
 }
 /* }}} */
 
 /* {{{ combat_can_attack_player
  * Returns true if the player can be attacked directly.
- * False if they have outposts that must be destroyed first.
+ * False if they have any bases that must be destroyed first.
  */
 bool combat_can_attack_player(Game* game, int player_index) {
-    return !combat_has_outpost(game, player_index);
+    if (!game || player_index < 0 || player_index >= game->player_count) {
+        return false;
+    }
+
+    Player* player = game->players[player_index];
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Player can only be attacked if they have no bases at all */
+    return deck_total_base_count(player->deck) == 0;
 }
 /* }}} */
 
@@ -160,8 +180,11 @@ bool combat_attack_player(Game* game, int player_index, int amount) {
 /* }}} */
 
 /* {{{ combat_attack_base
- * Deals damage to a base. Destroys it if damage >= defense.
+ * Deals damage to a base. Destroys it if total damage >= defense.
  * Returns false if attack is invalid.
+ *
+ * Zone priority: Frontier bases must be destroyed before interior bases.
+ * Bases now accumulate damage across multiple attacks.
  */
 bool combat_attack_base(Game* game, int player_index, CardInstance* base, int amount) {
     if (!game || !base || player_index < 0 || player_index >= game->player_count) {
@@ -184,31 +207,46 @@ bool combat_attack_base(Game* game, int player_index, CardInstance* base, int am
         return false;
     }
 
-    /* Check if base is actually in play */
-    bool found = false;
-    for (int i = 0; i < defender->deck->base_count; i++) {
-        if (defender->deck->bases[i] == base) {
-            found = true;
+    /* Check if base is in frontier zone */
+    bool in_frontier = false;
+    for (int i = 0; i < defender->deck->frontier_base_count; i++) {
+        if (defender->deck->frontier_bases[i] == base) {
+            in_frontier = true;
             break;
         }
     }
-    if (!found) {
+
+    /* Check if base is in interior zone */
+    bool in_interior = false;
+    if (!in_frontier) {
+        for (int i = 0; i < defender->deck->interior_base_count; i++) {
+            if (defender->deck->interior_bases[i] == base) {
+                in_interior = true;
+                break;
+            }
+        }
+    }
+
+    /* Base must be in play */
+    if (!in_frontier && !in_interior) {
         return false;
     }
 
-    /* Check outpost priority */
-    if (!base->type->is_outpost && combat_has_outpost(game, player_index)) {
-        return false;  /* Must destroy outposts first */
+    /* Check zone priority: can't attack interior if frontier exists */
+    if (in_interior && deck_has_frontier_bases(defender->deck)) {
+        return false;  /* Must destroy frontier bases first */
     }
 
     /* Spend combat */
     attacker->combat -= amount;
 
+    /* Accumulate damage on the base */
+    base->damage_taken += amount;
+
     /* Check if base is destroyed */
-    if (amount >= base->type->defense) {
+    if (base->damage_taken >= base->type->defense) {
         combat_destroy_base(game, player_index, base);
     }
-    /* Note: Bases don't take partial damage - either destroyed or not */
 
     return true;
 }
@@ -216,6 +254,7 @@ bool combat_attack_base(Game* game, int player_index, CardInstance* base, int am
 
 /* {{{ combat_destroy_base
  * Removes a base from play and puts it in the owner's discard pile.
+ * Resets damage and placement state on the card.
  */
 void combat_destroy_base(Game* game, int player_index, CardInstance* base) {
     if (!game || !base || player_index < 0 || player_index >= game->player_count) {
@@ -227,9 +266,14 @@ void combat_destroy_base(Game* game, int player_index, CardInstance* base) {
         return;
     }
 
-    /* Remove from bases and add to discard */
+    /* Remove from bases (deck_remove_base checks both zones) */
     CardInstance* removed = deck_remove_base(owner->deck, base);
     if (removed) {
+        /* Reset base state for when it's replayed */
+        removed->damage_taken = 0;
+        removed->deployed = false;
+        removed->placement = ZONE_NONE;
+
         deck_add_to_discard(owner->deck, removed);
     }
 }
@@ -257,12 +301,13 @@ int combat_get_available(Game* game) {
 /* }}} */
 
 /* {{{ combat_get_base_defense
- * Returns the defense value of a base.
+ * Returns the remaining defense value of a base (total defense minus damage).
  */
 int combat_get_base_defense(CardInstance* base) {
     if (!base || !base->type) {
         return 0;
     }
-    return base->type->defense;
+    int remaining = base->type->defense - base->damage_taken;
+    return remaining > 0 ? remaining : 0;
 }
 /* }}} */

@@ -134,10 +134,11 @@ Deck* deck_create(void) {
     deck->hand = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
     deck->discard = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
     deck->played = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
-    deck->bases = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
+    deck->frontier_bases = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
+    deck->interior_bases = calloc(DECK_DEFAULT_CAPACITY, sizeof(CardInstance*));
 
     if (!deck->draw_pile || !deck->hand || !deck->discard ||
-        !deck->played || !deck->bases) {
+        !deck->played || !deck->frontier_bases || !deck->interior_bases) {
         deck_free(deck);
         return NULL;
     }
@@ -146,7 +147,8 @@ Deck* deck_create(void) {
     deck->hand_capacity = DECK_DEFAULT_CAPACITY;
     deck->discard_capacity = DECK_DEFAULT_CAPACITY;
     deck->played_capacity = DECK_DEFAULT_CAPACITY;
-    deck->base_capacity = DECK_DEFAULT_CAPACITY;
+    deck->frontier_base_capacity = DECK_DEFAULT_CAPACITY;
+    deck->interior_base_capacity = DECK_DEFAULT_CAPACITY;
 
     return deck;
 }
@@ -173,8 +175,11 @@ void deck_free(Deck* deck) {
     for (int i = 0; i < deck->played_count; i++) {
         card_instance_free(deck->played[i]);
     }
-    for (int i = 0; i < deck->base_count; i++) {
-        card_instance_free(deck->bases[i]);
+    for (int i = 0; i < deck->frontier_base_count; i++) {
+        card_instance_free(deck->frontier_bases[i]);
+    }
+    for (int i = 0; i < deck->interior_base_count; i++) {
+        card_instance_free(deck->interior_bases[i]);
     }
 
     /* Free the arrays */
@@ -182,7 +187,8 @@ void deck_free(Deck* deck) {
     free(deck->hand);
     free(deck->discard);
     free(deck->played);
-    free(deck->bases);
+    free(deck->frontier_bases);
+    free(deck->interior_bases);
 
     free(deck);
 }
@@ -256,19 +262,61 @@ bool deck_add_to_played(Deck* deck, CardInstance* card) {
 }
 /* }}} */
 
+/* {{{ deck_add_base_to_frontier
+ * Adds a base to the frontier zone (exposed, attacked first).
+ * Sets the card's placement field.
+ */
+bool deck_add_base_to_frontier(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return false;
+    }
+    if (!ensure_capacity(&deck->frontier_bases, &deck->frontier_base_capacity,
+                         deck->frontier_base_count + 1)) {
+        return false;
+    }
+    card->placement = ZONE_FRONTIER;
+    card->deployed = false;  /* Will activate after first full turn */
+    card->damage_taken = 0;
+    deck->frontier_bases[deck->frontier_base_count++] = card;
+    return true;
+}
+/* }}} */
+
+/* {{{ deck_add_base_to_interior
+ * Adds a base to the interior zone (protected, attacked last).
+ * Sets the card's placement field.
+ */
+bool deck_add_base_to_interior(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return false;
+    }
+    if (!ensure_capacity(&deck->interior_bases, &deck->interior_base_capacity,
+                         deck->interior_base_count + 1)) {
+        return false;
+    }
+    card->placement = ZONE_INTERIOR;
+    card->deployed = false;  /* Will activate after first full turn */
+    card->damage_taken = 0;
+    deck->interior_bases[deck->interior_base_count++] = card;
+    return true;
+}
+/* }}} */
+
 /* {{{ deck_add_base
- * Adds a base to the persistent base zone. Returns false on failure.
+ * Adds a base using its current placement field.
+ * If placement is ZONE_NONE, defaults to frontier.
  */
 bool deck_add_base(Deck* deck, CardInstance* card) {
     if (!deck || !card) {
         return false;
     }
-    if (!ensure_capacity(&deck->bases, &deck->base_capacity,
-                         deck->base_count + 1)) {
-        return false;
+
+    if (card->placement == ZONE_INTERIOR) {
+        return deck_add_base_to_interior(deck, card);
+    } else {
+        /* Default to frontier for ZONE_NONE or ZONE_FRONTIER */
+        return deck_add_base_to_frontier(deck, card);
     }
-    deck->bases[deck->base_count++] = card;
-    return true;
 }
 /* }}} */
 
@@ -502,14 +550,89 @@ bool deck_discard_from_played(Deck* deck, CardInstance* card) {
 }
 /* }}} */
 
+/* {{{ deck_remove_from_frontier
+ * Removes a base from the frontier zone. Returns the card for cleanup.
+ */
+CardInstance* deck_remove_from_frontier(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return NULL;
+    }
+    CardInstance* removed = remove_from_array(deck->frontier_bases,
+                                               &deck->frontier_base_count, card);
+    if (removed) {
+        removed->placement = ZONE_NONE;
+    }
+    return removed;
+}
+/* }}} */
+
+/* {{{ deck_remove_from_interior
+ * Removes a base from the interior zone. Returns the card for cleanup.
+ */
+CardInstance* deck_remove_from_interior(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return NULL;
+    }
+    CardInstance* removed = remove_from_array(deck->interior_bases,
+                                               &deck->interior_base_count, card);
+    if (removed) {
+        removed->placement = ZONE_NONE;
+    }
+    return removed;
+}
+/* }}} */
+
 /* {{{ deck_remove_base
- * Removes a base from play (when destroyed). Returns the card for cleanup.
+ * Removes a base from play (searches both zones). Returns the card for cleanup.
+ * Checks frontier first, then interior.
  */
 CardInstance* deck_remove_base(Deck* deck, CardInstance* card) {
     if (!deck || !card) {
         return NULL;
     }
-    return remove_from_array(deck->bases, &deck->base_count, card);
+
+    /* Try frontier first */
+    CardInstance* removed = deck_remove_from_frontier(deck, card);
+    if (removed) {
+        return removed;
+    }
+
+    /* Then try interior */
+    return deck_remove_from_interior(deck, card);
+}
+/* }}} */
+
+/* {{{ deck_play_base_to_frontier
+ * Plays a base from hand to the frontier zone.
+ */
+bool deck_play_base_to_frontier(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return false;
+    }
+
+    CardInstance* removed = remove_from_array(deck->hand, &deck->hand_count, card);
+    if (!removed) {
+        return false;
+    }
+
+    return deck_add_base_to_frontier(deck, card);
+}
+/* }}} */
+
+/* {{{ deck_play_base_to_interior
+ * Plays a base from hand to the interior zone.
+ */
+bool deck_play_base_to_interior(Deck* deck, CardInstance* card) {
+    if (!deck || !card) {
+        return false;
+    }
+
+    CardInstance* removed = remove_from_array(deck->hand, &deck->hand_count, card);
+    if (!removed) {
+        return false;
+    }
+
+    return deck_add_base_to_interior(deck, card);
 }
 /* }}} */
 
@@ -651,7 +774,52 @@ int deck_total_card_count(Deck* deck) {
         return 0;
     }
     return deck->draw_pile_count + deck->hand_count + deck->discard_count +
-           deck->played_count + deck->base_count;
+           deck->played_count + deck->frontier_base_count + deck->interior_base_count;
+}
+/* }}} */
+
+/* {{{ deck_frontier_count
+ * Returns the number of bases in the frontier zone.
+ */
+int deck_frontier_count(Deck* deck) {
+    if (!deck) {
+        return 0;
+    }
+    return deck->frontier_base_count;
+}
+/* }}} */
+
+/* {{{ deck_interior_count
+ * Returns the number of bases in the interior zone.
+ */
+int deck_interior_count(Deck* deck) {
+    if (!deck) {
+        return 0;
+    }
+    return deck->interior_base_count;
+}
+/* }}} */
+
+/* {{{ deck_total_base_count
+ * Returns total number of bases across both zones.
+ */
+int deck_total_base_count(Deck* deck) {
+    if (!deck) {
+        return 0;
+    }
+    return deck->frontier_base_count + deck->interior_base_count;
+}
+/* }}} */
+
+/* {{{ deck_has_frontier_bases
+ * Returns true if there are any bases in the frontier zone.
+ * Used by combat to determine if interior bases can be targeted.
+ */
+bool deck_has_frontier_bases(Deck* deck) {
+    if (!deck) {
+        return false;
+    }
+    return deck->frontier_base_count > 0;
 }
 /* }}} */
 
