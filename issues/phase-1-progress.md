@@ -22,18 +22,18 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-007d | ↳ Special Effects | pending |
 | 1-007e | ↳ Upgrade and Spawn Effects | pending |
 | 1-007f | ↳ Conditional and Ally Abilities | **completed** |
-| 1-008 | Auto-Draw Resolution System | pending |
-| 1-008a | ↳ Eligibility Detection | pending |
-| 1-008b | ↳ Chain Resolution | pending |
-| 1-008c | ↳ Spent Flag Management | pending |
-| 1-008d | ↳ Event Emission | pending |
+| 1-008 | Auto-Draw Resolution System | **completed** |
+| 1-008a | ↳ Eligibility Detection | **completed** |
+| 1-008b | ↳ Chain Resolution | **completed** |
+| 1-008c | ↳ Spent Flag Management | **completed** |
+| 1-008d | ↳ Event Emission | **completed** |
 | 1-009 | Deck Flow Tracker (d10/d4) | **completed** |
 | 1-010 | Base Card Type | **completed** |
 | 1-011 | Spawning Mechanics | **completed** |
 | 1-012 | Gamestate Serialization | pending |
 | 1-013 | Phase 1 Demo | pending |
 
-## Completed: 12/22
+## Completed: 17/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -90,3 +90,13 @@ Completed 1-011:
 - Turn flow integrated: deploy -> process_base_effects -> draw order
 - 170 unit tests passing (10 new)
 - Files: 05-game.{h,c}, 07-effects.c
+
+### 2026-02-11: Auto-Draw Resolution Complete
+Completed 1-008 (all sub-issues 1-008a through 1-008d):
+- Eligibility detection scans hand for cards with EFFECT_DRAW
+- Spent flag management prevents re-triggering until shuffle
+- Chain resolution handles nested auto-draws with 20-iteration safety limit
+- Event emission for narrative hooks (START, TRIGGER, CARD, COMPLETE)
+- Integrated into game turn flow after draw order selection
+- 192 unit tests passing (22 new)
+- Files: src/core/08-auto-draw.{h,c}, updated 05-game.c

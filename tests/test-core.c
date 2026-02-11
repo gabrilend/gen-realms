@@ -15,6 +15,7 @@
 #include "../src/core/05-game.h"
 #include "../src/core/06-combat.h"
 #include "../src/core/07-effects.h"
+#include "../src/core/08-auto-draw.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -941,6 +942,169 @@ static void test_effects_module(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                      Auto-Draw Tests (1-008)                               */
+/* ========================================================================== */
+
+/* Static counter for auto-draw event testing */
+static int s_autodraw_event_count = 0;
+static AutoDrawEventType s_last_autodraw_event = AUTODRAW_EVENT_START;
+static int s_autodraw_total_drawn = 0;
+
+/* {{{ test_autodraw_listener
+ * Test listener for auto-draw events.
+ */
+static void test_autodraw_listener(Game* game, Player* player,
+                                    AutoDrawEvent* event, void* context) {
+    (void)game; (void)player; (void)context;
+    s_autodraw_event_count++;
+    if (event) {
+        s_last_autodraw_event = event->type;
+        if (event->type == AUTODRAW_EVENT_COMPLETE) {
+            s_autodraw_total_drawn = event->total_drawn;
+        }
+    }
+}
+/* }}} */
+
+/* {{{ test_autodraw_module */
+static void test_autodraw_module(void) {
+    printf("\n=== Auto-Draw Module Tests (1-008) ===\n");
+
+    /* Create card types */
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    scout->effects = effect_array_create(1);
+    scout->effects[0].type = EFFECT_TRADE;
+    scout->effects[0].value = 1;
+    scout->effect_count = 1;
+
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    viper->effects = effect_array_create(1);
+    viper->effects[0].type = EFFECT_COMBAT;
+    viper->effects[0].value = 1;
+    viper->effect_count = 1;
+
+    /* Create a card with draw effect */
+    CardType* courier = card_type_create("courier", "Guild Courier", 2, FACTION_MERCHANT, CARD_KIND_SHIP);
+    courier->effects = effect_array_create(2);
+    courier->effects[0].type = EFFECT_TRADE;
+    courier->effects[0].value = 2;
+    courier->effects[1].type = EFFECT_DRAW;
+    courier->effects[1].value = 1;  /* Draw 1 card */
+    courier->effect_count = 2;
+
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+
+    /* Test eligibility detection (1-008a) */
+    TEST("Scout has no draw effect", !autodraw_has_draw_effect(scout));
+    TEST("Courier has draw effect", autodraw_has_draw_effect(courier));
+
+    /* Create card instances */
+    CardInstance* courier_inst = card_instance_create(courier);
+    CardInstance* scout_inst = card_instance_create(scout);
+
+    TEST("Courier eligible for auto-draw", autodraw_is_eligible(courier_inst));
+    TEST("Scout not eligible", !autodraw_is_eligible(scout_inst));
+
+    /* Get draw effect */
+    Effect* draw_eff = autodraw_get_draw_effect(courier_inst);
+    TEST("Draw effect found", draw_eff != NULL);
+    TEST("Draw effect value", draw_eff && draw_eff->value == 1);
+
+    /* Test spent flag management (1-008c) */
+    TEST("Not spent initially", !autodraw_is_spent(courier_inst));
+    autodraw_mark_spent(courier_inst);
+    TEST("Marked as spent", autodraw_is_spent(courier_inst));
+    TEST("Spent card not eligible", !autodraw_is_eligible(courier_inst));
+
+    /* Reset for next test */
+    courier_inst->draw_effect_spent = false;
+
+    /* Test finding eligible cards in array */
+    CardInstance* hand[3] = { scout_inst, courier_inst, NULL };
+    hand[2] = card_instance_create(scout);
+    AutoDrawCandidate candidates[3];
+    int found = autodraw_find_eligible(hand, 3, candidates, 3);
+    TEST("Found 1 eligible card", found == 1);
+    TEST("Eligible card is courier", found > 0 && candidates[0].card == courier_inst);
+
+    /* Test chain resolution (1-008b) */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    game_set_starting_types(game, scout, viper, explorer);
+
+    /* Create simple trade row */
+    CardType* cards[5];
+    for (int i = 0; i < 5; i++) cards[i] = scout;
+    game->trade_row = trade_row_create(cards, 5, explorer);
+
+    bool started = game_start(game);
+    TEST("Game started for chain test", started);
+
+    Player* player = game->players[0];
+
+    /* Clear hand and add test cards */
+    while (player->deck->hand_count > 0) {
+        deck_add_to_discard(player->deck, player->deck->hand[0]);
+        player->deck->hand[0] = player->deck->hand[player->deck->hand_count - 1];
+        player->deck->hand_count--;
+    }
+
+    /* Add courier to hand */
+    CardInstance* chain_courier = card_instance_create(courier);
+    deck_add_to_hand(player->deck, chain_courier);
+
+    /* Add cards to draw pile so chain can draw */
+    for (int i = 0; i < 3; i++) {
+        CardInstance* card = card_instance_create(scout);
+        deck_add_to_draw_pile(player->deck, card);
+    }
+
+    int hand_before = player->deck->hand_count;
+    int draw_before = player->deck->draw_pile_count;
+
+    /* Test event emission (1-008d) */
+    s_autodraw_event_count = 0;
+    s_autodraw_total_drawn = 0;
+    autodraw_register_listener(test_autodraw_listener, NULL);
+
+    AutoDrawResult result = autodraw_resolve_chain(game, player);
+
+    TEST("Chain resolved OK", result == AUTODRAW_OK);
+    TEST("Courier marked spent", chain_courier->draw_effect_spent);
+    TEST("Hand increased", player->deck->hand_count > hand_before);
+    TEST("Draw pile decreased", player->deck->draw_pile_count < draw_before);
+
+    /* Check events */
+    TEST("Events emitted", s_autodraw_event_count > 0);
+    TEST("Complete event received", s_last_autodraw_event == AUTODRAW_EVENT_COMPLETE);
+    TEST("Total drawn tracked", s_autodraw_total_drawn > 0);
+
+    /* Test second chain does nothing (card is spent) */
+    s_autodraw_total_drawn = 0;
+    result = autodraw_resolve_chain(game, player);
+    TEST("Second chain - no eligible", result == AUTODRAW_NO_ELIGIBLE || s_autodraw_total_drawn == 0);
+
+    /* Test shuffle resets spent flag - move card to discard first */
+    deck_discard_from_hand(player->deck, chain_courier);
+    TEST("Courier in discard", deck_discard_contains(player->deck, chain_courier));
+    deck_reshuffle_discard(player->deck);
+    TEST("Shuffle resets spent", !chain_courier->draw_effect_spent);
+
+    /* Cleanup */
+    autodraw_clear_listeners();
+    card_instance_free(courier_inst);
+    card_instance_free(scout_inst);
+    card_instance_free(hand[2]);
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(courier);
+    card_type_free(explorer);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
 
@@ -958,6 +1122,7 @@ int main(void) {
     test_base_zones();
     test_spawning_mechanics();
     test_effects_module();
+    test_autodraw_module();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

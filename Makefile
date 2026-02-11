@@ -44,6 +44,7 @@ TEST_TERMINAL_BIN = $(BIN_DIR)/test-terminal
 TEST_CONFIG_BIN = $(BIN_DIR)/test-config
 TEST_HTTP_BIN = $(BIN_DIR)/test-http
 TEST_SSH_BIN = $(BIN_DIR)/test-ssh
+TEST_SERIALIZE_BIN = $(BIN_DIR)/test-serialize
 # }}}
 
 # {{{ source files
@@ -51,7 +52,7 @@ TEST_SSH_BIN = $(BIN_DIR)/test-ssh
 TERMINAL_SOURCES = \
 	$(CLIENT_DIR)/01-terminal.c
 
-# Core game sources (Track A: 1-001 through 1-007)
+# Core game sources (Track A: 1-001 through 1-008)
 CORE_SOURCES = \
 	$(CORE_DIR)/01-card.c \
 	$(CORE_DIR)/02-deck.c \
@@ -59,7 +60,8 @@ CORE_SOURCES = \
 	$(CORE_DIR)/04-trade-row.c \
 	$(CORE_DIR)/05-game.c \
 	$(CORE_DIR)/06-combat.c \
-	$(CORE_DIR)/07-effects.c
+	$(CORE_DIR)/07-effects.c \
+	$(CORE_DIR)/08-auto-draw.c
 
 # Network sources (Track B: 2-001, 2-002, 2-004)
 NET_SOURCES = \
@@ -96,6 +98,12 @@ TEST_SSH_SOURCES = \
 	$(NET_DIR)/01-config.c \
 	$(NET_DIR)/03-ssh.c \
 	$(CJSON_SOURCES)
+
+TEST_SERIALIZE_SOURCES = \
+	tests/test-serialize.c \
+	$(CORE_SOURCES) \
+	$(CORE_DIR)/09-serialize.c \
+	$(CJSON_SOURCES)
 # }}}
 
 # {{{ object files
@@ -108,6 +116,7 @@ TEST_CORE_OBJECTS = $(TEST_CORE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_CONFIG_OBJECTS = $(TEST_CONFIG_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_HTTP_OBJECTS = $(TEST_HTTP_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SSH_OBJECTS = $(TEST_SSH_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_SERIALIZE_OBJECTS = $(TEST_SERIALIZE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
 # {{{ output binaries
@@ -115,7 +124,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server test test-core test-terminal test-config test-http test-ssh dirs
+.PHONY: all clean terminal server test test-core test-terminal test-config test-http test-ssh test-serialize dirs
 
 all: dirs terminal
 
@@ -170,6 +179,13 @@ test-ssh: dirs $(TEST_SSH_BIN)
 
 $(TEST_SSH_BIN): $(TEST_SSH_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(SSH_LIBS) $(MATH_LIBS)
+
+# Serialize tests (Track A: 1-012)
+test-serialize: dirs $(TEST_SERIALIZE_BIN)
+	./$(TEST_SERIALIZE_BIN)
+
+$(TEST_SERIALIZE_BIN): $(TEST_SERIALIZE_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
 
 # Object file compilation
 $(BUILD_DIR)/%.o: %.c

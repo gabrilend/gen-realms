@@ -8,6 +8,7 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include "05-game.h"
+#include "08-auto-draw.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -242,7 +243,7 @@ void game_start_turn(Game* game) {
 
 /* {{{ game_submit_draw_order
  * Player submits their preferred draw order.
- * Draws cards in that order, then transitions to main phase.
+ * Draws cards in that order, resolves auto-draws, then transitions to main phase.
  */
 void game_submit_draw_order(Game* game, int* order, int count) {
     if (!game || game->phase != PHASE_DRAW_ORDER) {
@@ -263,6 +264,9 @@ void game_submit_draw_order(Game* game, int* order, int count) {
     /* Draw in specified order */
     deck_draw_ordered(player->deck, order, count);
 
+    /* Resolve auto-draw effects before main phase */
+    autodraw_resolve_chain(game, player);
+
     /* Transition to main phase */
     game->phase = PHASE_MAIN;
 }
@@ -270,6 +274,7 @@ void game_submit_draw_order(Game* game, int* order, int count) {
 
 /* {{{ game_skip_draw_order
  * Skips draw order selection, draws cards in default order.
+ * Resolves auto-draws before transitioning to main phase.
  */
 void game_skip_draw_order(Game* game) {
     if (!game || game->phase != PHASE_DRAW_ORDER) {
@@ -283,6 +288,9 @@ void game_skip_draw_order(Game* game) {
 
     /* Draw in default order */
     player_draw_starting_hand(player);
+
+    /* Resolve auto-draw effects before main phase */
+    autodraw_resolve_chain(game, player);
 
     /* Transition to main phase */
     game->phase = PHASE_MAIN;
