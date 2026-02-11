@@ -1330,6 +1330,188 @@ static void test_card_manipulation_effects(void) {
 /* }}} */
 
 /* ========================================================================== */
+/*                      Special Effects Tests (1-007d)                        */
+/* ========================================================================== */
+
+/* {{{ test_special_effects */
+static void test_special_effects(void) {
+    printf("\n=== Special Effects Tests (1-007d) ===\n");
+
+    /* Create card types */
+    CardType* scout = card_type_create("scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    scout->effects = effect_array_create(1);
+    scout->effects[0].type = EFFECT_TRADE;
+    scout->effects[0].value = 1;
+    scout->effect_count = 1;
+
+    CardType* viper = card_type_create("viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    viper->effects = effect_array_create(1);
+    viper->effects[0].type = EFFECT_COMBAT;
+    viper->effects[0].value = 1;
+    viper->effect_count = 1;
+
+    CardType* explorer = card_type_create("explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    explorer->effects = effect_array_create(2);
+    explorer->effects[0].type = EFFECT_TRADE;
+    explorer->effects[0].value = 2;
+    explorer->effects[1].type = EFFECT_COMBAT;
+    explorer->effects[1].value = 2;
+    explorer->effect_count = 2;
+
+    /* Create a card with copy ship effect */
+    CardType* mimic = card_type_create("mimic", "Mimic Ship", 4, FACTION_ARTIFICER, CARD_KIND_SHIP);
+    mimic->effects = effect_array_create(1);
+    mimic->effects[0].type = EFFECT_COPY_SHIP;
+    mimic->effects[0].value = 0;
+    mimic->effect_count = 1;
+
+    /* Create a card with destroy base effect */
+    CardType* assassin = card_type_create("assassin", "Assassin", 5, FACTION_WILDS, CARD_KIND_SHIP);
+    assassin->effects = effect_array_create(1);
+    assassin->effects[0].type = EFFECT_DESTROY_BASE;
+    assassin->effects[0].value = 0;
+    assassin->effect_count = 1;
+
+    /* Create a card with acquire free effect */
+    CardType* patron = card_type_create("patron", "Patron", 4, FACTION_MERCHANT, CARD_KIND_SHIP);
+    patron->effects = effect_array_create(1);
+    patron->effects[0].type = EFFECT_ACQUIRE_FREE;
+    patron->effects[0].value = 4;  /* Can acquire card up to cost 4 */
+    patron->effect_count = 1;
+
+    /* Create a card with acquire top effect */
+    CardType* oracle = card_type_create("oracle", "Oracle", 3, FACTION_KINGDOM, CARD_KIND_SHIP);
+    oracle->effects = effect_array_create(1);
+    oracle->effects[0].type = EFFECT_ACQUIRE_TOP;
+    oracle->effects[0].value = 0;
+    oracle->effect_count = 1;
+
+    /* Create a base for testing destroy */
+    CardType* fortress = card_type_create("fortress", "Fortress", 5, FACTION_KINGDOM, CARD_KIND_BASE);
+    card_type_set_base_stats(fortress, 6, false);
+
+    /* Set up game */
+    effects_init();
+
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    game_set_starting_types(game, scout, viper, explorer);
+
+    /* Create trade row with more cards */
+    CardType* trade_cards[15] = {
+        mimic, assassin, patron, oracle, explorer,
+        scout, scout, scout, scout, scout,
+        viper, viper, viper, viper, viper
+    };
+    game->trade_row = trade_row_create(trade_cards, 15, explorer);
+
+    game_start(game);
+    game_skip_draw_order(game);
+
+    Player* player1 = game->players[0];
+    Player* player2 = game->players[1];
+
+    /* Test copy ship effect */
+    Effect copy_eff = { EFFECT_COPY_SHIP, 0, NULL };
+    effects_execute(game, player1, &copy_eff, NULL);
+
+    TEST("Copy ship creates pending", game_has_pending_action(game));
+    PendingAction* pending = game_get_pending_action(game);
+    TEST("Copy ship pending type", pending && pending->type == PENDING_COPY_SHIP);
+    TEST("Copy ship is optional", pending && pending->optional == true);
+
+    /* Add a ship to played area for copying */
+    CardInstance* target_ship = card_instance_create(explorer);
+    deck_add_to_played(player1->deck, target_ship);
+
+    int trade_before = player1->trade;
+    int combat_before = player1->combat;
+
+    bool resolved = game_resolve_copy_ship(game, target_ship->instance_id);
+    TEST("Copy ship resolved", resolved);
+    TEST("Copy ship gained trade", player1->trade == trade_before + 2);
+    TEST("Copy ship gained combat", player1->combat == combat_before + 2);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* Test destroy base effect */
+    Effect destroy_eff = { EFFECT_DESTROY_BASE, 0, NULL };
+    effects_execute(game, player1, &destroy_eff, NULL);
+
+    TEST("Destroy base creates pending", game_has_pending_action(game));
+    pending = game_get_pending_action(game);
+    TEST("Destroy base pending type", pending && pending->type == PENDING_DESTROY_BASE);
+
+    /* Add a base to opponent */
+    CardInstance* opp_base = card_instance_create(fortress);
+    opp_base->placement = ZONE_FRONTIER;
+    deck_add_base(player2->deck, opp_base);
+
+    int base_count_before = deck_total_base_count(player2->deck);
+    resolved = game_resolve_destroy_base(game, opp_base->instance_id);
+    TEST("Destroy base resolved", resolved);
+    TEST("Base removed from opponent", deck_total_base_count(player2->deck) == base_count_before - 1);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* Test acquire free effect */
+    extern EffectContext* effects_get_context(Player*);
+    EffectContext* ctx = effects_get_context(player1);
+
+    Effect free_eff = { EFFECT_ACQUIRE_FREE, 4, NULL };
+    effects_execute(game, player1, &free_eff, NULL);
+
+    TEST("Acquire free flag set", ctx && ctx->next_ship_free == true);
+    TEST("Free max cost set", ctx && ctx->free_ship_max_cost == 4);
+
+    /* Buy card with no trade using game_buy_card */
+    player1->trade = 0;
+    int discard_before = player1->deck->discard_count;
+    CardInstance* bought = game_buy_card(game, 0);  /* Slot 0 */
+    TEST("Buy with free succeeds", bought != NULL);
+    TEST("Trade still 0", player1->trade == 0);
+    TEST("Card in discard", player1->deck->discard_count == discard_before + 1);
+    TEST("Free flag reset", ctx && ctx->next_ship_free == false);
+
+    /* Test acquire top effect */
+    Effect top_eff = { EFFECT_ACQUIRE_TOP, 0, NULL };
+    effects_execute(game, player1, &top_eff, NULL);
+
+    TEST("Acquire top flag set", ctx && ctx->next_ship_to_top == true);
+
+    /* Buy card and check it goes to deck top */
+    player1->trade = 10;  /* Enough to buy */
+    int draw_before = player1->deck->draw_pile_count;
+    discard_before = player1->deck->discard_count;
+    bought = game_buy_card(game, 0);
+
+    TEST("Buy with top succeeds", bought != NULL);
+    TEST("Draw pile increased", player1->deck->draw_pile_count == draw_before + 1);
+    TEST("Discard unchanged", player1->deck->discard_count == discard_before);
+    TEST("Card on top of deck", player1->deck->draw_pile[0] == bought);
+    TEST("Top flag reset", ctx && ctx->next_ship_to_top == false);
+
+    /* Test skip copy ship */
+    effects_execute(game, player1, &copy_eff, NULL);
+    bool skipped = game_skip_pending_action(game);
+    TEST("Copy ship skipped", skipped);
+    TEST("Pending removed after skip", !game_has_pending_action(game));
+
+    /* Cleanup */
+    /* Note: target_ship is owned by player1->deck->played, freed by game_free */
+    /* Note: opp_base was freed by game_resolve_destroy_base */
+    game_free(game);
+    card_type_free(scout);
+    card_type_free(viper);
+    card_type_free(explorer);
+    card_type_free(mimic);
+    card_type_free(assassin);
+    card_type_free(patron);
+    card_type_free(oracle);
+    card_type_free(fortress);
+}
+/* }}} */
+
+/* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
 
@@ -1349,6 +1531,7 @@ int main(void) {
     test_effects_module();
     test_autodraw_module();
     test_card_manipulation_effects();
+    test_special_effects();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

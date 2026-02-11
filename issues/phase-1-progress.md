@@ -19,7 +19,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-007a | ↳ Effect Dispatch Infrastructure | **completed** |
 | 1-007b | ↳ Resource Effects | **completed** |
 | 1-007c | ↳ Card Manipulation Effects | **completed** |
-| 1-007d | ↳ Special Effects | pending |
+| 1-007d | ↳ Special Effects | **completed** |
 | 1-007e | ↳ Upgrade and Spawn Effects | pending |
 | 1-007f | ↳ Conditional and Ally Abilities | **completed** |
 | 1-008 | Auto-Draw Resolution System | **completed** |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | **completed** |
 | 1-013 | Phase 1 Demo | **completed** |
 
-## Completed: 20/22
+## Completed: 21/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -125,3 +125,15 @@ Completed 1-007c:
 - game_skip_pending_action for optional actions
 - 234 unit tests passing (42 new)
 - Files: src/core/05-game.{h,c}, src/core/07-effects.c
+
+### 2026-02-11: Special Effects Complete
+Completed 1-007d:
+- Copy ship creates PENDING_COPY_SHIP, player selects ship, executes target's effects
+- Destroy base creates PENDING_DESTROY_BASE, player selects opponent's base, base is freed
+- Acquire free sets EffectContext.next_ship_free with max cost limit
+- Acquire top sets EffectContext.next_ship_to_top for deck placement
+- game_buy_card/game_buy_explorer wrappers check effect context flags
+- Flags automatically reset after purchase
+- EFFECT_ACQUIRE_TOP added to EffectType enum
+- 260 unit tests passing (26 new)
+- Files: src/core/01-card.h, src/core/05-game.{h,c}, src/core/07-effects.c

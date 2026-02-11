@@ -1207,3 +1207,363 @@ bool game_skip_pending_action(Game* game) {
     return true;
 }
 /* }}} */
+
+/* {{{ game_request_copy_ship
+ * Creates a pending action to copy another ship's effects.
+ */
+void game_request_copy_ship(Game* game, int player_id) {
+    if (!game || player_id < 1) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_COPY_SHIP,
+        .player_id = player_id,
+        .count = 1,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_request_destroy_base
+ * Creates a pending action to destroy an opponent's base.
+ */
+void game_request_destroy_base(Game* game, int player_id) {
+    if (!game || player_id < 1) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_DESTROY_BASE,
+        .player_id = player_id,
+        .count = 1,
+        .min_count = 0,  /* Optional - can skip if no bases */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = 0,
+        .upgrade_value = 0,
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_resolve_copy_ship
+ * Resolves a copy ship action by executing the target ship's effects.
+ * Target can be from player's played area or trade row.
+ * Returns true if successfully copied.
+ */
+bool game_resolve_copy_ship(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_COPY_SHIP) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Find target card - check player's played area first */
+    CardInstance* target = NULL;
+    for (int i = 0; i < player->deck->played_count; i++) {
+        if (player->deck->played[i] &&
+            strcmp(player->deck->played[i]->instance_id, card_instance_id) == 0) {
+            target = player->deck->played[i];
+            break;
+        }
+    }
+
+    /* If not in played, check trade row */
+    if (!target && game->trade_row) {
+        for (int i = 0; i < TRADE_ROW_SLOTS; i++) {
+            if (game->trade_row->slots[i] &&
+                strcmp(game->trade_row->slots[i]->instance_id, card_instance_id) == 0) {
+                target = game->trade_row->slots[i];
+                break;
+            }
+        }
+    }
+
+    if (!target || !target->type) {
+        return false;
+    }
+
+    /* Only ships can be copied */
+    if (target->type->kind != CARD_KIND_SHIP) {
+        return false;
+    }
+
+    /* Include effects header for effects_execute_card */
+    /* Note: effects_execute_card defined in 07-effects.h */
+    extern void effects_execute_card(Game*, Player*, CardInstance*);
+
+    /* Execute target's effects as if played */
+    effects_execute_card(game, player, target);
+
+    /* Pop the pending action */
+    game_pop_pending_action(game);
+    return true;
+}
+/* }}} */
+
+/* {{{ game_resolve_destroy_base
+ * Resolves a destroy base action by removing opponent's base.
+ * Returns true if successfully destroyed.
+ */
+bool game_resolve_destroy_base(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_DESTROY_BASE) {
+        return false;
+    }
+
+    /* Find the player (the one who triggered the effect) */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player) {
+        return false;
+    }
+
+    /* Get opponent - check all other players for the target base */
+    CardInstance* target = NULL;
+    Player* target_owner = NULL;
+
+    for (int p = 0; p < game->player_count; p++) {
+        if (game->players[p] == player) {
+            continue;  /* Skip the active player */
+        }
+
+        Player* opponent = game->players[p];
+        if (!opponent || !opponent->deck) {
+            continue;
+        }
+
+        /* Check frontier bases */
+        for (int i = 0; i < opponent->deck->frontier_base_count; i++) {
+            if (opponent->deck->frontier_bases[i] &&
+                strcmp(opponent->deck->frontier_bases[i]->instance_id, card_instance_id) == 0) {
+                target = opponent->deck->frontier_bases[i];
+                target_owner = opponent;
+                break;
+            }
+        }
+        if (target) break;
+
+        /* Check interior bases */
+        for (int i = 0; i < opponent->deck->interior_base_count; i++) {
+            if (opponent->deck->interior_bases[i] &&
+                strcmp(opponent->deck->interior_bases[i]->instance_id, card_instance_id) == 0) {
+                target = opponent->deck->interior_bases[i];
+                target_owner = opponent;
+                break;
+            }
+        }
+        if (target) break;
+    }
+
+    if (!target || !target_owner) {
+        return false;
+    }
+
+    /* Remove base from owner's deck */
+    CardInstance* removed = deck_remove_base(target_owner->deck, target);
+    if (!removed) {
+        return false;
+    }
+
+    /* Free the destroyed base (it's removed from game, not scrapped) */
+    card_instance_free(removed);
+
+    /* Pop the pending action */
+    game_pop_pending_action(game);
+    return true;
+}
+/* }}} */
+
+/* ========================================================================== */
+/*                        Purchase with Effect Context                        */
+/* ========================================================================== */
+
+/* Forward declare effects context functions */
+typedef struct {
+    bool next_ship_free;
+    int free_ship_max_cost;
+    bool next_ship_to_top;
+    int pending_draws;
+} EffectContext;
+extern EffectContext* effects_get_context(Player* player);
+
+/* {{{ game_buy_card
+ * Purchases a card from the trade row, respecting effect context flags.
+ * Handles next_ship_free (reduced cost) and next_ship_to_top (deck placement).
+ * Returns the purchased card instance, or NULL on failure.
+ */
+CardInstance* game_buy_card(Game* game, int slot) {
+    if (!game || !game->trade_row || slot < 0 || slot >= TRADE_ROW_SLOTS) {
+        return NULL;
+    }
+
+    Player* player = game_get_active_player(game);
+    if (!player) {
+        return NULL;
+    }
+
+    CardInstance* target = trade_row_get_slot(game->trade_row, slot);
+    if (!target || !target->type) {
+        return NULL;
+    }
+
+    int cost = target->type->cost;
+    EffectContext* ctx = effects_get_context(player);
+
+    /* Check if next ship is free */
+    bool is_free = false;
+    if (ctx && ctx->next_ship_free) {
+        /* Check cost limit (0 = any cost) */
+        if (ctx->free_ship_max_cost == 0 || cost <= ctx->free_ship_max_cost) {
+            is_free = true;
+        }
+    }
+
+    /* Check if player can afford */
+    if (!is_free && player->trade < cost) {
+        return NULL;  /* Can't afford */
+    }
+
+    /* Deduct trade (unless free) */
+    if (!is_free) {
+        player->trade -= cost;
+    }
+
+    /* Increment d10 (buy momentum) */
+    player_d10_increment(player);
+
+    /* Get the card from trade row */
+    CardInstance* card = game->trade_row->slots[slot];
+    game->trade_row->slots[slot] = NULL;
+
+    /* Refill the slot */
+    trade_row_fill_slots(game->trade_row);
+
+    /* Check if card goes to top of deck or discard */
+    bool to_top = ctx && ctx->next_ship_to_top;
+
+    if (to_top) {
+        deck_put_on_top(player->deck, card);
+    } else {
+        deck_add_to_discard(player->deck, card);
+    }
+
+    /* Reset effect flags after use */
+    if (ctx) {
+        if (is_free) {
+            ctx->next_ship_free = false;
+            ctx->free_ship_max_cost = 0;
+        }
+        if (to_top) {
+            ctx->next_ship_to_top = false;
+        }
+    }
+
+    return card;
+}
+/* }}} */
+
+/* {{{ game_buy_explorer
+ * Purchases an explorer, respecting effect context flags.
+ * Returns the purchased explorer instance, or NULL on failure.
+ */
+CardInstance* game_buy_explorer(Game* game) {
+    if (!game || !game->trade_row || !game->trade_row->explorer_type) {
+        return NULL;
+    }
+
+    Player* player = game_get_active_player(game);
+    if (!player) {
+        return NULL;
+    }
+
+    int cost = EXPLORER_COST;
+    EffectContext* ctx = effects_get_context(player);
+
+    /* Check if next ship is free */
+    bool is_free = false;
+    if (ctx && ctx->next_ship_free) {
+        /* Check cost limit (0 = any cost) */
+        if (ctx->free_ship_max_cost == 0 || cost <= ctx->free_ship_max_cost) {
+            is_free = true;
+        }
+    }
+
+    /* Check if player can afford */
+    if (!is_free && player->trade < cost) {
+        return NULL;  /* Can't afford */
+    }
+
+    /* Deduct trade (unless free) */
+    if (!is_free) {
+        player->trade -= cost;
+    }
+
+    /* Increment d10 (buy momentum) */
+    player_d10_increment(player);
+
+    /* Create explorer instance */
+    CardInstance* card = card_instance_create(game->trade_row->explorer_type);
+    if (!card) {
+        return NULL;
+    }
+
+    /* Check if card goes to top of deck or discard */
+    bool to_top = ctx && ctx->next_ship_to_top;
+
+    if (to_top) {
+        deck_put_on_top(player->deck, card);
+    } else {
+        deck_add_to_discard(player->deck, card);
+    }
+
+    /* Reset effect flags after use */
+    if (ctx) {
+        if (is_free) {
+            ctx->next_ship_free = false;
+            ctx->free_ship_max_cost = 0;
+        }
+        if (to_top) {
+            ctx->next_ship_to_top = false;
+        }
+    }
+
+    return card;
+}
+/* }}} */

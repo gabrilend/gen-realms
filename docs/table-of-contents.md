@@ -10,6 +10,7 @@ docs/
 ├── 04-architecture-c-server.md    C server architecture details
 ├── 05-parallelized-roadmap.md     5-track parallel development guide
 ├── 06-faction-guide.md            Faction design philosophy and strategy
+├── wasm-transition-plan.md        JS/CSS to WebAssembly migration guide
 └── table-of-contents.md           This document
 ```
 

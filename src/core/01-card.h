@@ -78,6 +78,7 @@ typedef enum {
     EFFECT_DESTROY_BASE,    /* Target and destroy an opponent's base */
     EFFECT_COPY_SHIP,       /* Copy another ship's effects */
     EFFECT_ACQUIRE_FREE,    /* Acquire a card without paying */
+    EFFECT_ACQUIRE_TOP,     /* Next acquired card goes to deck top */
 
     /* Upgrade effects (permanent modifications to cards) */
     EFFECT_UPGRADE_ATTACK,  /* Permanent +attack to a card */

@@ -47,6 +47,7 @@ static void handle_d10_down(Game* game, Player* player, Effect* effect, CardInst
 static void handle_destroy_base(Game* game, Player* player, Effect* effect, CardInstance* source);
 static void handle_copy_ship(Game* game, Player* player, Effect* effect, CardInstance* source);
 static void handle_acquire_free(Game* game, Player* player, Effect* effect, CardInstance* source);
+static void handle_acquire_top(Game* game, Player* player, Effect* effect, CardInstance* source);
 static void handle_upgrade_attack(Game* game, Player* player, Effect* effect, CardInstance* source);
 static void handle_upgrade_trade(Game* game, Player* player, Effect* effect, CardInstance* source);
 static void handle_upgrade_auth(Game* game, Player* player, Effect* effect, CardInstance* source);
@@ -74,6 +75,7 @@ static EffectHandler s_dispatch_table[EFFECT_TYPE_COUNT] = {
     [EFFECT_DESTROY_BASE]   = handle_destroy_base,
     [EFFECT_COPY_SHIP]      = handle_copy_ship,
     [EFFECT_ACQUIRE_FREE]   = handle_acquire_free,
+    [EFFECT_ACQUIRE_TOP]    = handle_acquire_top,
     [EFFECT_UPGRADE_ATTACK] = handle_upgrade_attack,
     [EFFECT_UPGRADE_TRADE]  = handle_upgrade_trade,
     [EFFECT_UPGRADE_AUTH]   = handle_upgrade_auth,
@@ -471,19 +473,35 @@ static void handle_d10_down(Game* game, Player* player,
 
 /* {{{ handle_destroy_base
  * Allows player to destroy an opponent's base without combat.
+ * Creates a pending action for player to choose which base.
  */
 static void handle_destroy_base(Game* game, Player* player,
                                 Effect* effect, CardInstance* source) {
-    /* TODO: Implement base destroy choice (requires action queue) */
+    (void)effect; (void)source;
+
+    if (!game || !player) {
+        return;
+    }
+
+    /* Create pending destroy base action */
+    game_request_destroy_base(game, player->id);
 }
 /* }}} */
 
 /* {{{ handle_copy_ship
  * Allows player to copy another ship's effects.
+ * Creates a pending action for player to choose which ship.
  */
 static void handle_copy_ship(Game* game, Player* player,
                              Effect* effect, CardInstance* source) {
-    /* TODO: Implement ship copy choice (requires action queue) */
+    (void)effect; (void)source;
+
+    if (!game || !player) {
+        return;
+    }
+
+    /* Create pending copy ship action */
+    game_request_copy_ship(game, player->id);
 }
 /* }}} */
 
@@ -492,10 +510,26 @@ static void handle_copy_ship(Game* game, Player* player,
  */
 static void handle_acquire_free(Game* game, Player* player,
                                 Effect* effect, CardInstance* source) {
+    (void)game; (void)source;
+
     EffectContext* ctx = effects_get_context(player);
     if (ctx) {
         ctx->next_ship_free = true;
         ctx->free_ship_max_cost = effect->value;  /* 0 = any cost */
+    }
+}
+/* }}} */
+
+/* {{{ handle_acquire_top
+ * Sets flag for next purchased ship to go to deck top.
+ */
+static void handle_acquire_top(Game* game, Player* player,
+                               Effect* effect, CardInstance* source) {
+    (void)game; (void)effect; (void)source;
+
+    EffectContext* ctx = effects_get_context(player);
+    if (ctx) {
+        ctx->next_ship_to_top = true;
     }
 }
 /* }}} */
