@@ -148,9 +148,27 @@ PTY subsystem that:
 | `\033[0m` | Reset attributes |
 
 ## Acceptance Criteria
-- [ ] PTY allocated on request
-- [ ] Terminal size negotiated
-- [ ] Window resize handled
-- [ ] Shell request starts interface
-- [ ] Escape sequences work
-- [ ] Input received correctly
+- [x] PTY allocated on request
+- [x] Terminal size negotiated
+- [x] Window resize handled
+- [x] Shell request starts interface
+- [x] Escape sequences work
+- [x] Input received correctly
+
+## Implementation Notes
+
+**Completed:** 2026-02-10
+
+Implemented in `src/net/03-ssh.c`:
+- `pty_request_cb()` - Handles PTY allocation, stores width/height/term_type
+- `pty_resize_cb()` - Handles window resize events
+- `shell_request_cb()` - Starts game interface with welcome message
+- `data_cb()` - Receives input data from terminal
+
+Terminal control functions in `03-ssh.h`:
+- `ssh_connection_clear_screen()` - ANSI clear
+- `ssh_connection_move_cursor()` - ANSI cursor positioning
+- `ssh_connection_set_color()` - ANSI color codes
+- `ssh_connection_reset_attributes()` - ANSI reset
+
+PTY state stored in `SSHPtyState` struct with width, height, term_type.

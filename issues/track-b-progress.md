@@ -13,7 +13,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ## Current Status
 
-**Checkpoint Progress:** Alpha → Beta (HTTP Foundation) in progress
+**Checkpoint Progress:** Alpha complete, waiting for BETA checkpoint (1-012) for protocol work
 
 ## Completed Issues
 
@@ -49,6 +49,28 @@ Track B implements the network layer enabling multi-client connections. It inclu
   - Automatic index.html for root path
 - **Dependencies:** Requires `libwebsockets-devel` package
 
+### 2-004: SSH Server Integration (all sub-issues complete)
+- **Status:** COMPLETE
+- **Completed:** 2026-02-10
+- **Files Created:**
+  - `src/net/03-ssh.h` - SSH server API and types
+  - `src/net/03-ssh.c` - libssh-based SSH server implementation
+  - `tests/test-ssh.c` - SSH server lifecycle tests
+- **Sub-issues Completed:**
+  - 2-004a: libssh Build Integration (using system package)
+  - 2-004b: SSH Authentication (password + public key)
+  - 2-004c: PTY and Terminal Handling
+  - 2-004d: SSH Session Lifecycle (connection pool, threading)
+- **Features Implemented:**
+  - SSH server with connection pool (32 max)
+  - Password and public key authentication
+  - RSA host key generation
+  - PTY allocation and terminal size negotiation
+  - ANSI escape sequence utilities
+  - Threaded connection handling
+  - Welcome message and echo mode (development)
+- **Dependencies:** Requires `libssh-devel` package
+
 ## In Progress Issues
 
 (None currently)
@@ -57,7 +79,7 @@ Track B implements the network layer enabling multi-client connections. It inclu
 
 ### Pre-Alpha → Alpha
 - ~~2-002: HTTP server (libwebsockets)~~ - COMPLETE
-- 2-004*: SSH server integration - Depends on 2-001 (has sub-issues 2-004a through 2-004d)
+- ~~2-004*: SSH server integration~~ - COMPLETE (all sub-issues)
 
 ### Alpha → Beta
 - 2-005*: Protocol implementation - Depends on 1-012 (BETA checkpoint)

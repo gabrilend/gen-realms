@@ -12,6 +12,7 @@
 #define SYMBELINE_SSH_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include "01-config.h"
 
 /* Forward declarations to avoid libssh header dependency */
