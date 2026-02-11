@@ -125,6 +125,11 @@
       "default": false,
       "description": "WILDS ONLY: When played, all cards at the frontier charge into play simultaneously"
     },
+    "workshop": {
+      "type": "boolean",
+      "default": false,
+      "description": "ARTIFICER ONLY: Card persists in protected workshop zone until its upgrade effect resolves. Cannot be attacked. Discards after upgrade completes. Like Kingdom Coin persistence."
+    },
     "flavor": {
       "type": "string",
       "description": "Flavor text for narrative immersion"

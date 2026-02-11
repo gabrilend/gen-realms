@@ -47,6 +47,16 @@ while they're in your hand:
 
 These upgrades persist across all future shuffles, creating compound value.
 
+**Workshop Persistence:**
+Upgrade specialists enter a protected workshop zone when played. They
+wait there (unattackable) until the target card appears in your hand.
+- Draw effect triggers immediately
+- Upgrade resolves when target is drawn
+- Card discards after upgrade completes
+
+Like Kingdom Coin, the workshop lets you invest now and collect later.
+No wasted plays if you don't have the right card in hand.
+
 **The Scrap vs Upgrade Tension:**
 You can't do both. A scrapped Scout is gone forever (velocity gain). An
 upgraded Scout returns every shuffle with +1 Trade (compound value). The

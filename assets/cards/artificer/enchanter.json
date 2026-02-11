@@ -4,9 +4,10 @@
   "cost": 4,
   "faction": "artificer",
   "card_type": "ship",
+  "workshop": true,
   "effects": [
     { "type": "draw_card", "value": 1 },
-    { "type": "upgrade_authority", "value": 2, "target": "hand", "target_card": "scout_or_viper", "optional": true }
+    { "type": "upgrade_authority", "value": 2, "target": "hand", "target_card": "scout_or_viper" }
   ],
   "scrap_effects": [
     { "type": "add_authority", "value": 3 }

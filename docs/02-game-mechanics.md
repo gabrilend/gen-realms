@@ -472,8 +472,16 @@ them for velocity, or upgrade them for lasting value?
 - Scrap a Scout: +2 velocity (smaller deck)
 - Upgrade a Scout: +1 Trade every shuffle (compound value)
 
-Upgrades target cards *in hand*, so you need the right card drawn
-alongside the upgrader. This adds variance but rewards patience.
+**Workshop Persistence:**
+Upgrade specialists have `workshop: true`. When played, they enter a
+protected workshop zone and wait until the target card appears in hand.
+- Cannot be attacked while in workshop
+- Draw effect triggers immediately (you still get the card)
+- Upgrade resolves when target appears in a future hand
+- Card discards after upgrade completes
+
+This removes the variance of needing the right card drawn alongside
+the upgrader. Play the Blacksmith now, upgrade a Viper later.
 
 **Cross-Faction Value:**
 Every player starts with Scouts and Vipers. Artificer upgrades benefit

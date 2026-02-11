@@ -88,9 +88,19 @@ See `assets/cards/artificer/` for full card files.
 - Cross-faction value: any player can splash upgraders
 - Thematic: Blacksmith sharpens weapons (Vipers), Goldweaver gilds purses (Scouts)
 
-**Schema Addition:**
-New `target_card` field restricts which cards can be upgraded:
+**Schema Additions:**
+
+`target_card` field restricts which cards can be upgraded:
 - `viper`: Vipers only
 - `scout`: Scouts only
 - `scout_or_viper`: Either starting card
 - `any`: No restriction (default)
+
+`workshop` field (boolean) for persistent upgraders:
+- Card enters protected workshop zone when played
+- Cannot be attacked while waiting
+- Draw effect triggers immediately
+- Upgrade resolves when target card appears in hand
+- Card discards after upgrade completes
+
+Like Kingdom Coin, workshop lets you invest now and collect later.

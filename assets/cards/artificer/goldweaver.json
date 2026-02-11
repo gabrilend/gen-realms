@@ -4,10 +4,11 @@
   "cost": 4,
   "faction": "artificer",
   "card_type": "ship",
+  "workshop": true,
   "effects": [
     { "type": "draw_card", "value": 1 },
-    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout", "optional": true },
-    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout", "optional": true }
+    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout" },
+    { "type": "upgrade_trade", "value": 1, "target": "hand", "target_card": "scout" }
   ],
   "scrap_effects": [
     { "type": "add_trade", "value": 3 }
