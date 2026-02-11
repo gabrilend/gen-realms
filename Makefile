@@ -84,6 +84,7 @@ TEST_SSH_BIN = $(BIN_DIR)/test-ssh
 TEST_SERIALIZE_BIN = $(BIN_DIR)/test-serialize
 TEST_PROTOCOL_BIN = $(BIN_DIR)/test-protocol
 TEST_WEBSOCKET_BIN = $(BIN_DIR)/test-websocket
+TEST_CONNECTIONS_BIN = $(BIN_DIR)/test-connections
 # }}}
 
 # {{{ source files
@@ -166,6 +167,11 @@ TEST_WEBSOCKET_SOURCES = \
 	$(CORE_SOURCES) \
 	$(CORE_DIR)/09-serialize.c \
 	$(CJSON_SOURCES)
+
+# Connection manager tests (uses stubs for WS/SSH)
+TEST_CONNECTIONS_SOURCES = \
+	tests/test-connections.c \
+	$(NET_DIR)/06-connections.c
 # }}}
 
 # {{{ object files
@@ -181,6 +187,7 @@ TEST_SSH_OBJECTS = $(TEST_SSH_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SERIALIZE_OBJECTS = $(TEST_SERIALIZE_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_PROTOCOL_OBJECTS = $(TEST_PROTOCOL_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_WEBSOCKET_OBJECTS = $(TEST_WEBSOCKET_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_CONNECTIONS_OBJECTS = $(TEST_CONNECTIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
@@ -189,7 +196,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket dirs deps deps-force deps-info clean-deps
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -273,6 +280,13 @@ test-websocket: dirs $(TEST_WEBSOCKET_BIN)
 
 $(TEST_WEBSOCKET_BIN): $(TEST_WEBSOCKET_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(WEBSOCKET_LIBS) $(MATH_LIBS)
+
+# Connection manager tests (Track B: 2-006)
+test-connections: dirs $(TEST_CONNECTIONS_BIN)
+	./$(TEST_CONNECTIONS_BIN)
+
+$(TEST_CONNECTIONS_BIN): $(TEST_CONNECTIONS_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 # Object file compilation
 $(BUILD_DIR)/%.o: %.c
