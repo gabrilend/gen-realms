@@ -5,10 +5,10 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 1 }
+    { "type": "add_combat", "value": 2 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 1 }
+    { "type": "add_authority", "value": 1 }
   ],
   "flavor": "The pack hunts as one, or not at all.",
   "art_prompt": "grey wolf with glowing eyes stalking through forest, moonlight, medieval fantasy"

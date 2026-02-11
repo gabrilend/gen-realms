@@ -5,10 +5,11 @@
   "faction": "wilds",
   "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 3 },
+    { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_trade", "value": 1 }
   ],
   "flavor": "Where one circles, a thousand follow.",
   "art_prompt": "dark swarm of crows blotting out the sun, battlefield, medieval fantasy"

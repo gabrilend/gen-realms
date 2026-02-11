@@ -1,14 +1,14 @@
 {
   "id": "wolf_token",
   "name": "Spirit Wolf",
-  "cost": 0,
+  "cost": 1,
   "faction": "wilds",
   "card_type": "unit",
   "effects": [
-    { "type": "add_combat", "value": 1 }
+    { "type": "add_combat", "value": 2 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 1 }
+    { "type": "add_authority", "value": 1 }
   ],
   "scrap_effects": [
     { "type": "draw_card", "value": 1 }

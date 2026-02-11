@@ -7,11 +7,11 @@
   "defense": 6,
   "is_outpost": false,
   "effects": [
-    { "type": "add_combat", "value": 1 }
-  ],
-  "ally_effects": [
     { "type": "add_combat", "value": 2 },
     { "type": "draw_card", "value": 1 }
+  ],
+  "ally_effects": [
+    { "type": "add_authority", "value": 3 }
   ],
   "flavor": "All wild things hear its call.",
   "art_prompt": "massive glowing tree heart pulsing with green energy, forest spirits, medieval fantasy"

@@ -177,51 +177,90 @@ This balances persistent value against tempo.
 
 ## Faction-Specific Mechanics
 
-### The Wilds: Pack Stacking
+### The Wilds: Frontier & The Charge
 
-**Unique Rule:** Wilds ally effects trigger *once per OTHER ally in play*.
+The Wilds has two unique mechanics that work together:
 
-Standard ally rules (all other factions):
-- 0 other allies: No ally effect
-- 1+ other allies: Ally effect triggers once
+#### 1. Effect Split: Combat/Draw vs Resources/Healing
 
-Wilds pack rules:
-- 0 other allies: No ally effect
-- 1 other ally: Ally effect triggers 1x per card
-- 2 other allies: Ally effect triggers 2x per card
-- 3 other allies: Ally effect triggers 3x per card
-- etc.
+Wilds cards split their effects:
+- **Main effects:** Combat damage and card draw (offensive)
+- **Ally effects:** Trade and Authority only (defensive/resource)
 
-**Formula:** Total = n × (base + ally × (n-1)) where n = number of Wilds cards
+This creates a tension: play cards normally for damage, or...
 
-**Example - Wolf Scout (+1 Combat base, +1 Combat ally):**
+#### 2. The Frontier
+
+Wilds cards can be played to the **Frontier** instead of the play area.
+
+**Playing to Frontier:**
+1. Play a Wilds card and declare "to the Frontier"
+2. Place it on/near a Wilds base you control
+3. The card's **cost** adds to the base's defense temporarily
+4. Ally effects trigger immediately (you get the healing/resources now)
+5. Main effects do NOT trigger (no combat/draw yet)
+
+**Example - Building the Pack:**
 ```
-1 Wolf Scout:   1×(1 + 1×0) = 1  Combat
-2 Wolf Scouts:  2×(1 + 1×1) = 4  Combat
-3 Wolf Scouts:  3×(1 + 1×2) = 9  Combat
-4 Wolf Scouts:  4×(1 + 1×3) = 16 Combat
+Turn 1: Play Thornwall (base, defense 4)
+Turn 2: Play Wolf Scout (cost 1) to Frontier
+        → Thornwall now has 5 defense
+        → Ally triggers: +1 Authority (per ally rules)
+Turn 3: Play Pack Hunter (cost 2) to Frontier
+        → Thornwall now has 7 defense
+        → Ally triggers: +1 Authority ×2 (2 allies at frontier)
+Turn 4: Play Dire Bear (cost 4) to Frontier
+        → Thornwall now has 11 defense
+        → Ally triggers: +2 Authority ×3 (3 allies at frontier)
 ```
 
-This produces **n² growth** - balanced exponential scaling.
+#### 3. The Charge (Frontier Leaders)
 
-**Mixed Pack Example (Wolf Scout + Pack Hunter + Beastcaller):**
+Certain Wilds cards are **Frontier Leaders** (marked with `frontier_leader: true`):
+- Beastcaller (cost 3)
+- Forest Shaman (cost 4)
+- Alpha Pack Leader (cost 5)
+- Primal Titan (cost 7)
+
+**When a Frontier Leader is played:**
+1. ALL cards at the Frontier immediately enter play
+2. Their main effects trigger simultaneously
+3. The base's defense returns to normal
+4. Ally effects trigger again based on the full pack
+
+**Example - The Charge:**
 ```
-Wolf Scout:    1 base + 1×2 ally = 3 Combat
-Pack Hunter:   2 base + 1×2 ally = 4 Combat
-Beastcaller:   2 base + 1×2 ally = 4 Combat, Draw 2
-Total: 11 Combat + 2 cards drawn
+Frontier has: Wolf Scout (2), Pack Hunter (3), Dire Bear (5,draw)
+Thornwall defense: 4 + 1 + 2 + 4 = 11
+
+Play Alpha Pack Leader!
+→ All 4 cards enter play simultaneously
+→ Wolf Scout: 2 Combat
+→ Pack Hunter: 3 Combat
+→ Dire Bear: 5 Combat, Draw 1
+→ Alpha Pack Leader: 5 Combat, Draw 2
+→ Total: 15 Combat, Draw 3 cards
+
+Ally effects (each card has 3 other allies):
+→ 4 cards × (authority values) × 3 = massive healing burst
 ```
+
+#### Strategic Implications
+
+**Pros of Frontier:**
+- Temporarily fortify your outpost (survive aggro)
+- Bank ally triggers for sustained healing
+- Set up devastating charge turns
+
+**Cons of Frontier:**
+- No combat damage while cards wait
+- Vulnerable if base is destroyed (cards go to discard)
+- Need to draw a Leader to trigger the charge
 
 **Design Intent:**
-The pack grows stronger with each member. A lone wolf is weak, but a
-coordinated pack is devastating. The n² curve ensures growth is
-meaningful but not game-breaking—it takes 4 cards to reach 16 damage,
-not 32.
-
-**Thematic Justification:**
-Each creature's ally ability represents "one more of that totem joining
-the hunt." When you have 2 other allies, your Wolf Scout howls and 2
-wolves answer the call, stacking the bonus twice.
+The pack gathers at the guardhouse, strengthening its walls while
+they wait. Each beast that joins heals the tribe. Then the alpha
+howls, and they all charge together—an unstoppable wave.
 
 ### Artificer Order: Scrap-Draw Chain
 

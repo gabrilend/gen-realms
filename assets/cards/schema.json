@@ -64,6 +64,11 @@
       "default": false,
       "description": "If true, always available for purchase (like Explorer)"
     },
+    "frontier_leader": {
+      "type": "boolean",
+      "default": false,
+      "description": "WILDS ONLY: When played, all cards at the frontier charge into play simultaneously"
+    },
     "flavor": {
       "type": "string",
       "description": "Flavor text for narrative immersion"

@@ -4,12 +4,13 @@
   "cost": 3,
   "faction": "wilds",
   "card_type": "ship",
+  "frontier_leader": true,
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 3 },
+    { "type": "draw_card", "value": 1 }
   ],
   "ally_effects": [
-    { "type": "add_combat", "value": 1 },
-    { "type": "draw_card", "value": 1 }
+    { "type": "add_authority", "value": 2 }
   ],
   "flavor": "Her howl summons the hunt.",
   "art_prompt": "wild woman with antlers calling to wolf pack, moonlit forest clearing, medieval fantasy"
