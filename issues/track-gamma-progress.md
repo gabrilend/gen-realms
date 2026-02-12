@@ -60,6 +60,7 @@ Track Gamma handles all game content and AI integration:
 | 6-007 | Scene composition rules | 2026-02-11 |
 | 6-008 | Style transfer prompts | 2026-02-11 |
 | 6-009 | Image caching/persistence | 2026-02-11 |
+| 5-006 | Trade row selection logic | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -72,8 +73,7 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 5-006 | Trade row selection logic | 5-005, Track Alpha 1-004 |
-| 5-009 | Coherence recovery | 5-006, 5-008 |
+| 5-009 | Coherence recovery | 5-006 (done), 5-008 (done) |
 | 5-010 | Phase 5 Demo | 5-009, Track Beta 3-010 |
 
 ### Pending Issues (AI - Visual)
@@ -96,8 +96,8 @@ Track Gamma handles all game content and AI integration:
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 23 complete, 3 pending
-**Total:** 31 complete, 5 pending
+**AI Issues:** 24 complete, 2 pending
+**Total:** 32 complete, 4 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -107,7 +107,7 @@ Track Gamma handles all game content and AI integration:
 - High Kingdom: 14 cards
 - Artificer Order: 15 cards
 
-**Unit Tests Passing:** 186 total
+**Unit Tests Passing:** 212 total
 - LLM client: 9
 - Prompts: 15
 - World state: 12
@@ -118,6 +118,7 @@ Track Gamma handles all game content and AI integration:
 - ComfyUI client: 12
 - Card prompts: 24
 - Image cache: 16
+- Trade select: 26
 
 ## Deliverables
 
@@ -140,6 +141,7 @@ Track Gamma handles all game content and AI integration:
 - [x] `src/llm/05-event-narration.h/c` - Event narration
 - [x] `src/llm/06-context-manager.h/c` - Context window management
 - [x] `src/llm/07-narrative-cache.h/c` - Caching (5-008)
+- [x] `src/llm/08-trade-select.h/c` - Trade row selection (5-006)
 - [ ] `issues/completed/demos/phase-5-demo.sh` - AI-narrated game
 
 ### AI - Visual (Phase 6)
@@ -222,7 +224,17 @@ Completed 6-009 (image caching/persistence):
 - Final image export to PNG/JPEG
 - 16 unit tests passing
 
+### 2026-02-11: Trade Row Selection Complete
+Completed 5-006 (trade row selection logic):
+- `src/llm/08-trade-select.h/c` - LLM-guided card selection
+- Faction balance scoring (underrepresented factions prioritized)
+- Singleton encouragement (less-bought cards prioritized)
+- Cost variety scoring (fill gaps in cost distribution)
+- LLM narrative fit scoring when available
+- DM callback for integration with trade row
+- 26 unit tests passing
+
 ### Next Steps
-1. 6-010 (Phase 6 Demo) - blocked on 5-010 (Phase 5 Demo)
-2. 5-006 (trade row logic) - blocked on Track Alpha 1-004
-3. Phase demos (5-010, 6-010) - blocked on respective dependencies
+1. 5-009 (Coherence recovery) - now unblocked! (depends on 5-006, 5-008 both done)
+2. 5-010 (Phase 5 Demo) - blocked on 5-009
+3. 6-010 (Phase 6 Demo) - blocked on 5-010
