@@ -121,3 +121,44 @@ make demo
 - Demonstrates all Phase 1 mechanics working together
 - Auto-draw events displayed clearly during resolution
 - Base deployment delay visible (shows "deploying" vs "active")
+
+## Enhancement Update (2026-02-12)
+
+### UI Improvements:
+1. **ANSI Color Support** - Full color coding for:
+   - Factions: Yellow (Merchant), Green (Wilds), Blue (Kingdom), Magenta (Artificer), Gray (Neutral)
+   - Resources: Yellow (Trade), Red (Combat), Green (Authority), Cyan (Draw)
+   - Effects: Magenta (Upgrades), Green (Success), Red (Error), Cyan (Pending)
+
+2. **Box-Drawing UI** - Header bars with Unicode box-drawing characters
+
+3. **Improved Card Display** - Shows:
+   - Faction color and name
+   - All effects with color-coded icons (+T, +C, +A, Draw)
+   - Ally ability indicators [A]
+   - Scrap ability indicators [S]
+   - Upgrade effect indicators (↑T+1, ↑A+1, ↑C+1)
+   - Spawn indicators [Spawn]
+
+### New Commands:
+- `scrap N` - Scrap card at index N from hand
+- `d` - View discard pile
+- `h` - Show command help reference
+- `r N` - Resolve pending action with card/slot N
+
+### New Demo Cards:
+- **Master Merchant** (5g) - +3T, Upgrade Trade +1
+- **Alpha Wolf** (5g) - +4C, Upgrade Attack +1, Ally ability
+- **Royal Healer** (4g) - +3A, Upgrade Authority +1
+- **Mini Construct** - Spawnable unit from Construct Factory
+
+### Additional Features:
+- **Pending Action UI** - Displays when actions require resolution
+- **Effect Listener** - Shows effect execution feedback with ⚡ indicator
+- **In Play Section** - Shows active faction ally abilities
+- **Player Status Bar** - Shows authority, d10/d4, current trade/combat
+
+### Demo Size:
+- `src/demo/phase-1-demo.c` expanded to ~1300 lines (from ~600)
+- Full feature parity with Phase 1 mechanics
+- High-quality showcase suitable as deliverable
