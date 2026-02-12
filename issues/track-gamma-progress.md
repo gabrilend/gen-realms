@@ -61,6 +61,7 @@ Track Gamma handles all game content and AI integration:
 | 6-008 | Style transfer prompts | 2026-02-11 |
 | 6-009 | Image caching/persistence | 2026-02-11 |
 | 5-006 | Trade row selection logic | 2026-02-11 |
+| 5-009 | Coherence recovery | 2026-02-11 |
 
 ### Pending Issues (Content)
 
@@ -73,8 +74,7 @@ Track Gamma handles all game content and AI integration:
 
 | Issue | Description | Dependencies |
 |-------|-------------|--------------|
-| 5-009 | Coherence recovery | 5-006 (done), 5-008 (done) |
-| 5-010 | Phase 5 Demo | 5-009, Track Beta 3-010 |
+| 5-010 | Phase 5 Demo | 5-009 (done), Track Beta 3-010 |
 
 ### Pending Issues (AI - Visual)
 
@@ -96,8 +96,8 @@ Track Gamma handles all game content and AI integration:
 ## Statistics
 
 **Content Issues:** 8 complete, 2 pending
-**AI Issues:** 24 complete, 2 pending
-**Total:** 32 complete, 4 pending
+**AI Issues:** 25 complete, 1 pending (5-010 demo)
+**Total:** 33 complete, 3 pending
 
 **Cards Created:** 65 total
 - Starting: 2 cards
@@ -107,7 +107,7 @@ Track Gamma handles all game content and AI integration:
 - High Kingdom: 14 cards
 - Artificer Order: 15 cards
 
-**Unit Tests Passing:** 212 total
+**Unit Tests Passing:** 235 total
 - LLM client: 9
 - Prompts: 15
 - World state: 12
@@ -119,6 +119,7 @@ Track Gamma handles all game content and AI integration:
 - Card prompts: 24
 - Image cache: 16
 - Trade select: 26
+- Coherence: 23
 
 ## Deliverables
 
@@ -142,6 +143,7 @@ Track Gamma handles all game content and AI integration:
 - [x] `src/llm/06-context-manager.h/c` - Context window management
 - [x] `src/llm/07-narrative-cache.h/c` - Caching (5-008)
 - [x] `src/llm/08-trade-select.h/c` - Trade row selection (5-006)
+- [x] `src/llm/09-coherence.h/c` - Coherence recovery (5-009)
 - [ ] `issues/completed/demos/phase-5-demo.sh` - AI-narrated game
 
 ### AI - Visual (Phase 6)
@@ -234,7 +236,17 @@ Completed 5-006 (trade row selection logic):
 - DM callback for integration with trade row
 - 26 unit tests passing
 
+### 2026-02-11: Coherence Recovery Complete
+Completed 5-009 (coherence recovery):
+- `src/llm/09-coherence.h/c` - Narrative coherence checking
+- Detects: name mismatches, faction errors, timeline jumps, authority implausibility
+- World state rebuild from game data on recovery
+- Recovery narrative generation (LLM or fallback)
+- Intelligent check scheduling (every 3rd turn, low authority, after issues)
+- Logging for debugging
+- 23 unit tests passing
+
 ### Next Steps
-1. 5-009 (Coherence recovery) - now unblocked! (depends on 5-006, 5-008 both done)
-2. 5-010 (Phase 5 Demo) - blocked on 5-009
-3. 6-010 (Phase 6 Demo) - blocked on 5-010
+1. 5-010 (Phase 5 Demo) - now unblocked! All AI-LLM components complete
+2. 6-010 (Phase 6 Demo) - blocked on 5-010
+3. Phase demos need Track Beta 3-010 for full integration
