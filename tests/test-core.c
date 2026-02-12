@@ -1299,7 +1299,7 @@ static void test_card_manipulation_effects(void) {
     TEST("Pending removed after skip", !game_has_pending_action(game));
 
     /* Test cannot skip required action */
-    game_request_discard(game, player2->id, 1);
+    game_request_discard(game, player2->id, 1, NULL);  /* NULL source for test */
     skipped = game_skip_pending_action(game);
     TEST("Required not skipped", !skipped);
     game_clear_pending_actions(game);

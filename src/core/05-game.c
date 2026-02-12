@@ -776,7 +776,7 @@ void game_clear_pending_actions(Game* game) {
  * Creates a pending action for player to discard cards.
  * Used by opponent discard effects.
  */
-void game_request_discard(Game* game, int player_id, int count) {
+void game_request_discard(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -788,7 +788,7 @@ void game_request_discard(Game* game, int player_id, int count) {
         .min_count = count,  /* Must discard exactly this many */
         .resolved_count = 0,
         .optional = false,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,
@@ -801,7 +801,7 @@ void game_request_discard(Game* game, int player_id, int count) {
 /* {{{ game_request_scrap_trade_row
  * Creates a pending action to scrap from trade row.
  */
-void game_request_scrap_trade_row(Game* game, int player_id, int count) {
+void game_request_scrap_trade_row(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -813,7 +813,7 @@ void game_request_scrap_trade_row(Game* game, int player_id, int count) {
         .min_count = 0,  /* Optional - can skip */
         .resolved_count = 0,
         .optional = true,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,
@@ -826,7 +826,7 @@ void game_request_scrap_trade_row(Game* game, int player_id, int count) {
 /* {{{ game_request_scrap_hand
  * Creates a pending action to scrap from hand.
  */
-void game_request_scrap_hand(Game* game, int player_id, int count) {
+void game_request_scrap_hand(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -838,7 +838,7 @@ void game_request_scrap_hand(Game* game, int player_id, int count) {
         .min_count = 0,  /* Optional - can skip */
         .resolved_count = 0,
         .optional = true,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,
@@ -851,7 +851,7 @@ void game_request_scrap_hand(Game* game, int player_id, int count) {
 /* {{{ game_request_scrap_discard
  * Creates a pending action to scrap from discard pile.
  */
-void game_request_scrap_discard(Game* game, int player_id, int count) {
+void game_request_scrap_discard(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -863,7 +863,7 @@ void game_request_scrap_discard(Game* game, int player_id, int count) {
         .min_count = 0,  /* Optional - can skip */
         .resolved_count = 0,
         .optional = true,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,
@@ -876,7 +876,7 @@ void game_request_scrap_discard(Game* game, int player_id, int count) {
 /* {{{ game_request_scrap_hand_discard
  * Creates a pending action to scrap from hand or discard.
  */
-void game_request_scrap_hand_discard(Game* game, int player_id, int count) {
+void game_request_scrap_hand_discard(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -888,7 +888,7 @@ void game_request_scrap_hand_discard(Game* game, int player_id, int count) {
         .min_count = 0,  /* Optional - can skip */
         .resolved_count = 0,
         .optional = true,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,
@@ -901,7 +901,7 @@ void game_request_scrap_hand_discard(Game* game, int player_id, int count) {
 /* {{{ game_request_top_deck
  * Creates a pending action to put a card from discard on top of deck.
  */
-void game_request_top_deck(Game* game, int player_id, int count) {
+void game_request_top_deck(Game* game, int player_id, int count, CardInstance* source) {
     if (!game || player_id < 1 || count <= 0) {
         return;
     }
@@ -913,7 +913,7 @@ void game_request_top_deck(Game* game, int player_id, int count) {
         .min_count = 0,  /* Optional - can skip */
         .resolved_count = 0,
         .optional = true,
-        .source_card = NULL,
+        .source_card = source,  /* Track which card caused this */
         .source_effect = NULL,
         .upgrade_type = 0,
         .upgrade_value = 0,

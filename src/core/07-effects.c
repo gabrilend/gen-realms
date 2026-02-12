@@ -334,9 +334,11 @@ void effects_reset_context(Player* player) {
 /* {{{ handle_trade
  * Adds trade (gold/coins) to the player's pool for this turn.
  * Includes upgrade bonus from CardInstance.
+ * Game pointer validated for consistency; used by callbacks.
  */
 static void handle_trade(Game* game, Player* player,
                          Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
     int bonus = source ? source->trade_bonus : 0;
     player_add_trade(player, effect->value + bonus);
 }
@@ -345,9 +347,11 @@ static void handle_trade(Game* game, Player* player,
 /* {{{ handle_combat
  * Adds combat (attack power) to the player's pool for this turn.
  * Includes upgrade bonus from CardInstance.
+ * Game pointer validated for consistency; used by callbacks.
  */
 static void handle_combat(Game* game, Player* player,
                           Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
     int bonus = source ? source->attack_bonus : 0;
     player_add_combat(player, effect->value + bonus);
 }
@@ -356,9 +360,11 @@ static void handle_combat(Game* game, Player* player,
 /* {{{ handle_authority
  * Adds authority (health) to the player.
  * Includes upgrade bonus from CardInstance.
+ * Game pointer validated for consistency; used by callbacks.
  */
 static void handle_authority(Game* game, Player* player,
                              Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
     int bonus = source ? source->authority_bonus : 0;
     player_add_authority(player, effect->value + bonus);
 }
@@ -367,9 +373,13 @@ static void handle_authority(Game* game, Player* player,
 /* {{{ handle_draw
  * Draws cards from the player's deck to their hand.
  * Simple immediate draw (auto-draw resolution is in 1-008).
+ * Game validated; source tracked by callbacks for narration.
  */
 static void handle_draw(Game* game, Player* player,
                         Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
+    /* Source card available for callbacks to narrate draw triggers */
+    (void)source;  /* Used by fire_callbacks after handler returns */
     player_draw_cards(player, effect->value);
 }
 /* }}} */
@@ -377,6 +387,7 @@ static void handle_draw(Game* game, Player* player,
 /* {{{ handle_discard
  * Forces the opponent to discard cards.
  * Creates a pending action for the opponent to choose which cards to discard.
+ * The source card is tracked for LLM narration (e.g. "Dire Wolf forced discard").
  */
 static void handle_discard(Game* game, Player* player,
                            Effect* effect, CardInstance* source) {
@@ -390,14 +401,15 @@ static void handle_discard(Game* game, Player* player,
         return;
     }
 
-    /* Create pending discard action for opponent */
-    game_request_discard(game, opponent->id, effect->value);
+    /* Create pending discard action for opponent, tracking source card */
+    game_request_discard(game, opponent->id, effect->value, source);
 }
 /* }}} */
 
 /* {{{ handle_scrap_trade_row
  * Allows player to scrap a card from the trade row.
  * Creates a pending action for the player to choose which card to scrap.
+ * Source tracked for UI/narration ("Brain World allows scrapping").
  */
 static void handle_scrap_trade_row(Game* game, Player* player,
                                    Effect* effect, CardInstance* source) {
@@ -407,8 +419,8 @@ static void handle_scrap_trade_row(Game* game, Player* player,
 
     int count = effect->value > 0 ? effect->value : 1;
 
-    /* Create pending scrap trade row action */
-    game_request_scrap_trade_row(game, player->id, count);
+    /* Create pending scrap trade row action, tracking source */
+    game_request_scrap_trade_row(game, player->id, count, source);
 }
 /* }}} */
 
@@ -416,6 +428,7 @@ static void handle_scrap_trade_row(Game* game, Player* player,
  * Allows player to scrap a card from their hand or discard pile.
  * Creates a pending action for the player to choose which card to scrap.
  * Note: Scrapping decrements d10 (handled in resolution).
+ * Source tracked for UI/narration.
  */
 static void handle_scrap_hand(Game* game, Player* player,
                               Effect* effect, CardInstance* source) {
@@ -425,14 +438,15 @@ static void handle_scrap_hand(Game* game, Player* player,
 
     int count = effect->value > 0 ? effect->value : 1;
 
-    /* Create pending scrap hand/discard action */
-    game_request_scrap_hand_discard(game, player->id, count);
+    /* Create pending scrap hand/discard action, tracking source */
+    game_request_scrap_hand_discard(game, player->id, count, source);
 }
 /* }}} */
 
 /* {{{ handle_top_deck
  * Allows player to put a card from discard on top of their deck.
  * Creates a pending action for the player to choose which card.
+ * Source tracked for UI/narration.
  */
 static void handle_top_deck(Game* game, Player* player,
                             Effect* effect, CardInstance* source) {
@@ -442,17 +456,21 @@ static void handle_top_deck(Game* game, Player* player,
 
     int count = effect->value > 0 ? effect->value : 1;
 
-    /* Create pending top deck action */
-    game_request_top_deck(game, player->id, count);
+    /* Create pending top deck action, tracking source */
+    game_request_top_deck(game, player->id, count, source);
 }
 /* }}} */
 
 /* {{{ handle_d10_up
  * Directly increments the d10 deck flow tracker.
  * Some cards provide this as a bonus effect.
+ * Game validated; source tracked by callbacks for narration.
  */
 static void handle_d10_up(Game* game, Player* player,
                           Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
+    /* Source card available for callbacks to narrate d10 changes */
+    (void)source;  /* Used by fire_callbacks after handler returns */
     for (int i = 0; i < effect->value; i++) {
         player_d10_increment(player);
     }
@@ -462,9 +480,13 @@ static void handle_d10_up(Game* game, Player* player,
 /* {{{ handle_d10_down
  * Directly decrements the d10 deck flow tracker.
  * Rare effect, usually from scrapping.
+ * Game validated; source tracked by callbacks for narration.
  */
 static void handle_d10_down(Game* game, Player* player,
                             Effect* effect, CardInstance* source) {
+    if (!game) return;  /* Validate game state exists */
+    /* Source card available for callbacks to narrate d10 changes */
+    (void)source;  /* Used by fire_callbacks after handler returns */
     for (int i = 0; i < effect->value; i++) {
         player_d10_decrement(player);
     }

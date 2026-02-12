@@ -104,8 +104,8 @@ typedef struct {
     int min_count;              /* Minimum required (0 = optional) */
     int resolved_count;         /* How many have been resolved so far */
     bool optional;              /* Can player skip this action? */
-    struct CardInstance* source_card;   /* Card that triggered this */
-    struct Effect* source_effect;       /* Effect that created this pending */
+    CardInstance* source_card;   /* Card that triggered this */
+    Effect* source_effect;       /* Effect that created this pending */
     int upgrade_type;           /* For upgrades: which stat to boost */
     int upgrade_value;          /* For upgrades: how much to boost */
 } PendingAction;
@@ -203,12 +203,12 @@ void game_pop_pending_action(Game* game);
 void game_clear_pending_actions(Game* game);
 
 /* Pending action creation helpers */
-void game_request_discard(Game* game, int player_id, int count);
-void game_request_scrap_trade_row(Game* game, int player_id, int count);
-void game_request_scrap_hand(Game* game, int player_id, int count);
-void game_request_scrap_discard(Game* game, int player_id, int count);
-void game_request_scrap_hand_discard(Game* game, int player_id, int count);
-void game_request_top_deck(Game* game, int player_id, int count);
+void game_request_discard(Game* game, int player_id, int count, CardInstance* source);
+void game_request_scrap_trade_row(Game* game, int player_id, int count, CardInstance* source);
+void game_request_scrap_hand(Game* game, int player_id, int count, CardInstance* source);
+void game_request_scrap_discard(Game* game, int player_id, int count, CardInstance* source);
+void game_request_scrap_hand_discard(Game* game, int player_id, int count, CardInstance* source);
+void game_request_top_deck(Game* game, int player_id, int count, CardInstance* source);
 
 /* Pending action resolution */
 bool game_resolve_discard(Game* game, const char* card_instance_id);
