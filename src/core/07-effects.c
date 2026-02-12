@@ -536,31 +536,43 @@ static void handle_acquire_top(Game* game, Player* player,
 
 /* {{{ handle_upgrade_attack
  * Permanently upgrades a card's attack bonus.
+ * Creates a pending action for the player to choose which card to upgrade.
  */
 static void handle_upgrade_attack(Game* game, Player* player,
                                   Effect* effect, CardInstance* source) {
-    /* TODO: Implement upgrade target choice (requires action queue) */
-    /* When target is selected, call:
-     * card_instance_apply_upgrade(target, EFFECT_UPGRADE_ATTACK, effect->value);
-     */
+    (void)source;
+    if (!game || !player || !effect) return;
+
+    int value = effect->value > 0 ? effect->value : 1;
+    game_request_upgrade(game, player->id, EFFECT_UPGRADE_ATTACK, value);
 }
 /* }}} */
 
 /* {{{ handle_upgrade_trade
  * Permanently upgrades a card's trade bonus.
+ * Creates a pending action for the player to choose which card to upgrade.
  */
 static void handle_upgrade_trade(Game* game, Player* player,
                                  Effect* effect, CardInstance* source) {
-    /* TODO: Implement upgrade target choice (requires action queue) */
+    (void)source;
+    if (!game || !player || !effect) return;
+
+    int value = effect->value > 0 ? effect->value : 1;
+    game_request_upgrade(game, player->id, EFFECT_UPGRADE_TRADE, value);
 }
 /* }}} */
 
 /* {{{ handle_upgrade_auth
  * Permanently upgrades a card's authority bonus.
+ * Creates a pending action for the player to choose which card to upgrade.
  */
 static void handle_upgrade_auth(Game* game, Player* player,
                                 Effect* effect, CardInstance* source) {
-    /* TODO: Implement upgrade target choice (requires action queue) */
+    (void)source;
+    if (!game || !player || !effect) return;
+
+    int value = effect->value > 0 ? effect->value : 1;
+    game_request_upgrade(game, player->id, EFFECT_UPGRADE_AUTH, value);
 }
 /* }}} */
 

@@ -1410,6 +1410,107 @@ bool game_resolve_destroy_base(Game* game, const char* card_instance_id) {
 }
 /* }}} */
 
+/* {{{ game_request_upgrade
+ * Creates a pending action for the player to choose a card to upgrade.
+ * upgrade_type: The EffectType for the upgrade (EFFECT_UPGRADE_ATTACK, etc.)
+ * upgrade_value: The amount to add to the stat.
+ */
+void game_request_upgrade(Game* game, int player_id, int upgrade_type, int upgrade_value) {
+    if (!game || player_id < 1) {
+        return;
+    }
+
+    PendingAction action = {
+        .type = PENDING_UPGRADE,
+        .player_id = player_id,
+        .count = 1,
+        .min_count = 0,  /* Optional - can skip */
+        .resolved_count = 0,
+        .optional = true,
+        .source_card = NULL,
+        .source_effect = NULL,
+        .upgrade_type = upgrade_type,
+        .upgrade_value = upgrade_value
+    };
+
+    game_push_pending_action(game, &action);
+}
+/* }}} */
+
+/* {{{ game_resolve_upgrade
+ * Resolves an upgrade action by applying the upgrade to the chosen card.
+ * The card can be in hand, discard, or played area.
+ * Returns true if successfully upgraded.
+ */
+bool game_resolve_upgrade(Game* game, const char* card_instance_id) {
+    if (!game || !card_instance_id) {
+        return false;
+    }
+
+    PendingAction* pending = game_get_pending_action(game);
+    if (!pending || pending->type != PENDING_UPGRADE) {
+        return false;
+    }
+
+    /* Find the player */
+    Player* player = NULL;
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i] && game->players[i]->id == pending->player_id) {
+            player = game->players[i];
+            break;
+        }
+    }
+    if (!player || !player->deck) {
+        return false;
+    }
+
+    /* Search for the target card in player's hand, discard, or played area */
+    CardInstance* target = NULL;
+
+    /* Check hand */
+    for (int i = 0; i < player->deck->hand_count; i++) {
+        if (player->deck->hand[i] &&
+            strcmp(player->deck->hand[i]->instance_id, card_instance_id) == 0) {
+            target = player->deck->hand[i];
+            break;
+        }
+    }
+
+    /* Check discard */
+    if (!target) {
+        for (int i = 0; i < player->deck->discard_count; i++) {
+            if (player->deck->discard[i] &&
+                strcmp(player->deck->discard[i]->instance_id, card_instance_id) == 0) {
+                target = player->deck->discard[i];
+                break;
+            }
+        }
+    }
+
+    /* Check played */
+    if (!target) {
+        for (int i = 0; i < player->deck->played_count; i++) {
+            if (player->deck->played[i] &&
+                strcmp(player->deck->played[i]->instance_id, card_instance_id) == 0) {
+                target = player->deck->played[i];
+                break;
+            }
+        }
+    }
+
+    if (!target) {
+        return false;
+    }
+
+    /* Apply the upgrade */
+    card_instance_apply_upgrade(target, pending->upgrade_type, pending->upgrade_value);
+
+    /* Pop the pending action */
+    game_pop_pending_action(game);
+    return true;
+}
+/* }}} */
+
 /* ========================================================================== */
 /*                        Purchase with Effect Context                        */
 /* ========================================================================== */

@@ -1511,6 +1511,180 @@ static void test_special_effects(void) {
 }
 /* }}} */
 
+/* {{{ test_upgrade_spawn_effects */
+static void test_upgrade_spawn_effects(void) {
+    printf("\n=== Upgrade and Spawn Effects Tests (1-007e) ===\n");
+
+    /* Create card types for testing */
+    CardType* us_scout = card_type_create("us_scout", "Scout", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    us_scout->effects = effect_array_create(1);
+    us_scout->effects[0].type = EFFECT_TRADE;
+    us_scout->effects[0].value = 1;
+    us_scout->effect_count = 1;
+
+    CardType* us_viper = card_type_create("us_viper", "Viper", 0, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    us_viper->effects = effect_array_create(1);
+    us_viper->effects[0].type = EFFECT_COMBAT;
+    us_viper->effects[0].value = 1;
+    us_viper->effect_count = 1;
+
+    CardType* us_explorer = card_type_create("us_explorer", "Explorer", 2, FACTION_NEUTRAL, CARD_KIND_SHIP);
+    us_explorer->effects = effect_array_create(1);
+    us_explorer->effects[0].type = EFFECT_TRADE;
+    us_explorer->effects[0].value = 2;
+    us_explorer->effect_count = 1;
+
+    /* Unit type for spawn testing */
+    CardType* us_soldier = card_type_create("us_soldier", "Soldier", 0, FACTION_KINGDOM, CARD_KIND_UNIT);
+    us_soldier->effects = effect_array_create(1);
+    us_soldier->effects[0].type = EFFECT_COMBAT;
+    us_soldier->effects[0].value = 1;
+    us_soldier->effect_count = 1;
+
+    TEST("Card types created", us_scout && us_viper && us_explorer && us_soldier);
+
+    /* Create game with starting types */
+    Game* game = game_create(2);
+    game_add_player(game, "Player 1");
+    game_add_player(game, "Player 2");
+    game_set_starting_types(game, us_scout, us_viper, us_explorer);
+    game_register_card_type(game, us_soldier);  /* game takes ownership */
+
+    /* Set up trade row */
+    CardType* trade_cards[10];
+    for (int i = 0; i < 10; i++) trade_cards[i] = us_scout;
+    game->trade_row = trade_row_create(trade_cards, 10, us_explorer);
+
+    bool started = game_start(game);
+    TEST("Game started", started);
+    game_skip_draw_order(game);
+    TEST("Phase is main", game->phase == PHASE_MAIN);
+
+    Player* player1 = game->players[0];
+    TEST("Game setup complete", player1 != NULL);
+
+    /* ===== Test 1: EFFECT_UPGRADE_ATTACK creates pending action ===== */
+    Effect upgrade_atk = { .type = EFFECT_UPGRADE_ATTACK, .value = 2 };
+    effects_execute(game, player1, &upgrade_atk, NULL);
+    TEST("Upgrade attack creates pending", game_has_pending_action(game));
+
+    PendingAction* pending = game_get_pending_action(game);
+    TEST("Upgrade pending type", pending && pending->type == PENDING_UPGRADE);
+    TEST("Upgrade is optional", pending && pending->optional);
+    TEST("Upgrade type stored", pending && pending->upgrade_type == EFFECT_UPGRADE_ATTACK);
+    TEST("Upgrade value stored", pending && pending->upgrade_value == 2);
+
+    /* Get a card from hand to upgrade */
+    CardInstance* hand_card = player1->deck->hand_count > 0 ? player1->deck->hand[0] : NULL;
+    TEST("Have card in hand", hand_card != NULL);
+
+    int orig_attack = hand_card ? hand_card->attack_bonus : 0;
+    bool resolved = game_resolve_upgrade(game, hand_card ? hand_card->instance_id : "");
+    TEST("Upgrade resolved", resolved);
+    TEST("Attack bonus applied", hand_card && hand_card->attack_bonus == orig_attack + 2);
+    TEST("Pending removed", !game_has_pending_action(game));
+
+    /* ===== Test 2: EFFECT_UPGRADE_TRADE ===== */
+    Effect upgrade_trade = { .type = EFFECT_UPGRADE_TRADE, .value = 1 };
+    effects_execute(game, player1, &upgrade_trade, NULL);
+    TEST("Upgrade trade creates pending", game_has_pending_action(game));
+
+    pending = game_get_pending_action(game);
+    TEST("Upgrade trade type stored", pending && pending->upgrade_type == EFFECT_UPGRADE_TRADE);
+
+    CardInstance* card2 = player1->deck->hand_count > 1 ? player1->deck->hand[1] : player1->deck->hand[0];
+    int orig_trade = card2 ? card2->trade_bonus : 0;
+    resolved = game_resolve_upgrade(game, card2 ? card2->instance_id : "");
+    TEST("Trade upgrade resolved", resolved);
+    TEST("Trade bonus applied", card2 && card2->trade_bonus == orig_trade + 1);
+
+    /* ===== Test 3: EFFECT_UPGRADE_AUTH ===== */
+    Effect upgrade_auth = { .type = EFFECT_UPGRADE_AUTH, .value = 3 };
+    effects_execute(game, player1, &upgrade_auth, NULL);
+    TEST("Upgrade auth creates pending", game_has_pending_action(game));
+
+    pending = game_get_pending_action(game);
+    TEST("Upgrade auth type stored", pending && pending->upgrade_type == EFFECT_UPGRADE_AUTH);
+
+    CardInstance* card3 = player1->deck->hand[0];
+    int orig_auth = card3 ? card3->authority_bonus : 0;
+    resolved = game_resolve_upgrade(game, card3 ? card3->instance_id : "");
+    TEST("Auth upgrade resolved", resolved);
+    TEST("Auth bonus applied", card3 && card3->authority_bonus == orig_auth + 3);
+
+    /* ===== Test 4: Upgrade can be skipped ===== */
+    Effect upgrade_skip = { .type = EFFECT_UPGRADE_ATTACK, .value = 1 };
+    effects_execute(game, player1, &upgrade_skip, NULL);
+    TEST("Upgrade pending exists", game_has_pending_action(game));
+    bool skipped = game_skip_pending_action(game);
+    TEST("Upgrade skipped", skipped);
+    TEST("Pending removed after skip", !game_has_pending_action(game));
+
+    /* ===== Test 5: EFFECT_SPAWN creates units ===== */
+    int initial_discard = player1->deck->discard_count;
+    Effect spawn_eff = {
+        .type = EFFECT_SPAWN,
+        .value = 1,
+        .target_card_id = "us_soldier"
+    };
+    effects_execute(game, player1, &spawn_eff, NULL);
+    TEST("Spawn adds to discard", player1->deck->discard_count == initial_discard + 1);
+
+    /* Find the spawned soldier */
+    CardInstance* spawned = NULL;
+    for (int i = 0; i < player1->deck->discard_count; i++) {
+        if (player1->deck->discard[i]->type == us_soldier) {
+            spawned = player1->deck->discard[i];
+            break;
+        }
+    }
+    TEST("Spawned unit exists", spawned != NULL);
+    TEST("Spawned is soldier type", spawned && spawned->type == us_soldier);
+    TEST("Spawned has unique ID", spawned && spawned->instance_id != NULL);
+
+    /* ===== Test 6: Spawn multiple units ===== */
+    int before_multi = player1->deck->discard_count;
+    Effect spawn_multi = {
+        .type = EFFECT_SPAWN,
+        .value = 3,
+        .target_card_id = "us_soldier"
+    };
+    effects_execute(game, player1, &spawn_multi, NULL);
+    TEST("Spawn 3 units", player1->deck->discard_count == before_multi + 3);
+
+    /* ===== Test 7: Spawn with unknown type does nothing ===== */
+    int before_unknown = player1->deck->discard_count;
+    Effect spawn_unknown = {
+        .type = EFFECT_SPAWN,
+        .value = 1,
+        .target_card_id = "unknown_type"
+    };
+    effects_execute(game, player1, &spawn_unknown, NULL);
+    TEST("Unknown spawn type ignored", player1->deck->discard_count == before_unknown);
+
+    /* ===== Test 8: Upgrade card in discard pile ===== */
+    /* Move a card to discard for testing */
+    CardInstance* discard_card = player1->deck->hand[0];
+    const char* discard_id = discard_card->instance_id;
+    deck_add_to_discard(player1->deck, discard_card);
+    player1->deck->hand[0] = player1->deck->hand[--player1->deck->hand_count];
+
+    Effect upgrade_discard = { .type = EFFECT_UPGRADE_ATTACK, .value = 5 };
+    effects_execute(game, player1, &upgrade_discard, NULL);
+    int orig_bonus = discard_card->attack_bonus;
+    resolved = game_resolve_upgrade(game, discard_id);
+    TEST("Upgrade discard card resolved", resolved);
+    TEST("Discard card upgraded", discard_card->attack_bonus == orig_bonus + 5);
+
+    /* Clean up - game_free handles us_soldier since it was registered */
+    game_free(game);
+    card_type_free(us_scout);
+    card_type_free(us_viper);
+    card_type_free(us_explorer);
+    /* us_soldier freed by game_free since we registered it */
+}
+/* }}} */
+
 /* ========================================================================== */
 /*                               Main                                         */
 /* ========================================================================== */
@@ -1532,6 +1706,7 @@ int main(void) {
     test_autodraw_module();
     test_card_manipulation_effects();
     test_special_effects();
+    test_upgrade_spawn_effects();
 
     printf("\n=====================================\n");
     printf("Results: %d passed, %d failed\n", tests_passed, tests_failed);

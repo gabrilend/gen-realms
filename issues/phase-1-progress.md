@@ -3,7 +3,7 @@
 ## Goal
 Build the foundational C game engine implementing deck-building card game mechanics with Symbeline-specific modifications. Engine compiles to native binary and WebAssembly.
 
-## Status: In Progress (ALPHA checkpoint reached)
+## Status: COMPLETE (Track Alpha finished)
 
 ## Issues
 
@@ -15,12 +15,12 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-004 | Trade Row Implementation | **completed** |
 | 1-005 | Turn Loop Structure | **completed** |
 | 1-006 | Basic Combat Resolution | **completed** |
-| 1-007 | Card Effect System | in progress |
+| 1-007 | Card Effect System | **completed** |
 | 1-007a | ↳ Effect Dispatch Infrastructure | **completed** |
 | 1-007b | ↳ Resource Effects | **completed** |
 | 1-007c | ↳ Card Manipulation Effects | **completed** |
 | 1-007d | ↳ Special Effects | **completed** |
-| 1-007e | ↳ Upgrade and Spawn Effects | pending |
+| 1-007e | ↳ Upgrade and Spawn Effects | **completed** |
 | 1-007f | ↳ Conditional and Ally Abilities | **completed** |
 | 1-008 | Auto-Draw Resolution System | **completed** |
 | 1-008a | ↳ Eligibility Detection | **completed** |
@@ -33,7 +33,7 @@ Build the foundational C game engine implementing deck-building card game mechan
 | 1-012 | Gamestate Serialization | **completed** |
 | 1-013 | Phase 1 Demo | **completed** |
 
-## Completed: 21/22
+## Completed: 22/22
 
 ## Technology Stack
 - C11 with cJSON for card definitions
@@ -137,3 +137,19 @@ Completed 1-007d:
 - EFFECT_ACQUIRE_TOP added to EffectType enum
 - 260 unit tests passing (26 new)
 - Files: src/core/01-card.h, src/core/05-game.{h,c}, src/core/07-effects.c
+
+### 2026-02-12: Upgrade and Spawn Effects Complete - TRACK ALPHA FINISHED
+Completed 1-007e (final issue in Track Alpha):
+- Upgrade effects (EFFECT_UPGRADE_ATTACK/TRADE/AUTH) create PENDING_UPGRADE
+- game_request_upgrade() creates pending action with upgrade_type and value
+- game_resolve_upgrade() finds target card in hand/discard/played, applies bonus
+- card_instance_apply_upgrade() modifies CardInstance permanently
+- Spawn effect (EFFECT_SPAWN) looks up card type, creates instances in discard
+- Spawn supports value > 1 for multiple units
+- Unknown spawn types handled gracefully (no-op)
+- 292 unit tests passing (32 new)
+- Files: src/core/05-game.{h,c}, src/core/07-effects.c, tests/test-core.c
+
+**Track Alpha Complete**: All 22 issues in Phase 1 finished. Core C engine fully
+implements deck-building mechanics with Symbeline-specific modifications including
+bases, spawning, upgrades, deck flow tracker, and the complete effect system.

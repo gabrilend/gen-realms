@@ -224,6 +224,10 @@ void game_request_destroy_base(Game* game, int player_id);
 bool game_resolve_copy_ship(Game* game, const char* card_instance_id);
 bool game_resolve_destroy_base(Game* game, const char* card_instance_id);
 
+/* Upgrade pending actions */
+void game_request_upgrade(Game* game, int player_id, int upgrade_type, int upgrade_value);
+bool game_resolve_upgrade(Game* game, const char* card_instance_id);
+
 /* Purchase functions with effect context support */
 CardInstance* game_buy_card(Game* game, int slot);
 CardInstance* game_buy_explorer(Game* game);

@@ -25,10 +25,10 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 | 2-006 | Connection Manager | COMPLETE |
 | 2-007 | Game Session Management | COMPLETE |
 | 2-008 | Hidden Information Handling | COMPLETE |
-| 2-009 | Input Validation | pending |
+| 2-009 | Input Validation | COMPLETE |
 | 2-010 | Phase 2 Demo | pending |
 
-## Completed: 16/18
+## Completed: 17/18
 
 ## Technology Stack
 - libwebsockets for HTTP/WebSocket server
@@ -37,6 +37,22 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 - Unified connection manager for transport-agnostic game logic
 
 ## Recent Progress
+
+### 2-009: Input Validation (COMPLETE)
+Implemented comprehensive server-side validation of all client actions:
+- ValidationResult type with error codes and helpful messages
+- Turn ownership validation (is it this player's turn?)
+- Phase appropriateness validation (correct phase for action)
+- Resource sufficiency validation (enough trade/combat)
+- Target validity validation (card in hand, valid slot, outpost rules)
+- Draw order validation (correct indices, no duplicates)
+- Pending action validation (response matches pending type)
+- 21 unit tests (all pass)
+
+Files created:
+- src/net/08-validation.h - ValidationResult and function declarations
+- src/net/08-validation.c - Full implementation
+- tests/test-validation.c - 21 unit tests
 
 ### 2-008: Hidden Information Handling (COMPLETE)
 Implemented perspective-aware game state serialization:

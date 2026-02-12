@@ -87,6 +87,7 @@ TEST_WEBSOCKET_BIN = $(BIN_DIR)/test-websocket
 TEST_CONNECTIONS_BIN = $(BIN_DIR)/test-connections
 TEST_SESSIONS_BIN = $(BIN_DIR)/test-sessions
 TEST_HIDDEN_INFO_BIN = $(BIN_DIR)/test-hidden-info
+TEST_VALIDATION_BIN = $(BIN_DIR)/test-validation
 # }}}
 
 # {{{ source files
@@ -187,6 +188,13 @@ TEST_HIDDEN_INFO_SOURCES = \
 	$(CORE_SOURCES) \
 	$(CORE_DIR)/09-serialize.c \
 	$(CJSON_SOURCES)
+
+# Validation tests (needs validation, protocol, core)
+TEST_VALIDATION_SOURCES = \
+	tests/test-validation.c \
+	$(NET_DIR)/08-validation.c \
+	$(CORE_SOURCES) \
+	$(CJSON_SOURCES)
 # }}}
 
 # {{{ object files
@@ -205,6 +213,7 @@ TEST_WEBSOCKET_OBJECTS = $(TEST_WEBSOCKET_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_CONNECTIONS_OBJECTS = $(TEST_CONNECTIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_SESSIONS_OBJECTS = $(TEST_SESSIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_HIDDEN_INFO_OBJECTS = $(TEST_HIDDEN_INFO_SOURCES:%.c=$(BUILD_DIR)/%.o)
+TEST_VALIDATION_OBJECTS = $(TEST_VALIDATION_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
@@ -213,7 +222,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info dirs deps deps-force deps-info clean-deps
+.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info test-validation dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -317,6 +326,13 @@ test-hidden-info: dirs $(TEST_HIDDEN_INFO_BIN)
 	./$(TEST_HIDDEN_INFO_BIN)
 
 $(TEST_HIDDEN_INFO_BIN): $(TEST_HIDDEN_INFO_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
+
+# Input validation tests (Track B: 2-009)
+test-validation: dirs $(TEST_VALIDATION_BIN)
+	./$(TEST_VALIDATION_BIN)
+
+$(TEST_VALIDATION_BIN): $(TEST_VALIDATION_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
 
 # Object file compilation

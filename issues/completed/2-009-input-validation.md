@@ -1,6 +1,13 @@
 # 2-009: Input Validation
 
+## Status: COMPLETE
+
 ## Current Behavior
+Comprehensive server-side validation of all client actions via the
+ValidationResult system. All actions are validated before execution
+with clear error messages returned on failure.
+
+## Original Behavior (before fix)
 No server-side validation of client actions.
 
 ## Intended Behavior
@@ -56,9 +63,41 @@ Comprehensive input validation that:
 | end_turn | Is turn owner, phase is main |
 
 ## Acceptance Criteria
-- [ ] All actions validated before execution
-- [ ] Wrong turn rejected
-- [ ] Wrong phase rejected
-- [ ] Invalid targets rejected
-- [ ] Error messages are helpful
-- [ ] No exploits possible
+- [x] All actions validated before execution
+- [x] Wrong turn rejected
+- [x] Wrong phase rejected
+- [x] Invalid targets rejected
+- [x] Error messages are helpful
+- [x] No exploits possible
+
+## Implementation Notes
+
+### Files Created
+- `src/net/08-validation.h` - ValidationResult type and function declarations
+- `src/net/08-validation.c` - Implementation of all validators
+- `tests/test-validation.c` - 21 unit tests
+
+### Key Types
+- `ValidationResult` - Contains valid flag, ProtocolError code, and message
+
+### Validators Implemented
+- `validate_is_player_turn` - Turn ownership check
+- `validate_phase` - Phase appropriateness check
+- `validate_game_in_progress` - Game state check
+- `validate_play_card` - Card in hand, turn, phase
+- `validate_buy_card` - Slot valid, has trade, turn, phase
+- `validate_buy_explorer` - Has trade, turn, phase
+- `validate_attack_player` - Has combat, valid target, outpost rules
+- `validate_attack_base` - Has combat, base exists, outpost rules
+- `validate_scrap_hand` - Card in hand, turn, phase
+- `validate_scrap_discard` - Card in discard, turn, phase
+- `validate_scrap_trade_row` - Slot valid, turn, phase
+- `validate_end_turn` - Turn, phase, no pending actions
+- `validate_draw_order` - Turn, phase, valid indices
+- `validate_action` - Dispatch to specific validators
+- `validate_pending_response` - Response matches pending
+- `validate_pending_skip` - Pending is optional
+
+### Test Coverage
+21 tests covering turn ownership, phase validation, play card, buy card,
+attack validation, end turn, action dispatch, and draw order validation.
