@@ -156,8 +156,10 @@ DEMO_SOURCES = \
 	$(CORE_SOURCES)
 
 # Phase 2 demo sources (2-010)
+# Includes stubs for ws_send/ssh_send since demo simulates networking
 DEMO2_SOURCES = \
 	$(DEMO_DIR)/phase-2-demo.c \
+	$(DEMO_DIR)/phase-2-stubs.c \
 	$(CORE_SOURCES) \
 	$(CORE_DIR)/09-serialize.c \
 	$(NET_DIR)/04-protocol.c \

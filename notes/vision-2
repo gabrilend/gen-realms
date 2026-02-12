@@ -1,0 +1,67 @@
+this vision-2 document is about a post MVP viewer application for game metrics,
+statistics, and procedure flow of a symbeline-realms game. It should be intended
+for viewing a game, whether ongoing (live tracking results and displaying) or
+replaying a previous game with correct (acceleratable) timing flows.
+
+the primary use-case is for visualization of the game progression. In order to
+do so, the implementation (specific to each user, definable as they please) must
+be configurable for however people are best suited to view things. This is one
+such example that is suited to me, and along the development process we should
+take extra efforts to ensure that the procedure for developing this particular
+piece of software is documented and any future developers or learners are guided
+in a start-to-finish journey that illustrates everything that this program could
+be. All options are explained, all specifications illustrated (graphs and charts
+are very helpful for reading comprehension. In fact, they are one of the most
+helpful tools that language employs. Language is important - they must be
+definable using words. Ideally English for this implementation, because that is
+what I speak.
+
+the visuals will be built in a game engine like godot with LLM assisted tooling
+for all the scripting requirements. It will feel like a strategy game with an
+infinite zoom, like Supreme Commander. The more the player zooms in, the more
+units get added, such that the battlelines are displayed with an increased
+resolution. The player should be able to zoom in as much as they please, and the
+battlefield would get smaller and the units would stay the same size (as they're
+made out of hardware sprites and clearly cannot change in size at all without
+blurring or scaling, not ideal) but the world would seem to grow larger like the
+expansion of the universe. The space between things is increasing. However, the
+abstraction remains pure, and the resolution exists at all measurement
+magnitudes. like falling through time into a world that's more grown apart, how
+the petals of a blossom must feel as they radiate growth from the start.
+
+how this would shake out during the gameplay process is that the player would
+have a selection menu where they could select from buildings to place and then
+they would create units that move toward each other at a relatively even pace.
+then, upon meeting, they'd measure each other's strength against each other.
+
+...
+
+okay less crazy talk, what is this engine renderer thing even all about?
+
+right. so the gameplay loop involves placing buildings on a map which is
+randomly image generated and then image recognition is applied to sections of it
+to determine resource distribution.
+
+these buildings will spawn units every randomized iteration that will move
+toward other units and do battle. There are three potential targets for a unit
+to attack-move to engage:
+
+an interior base, a frontier outpost, or the player's urbanities.
+
+the game engine will display the units marching toward one of these locations,
+and then the renderer will display some of the other player's units (still in
+their deck) who will do battle with them. If the base or outpost is destroyed,
+then the units will destroy it and an image will be created of the destroyed
+building, a rebuilding building, and a renovated building. These will each
+display at the specified building destruction/construction cycle, which can be
+calculated by being first destroyed for a turn, then rebuilt until the other
+player replays that card, then renovated on every turn after that. When the
+building is destroyed again, there's a 1 in 3 chance that they're choose one of
+the old models when redesigning. [1 in 3 is default, configurable in the config
+file. there's also an option for putting all the options in a pool and to keep
+regenerating new ones when idle]
+
+if the units attack the urbanities, the defending units will push them back,
+unless the player who is being attacked loses. then the city gets sacked and it
+cracks like a mirror falling to shards on the ground. Then the game continues
+with part of the map a permanent black.

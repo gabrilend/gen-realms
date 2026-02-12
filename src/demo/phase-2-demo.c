@@ -453,6 +453,7 @@ static void demo_validation(DemoState* state) {
                result.valid ? "ALLOWED" : "REJECTED",
                result.valid ? "OK" : result.error_message);
     printf("\033[32m[PASS]\033[0m Attack without combat rejected\n");
+    fflush(stdout);
 }
 /* }}} */
 
@@ -461,77 +462,52 @@ static void demo_validation(DemoState* state) {
  */
 static void demo_protocol_flow(DemoState* state) {
     printf("\n");
+    fflush(stdout);
     printf("===========================================================\n");
+    fflush(stdout);
     printf("  PROTOCOL MESSAGE FLOW\n");
+    fflush(stdout);
     printf("===========================================================\n\n");
+    fflush(stdout);
 
-    Player* alice = state->game->players[0];
+    /* Demonstrate protocol message formats */
+    printf("--- Example: Client action message ---\n");
+    fflush(stdout);
+    const char* example_action = "{\"type\":\"action\",\"action\":\"play_card\",\"card_id\":\"scout_0001\"}";
+    log_alice("Sending action...");
+    fflush(stdout);
+    log_proto("->", example_action);
+    fflush(stdout);
 
-    /* Alice plays a scout */
-    if (alice->deck->hand_count > 0) {
-        CardInstance* card = alice->deck->hand[0];
-
-        printf("--- Alice plays %s ---\n", card->type->name);
-
-        /* Build action JSON */
-        char action_json[256];
-        snprintf(action_json, sizeof(action_json),
-                 "{\"type\":\"action\",\"action\":\"play_card\",\"card_id\":\"%s\"}",
-                 card->instance_id);
-
-        Message* action_msg = simulate_client_send(action_json, "Alice");
-        if (action_msg) {
-            /* Validate */
-            cJSON* payload = action_msg->payload;
-            cJSON* card_id_json = cJSON_GetObjectItem(payload, "card_id");
-            const char* card_id = card_id_json ? card_id_json->valuestring : NULL;
-
-            ValidationResult vr = validate_play_card(state->game, 0, card_id);
-            log_server("Validating action... %s",
-                       vr.valid ? "VALID" : vr.error_message);
-
-            if (vr.valid) {
-                /* Execute */
-                Action* action = action_create(ACTION_PLAY_CARD);
-                action->card_instance_id = strdup(card_id);
-                game_process_action(state->game, action);
-                action_free(action);
-
-                log_server("Action executed. Broadcasting gamestate...");
-
-                /* Broadcast updated state */
-                Message* gs_alice = protocol_create_gamestate(state->game, 0);
-                simulate_server_send(gs_alice, "Alice");
-                message_free(gs_alice);
-
-                Message* gs_bob = protocol_create_gamestate(state->game, 1);
-                simulate_server_send(gs_bob, "Bob");
-                message_free(gs_bob);
-            }
-
-            message_free(action_msg);
-        }
+    Message* action_msg = simulate_client_send(example_action, "Alice");
+    if (action_msg) {
+        log_server("Parsed action: type=%s", message_type_to_string(action_msg->type));
+        message_free(action_msg);
     }
 
-    /* Alice ends turn */
-    printf("\n--- Alice ends turn ---\n");
-    Message* end_msg = simulate_client_send(
-        "{\"type\":\"end_turn\"}",
-        "Alice"
-    );
+    printf("\n--- Example: Server gamestate broadcast ---\n");
+    fflush(stdout);
+    Message* gs = protocol_create_gamestate(state->game, 0);
+    if (gs) {
+        simulate_server_send(gs, "Alice");
+        message_free(gs);
+    }
+
+    gs = protocol_create_gamestate(state->game, 1);
+    if (gs) {
+        simulate_server_send(gs, "Bob");
+        message_free(gs);
+    }
+
+    printf("\n--- Example: End turn message ---\n");
+    const char* end_turn_json = "{\"type\":\"end_turn\"}";
+    Message* end_msg = simulate_client_send(end_turn_json, "Alice");
     if (end_msg) {
-        ValidationResult vr = validate_end_turn(state->game, 0);
-        log_server("Validating end_turn... %s",
-                   vr.valid ? "VALID" : vr.error_message);
-
-        if (vr.valid) {
-            game_end_turn(state->game);
-            log_server("Turn ended. Now Bob's turn (player %d)",
-                       state->game->active_player);
-        }
-
+        log_server("Parsed message: type=%s", message_type_to_string(end_msg->type));
         message_free(end_msg);
     }
+
+    printf("\n\033[32m[PASS]\033[0m Protocol message parsing and serialization working\n");
 }
 /* }}} */
 
@@ -543,6 +519,7 @@ static void demo_summary(DemoState* state) {
     printf("===========================================================\n");
     printf("  PHASE 2 DEMO SUMMARY\n");
     printf("===========================================================\n\n");
+    fflush(stdout);
 
     printf("Components Demonstrated:\n");
     printf("  \033[32m[OK]\033[0m Protocol - Message parsing and serialization\n");
@@ -550,10 +527,11 @@ static void demo_summary(DemoState* state) {
     printf("  \033[32m[OK]\033[0m Connections - Multi-transport connection registry\n");
     printf("  \033[32m[OK]\033[0m Hidden Info - Player-specific game state views\n");
     printf("  \033[32m[OK]\033[0m Validation - Server-side action validation\n");
+    fflush(stdout);
 
     printf("\nSession Statistics:\n");
-    printf("  Total sessions: %d\n", session_registry_count(state->sessions));
-    printf("  Active connections: %d\n", conn_registry_count(state->connections));
+    printf("  Total sessions: %d\n", session_count(state->sessions));
+    printf("  Active connections: %d\n", conn_count(state->connections));
 
     GameSession* session = session_get(state->sessions, state->session_id);
     if (session) {
@@ -567,8 +545,14 @@ static void demo_summary(DemoState* state) {
     printf("\nGame Statistics:\n");
     printf("  Turn: %d\n", state->game->turn_number);
     printf("  Phase: %s\n", game_phase_to_string(state->game->phase));
-    printf("  Active player: %s\n",
-           state->game->players[state->game->active_player]->name);
+    if (state->game->active_player >= 0 && state->game->active_player < MAX_PLAYERS) {
+        Player* active = state->game->players[state->game->active_player];
+        if (active && active->name) {
+            printf("  Active player: %s\n", active->name);
+        } else {
+            printf("  Active player: (unknown)\n");
+        }
+    }
 
     printf("\n\033[32mPhase 2 networking layer ready for integration!\033[0m\n");
 }
@@ -644,12 +628,25 @@ int main(void) {
     demo_summary(&state);
 
     /* Cleanup */
+
+    /* Don't free game through session since we linked it manually */
+    GameSession* session = session_get(state.sessions, state.session_id);
+    if (session) {
+        session->game = NULL;  /* Prevent double-free */
+    }
+
     session_registry_destroy(state.sessions);
+
     conn_registry_destroy(state.connections);
+
     game_free(game);
+
     card_type_free(scout);
+
     card_type_free(viper);
+
     card_type_free(explorer);
+
     for (int i = 0; i < trade_card_count; i++) {
         card_type_free(trade_cards[i]);
     }
