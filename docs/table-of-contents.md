@@ -31,7 +31,9 @@ issues/
 ├── phase-3-progress.md            Client Renderers status
 ├── phase-4-progress.md            Card Content status
 ├── phase-5-progress.md            LLM DM Integration status
-└── phase-6-progress.md            Visual Generation status
+├── phase-6-progress.md            Visual Generation status
+├── phase-7-progress.md            Campaign Mode status
+└── phase-8-progress.md            AI Gameplay System status
 ```
 
 ### Phase 1: Core C Engine (22 issues)
@@ -153,6 +155,34 @@ issues/
 └── 6-010-phase-6-demo.md
 ```
 
+### Phase 7: Campaign Mode (6 issues)
+```
+issues/
+├── 7-001-save-load-system.md
+├── 7-002-campaign-structure.md
+├── 7-003-encounter-generator.md
+├── 7-004-rewards-progression.md
+├── 7-005-permanent-upgrades.md
+└── 7-006-phase-7-demo.md
+```
+
+### Phase 8: AI Gameplay System (12 issues)
+```
+issues/
+├── 8-001-ai-runner-infrastructure.md
+├── 8-002-strategy-tree-data-structure.md
+├── 8-003-option-generation-system.md
+├── 8-004-character-motivation-model.md
+├── 8-005-movement-interaction-analyzer.md
+├── 8-006-strategy-orchestrator.md
+├── 8-007-tree-pruning-evaluation.md
+├── 8-008-opponent-modeling.md
+├── 8-009-ai-difficulty-profiles.md
+├── 8-010-strategy-learning.md
+├── 8-011-performance-optimization.md
+└── 8-012-phase-8-demo.md
+```
+
 ### Completed Issues
 ```
 issues/completed/
@@ -162,7 +192,9 @@ issues/completed/
     ├── run-phase3-demo.sh         (created in 3-010)
     ├── run-phase4-demo.sh         (created in 4-010)
     ├── run-phase5-demo.sh         (created in 5-010)
-    └── run-phase6-demo.sh         (created in 6-010)
+    ├── run-phase6-demo.sh         (created in 6-010)
+    ├── run-phase7-demo.sh         (created in 7-006)
+    └── run-phase8-demo.sh         (created in 8-012)
 ```
 
 ## Source Code (planned structure)
@@ -202,6 +234,18 @@ src/
 │   ├── context-manager.c          Context window management
 │   ├── cache.c                    Narrative caching
 │   └── coherence.c                Coherence recovery
+├── ai/
+│   ├── 01-runner.c                AI runner infrastructure
+│   ├── 02-tree.c                  Fractal strategy tree
+│   ├── 03-options.c               Option generation system
+│   ├── 04-motivation.c            Character motivation model
+│   ├── 05-movement.c              Movement interaction analyzer
+│   ├── 06-orchestrator.c          Strategy orchestrator
+│   ├── 07-search.c                Tree pruning and evaluation
+│   ├── 08-opponent.c              Opponent modeling
+│   ├── 09-difficulty.c            Difficulty profiles
+│   ├── 10-learning.c              Strategy learning system
+│   └── 11-perf.c                  Performance optimization
 └── main.c                         Entry point with mode dispatch
 ```
 
@@ -240,10 +284,12 @@ libs/
 └── libssh/                        SSH server (compiled from source)
 ```
 
-## Total Issues: 88
+## Total Issues: 106
 - Phase 1: 22 issues (Core C Engine, including 10 sub-issues)
 - Phase 2: 18 issues (Networking, including 8 sub-issues)
 - Phase 3: 14 issues (Clients, including 4 sub-issues)
 - Phase 4: 10 issues (Content)
 - Phase 5: 10 issues (LLM DM)
 - Phase 6: 14 issues (Visuals, including 4 sub-issues)
+- Phase 7: 6 issues (Campaign Mode)
+- Phase 8: 12 issues (AI Gameplay System)

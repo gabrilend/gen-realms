@@ -240,19 +240,101 @@ Complete visual experience with dynamic card art and battle scenes.
 
 ---
 
+<!-- ================================ phase 7 issue files ================================ -->
+
+## Phase 7: Campaign Mode
+
+Persistent progression and story-driven gameplay.
+
+### 7-001: Campaign State Persistence
+Save/load campaign progress with player choices and unlocks.
+
+### 7-002: Scenario Definition Format
+JSON schema for campaign scenarios with custom rules and conditions.
+
+### 7-003: Branching Narrative System
+Story branches based on player decisions and game outcomes.
+
+### 7-004: Unlock System
+Unlock cards, factions, and cosmetics through campaign progression.
+
+### 7-005: Campaign AI Opponents
+Scripted opponents with thematic decks for campaign encounters.
+
+### 7-006: Phase 7 Demo
+Playable campaign prologue with branching paths.
+
+---
+
+<!-- ================================ phase 8 issue files ================================ -->
+
+## Phase 8: AI Gameplay System
+
+Strategic AI for playing the game, with a meta-level orchestrator that dynamically
+generates and selects between gameplay strategies using a fractal tree structure.
+
+### 8-001: AI Runner Infrastructure
+Core framework for AI game execution - action enumeration, evaluation, and execution.
+
+### 8-002: Strategy Tree Data Structure
+Fractal tree-like data structure for representing branching strategic options.
+Nodes contain action choices, edges represent transitions, leaves are terminal states.
+
+### 8-003: Option Generation System
+Runtime generation of strategic options based on current game state.
+Dynamically builds tree branches as game evolves.
+
+### 8-004: Character Motivation Model
+Define AI "personalities" through motivation vectors - aggression, economy,
+defense, disruption weights that influence option evaluation.
+
+### 8-005: Movement Interaction Analyzer
+Track card interactions and movement patterns to inform strategic choices.
+Identify synergies, threats, and opportunity costs.
+
+### 8-006: Strategy Orchestrator
+Meta-level selector that chooses between AI strategy designs based on:
+- Current game state evaluation
+- Opponent modeling
+- Risk assessment
+- Long-term planning horizon
+
+### 8-007: Tree Pruning and Evaluation
+Efficient traversal and pruning of strategy tree using heuristics.
+Alpha-beta style cutoffs for large decision spaces.
+
+### 8-008: Opponent Modeling System
+Build probabilistic model of opponent tendencies from observed play.
+Adapt strategy selection based on opponent patterns.
+
+### 8-009: AI Difficulty Profiles
+Configurable AI personalities from "chaotic beginner" to "optimal calculator".
+Personality affects tree depth, evaluation weights, and deliberate suboptimality.
+
+### 8-010: Strategy Learning System
+Track which strategies succeed/fail against different situations.
+Update strategy selection weights based on outcomes (optional ML integration).
+
+### 8-011: Performance Optimization
+Caching, parallelization, and incremental tree updates for real-time play.
+Budget-based computation limiting for consistent response times.
+
+### 8-012: Phase 8 Demo
+AI vs AI exhibition match with strategy visualization and commentary.
+Human vs AI with adjustable difficulty.
+
+---
+
 ## Future Phases (Outline)
 
-### Phase 7: Campaign Mode
-- Persistent progression across sessions
-- Scenario-specific rules and win conditions
-- Unlockable cards and factions
-
-### Phase 8: Card Editor and Modding
+### Phase 9: Card Editor and Modding
 - In-game card creation tools
 - Custom style guide authoring
 - Balance testing sandbox
+- Custom AI personality creation
 
-### Phase 9: Tournament Features
+### Phase 10: Tournament Features
 - Matchmaking
-- Ranked play
-- Replay system
+- Ranked play with AI rating calibration
+- Replay system with AI analysis
+- Tournament brackets

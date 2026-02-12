@@ -174,24 +174,44 @@ Track Beta-2 implements the critical networking path:
 
 ### 3-011: WASM JS Elimination (Optional Parallel)
 
-**Status:** Can proceed independently
+**Status:** CORE COMPLETE (final cleanup pending)
 **Sub-issues:** 3-011a through 3-011j (10 sub-issues)
 
 This large refactoring effort can proceed in parallel as it doesn't
 affect the critical protocol path. It replaces 22 JavaScript files
 with pure WebAssembly C code.
 
-**Key sub-issues:**
-- 3-011a: Core canvas infrastructure
-- 3-011b: Theme and layout constants
-- 3-011c: Input handling
-- 3-011d: Card and zone rendering
-- 3-011e: Panel rendering
-- 3-011f: Animation system
-- 3-011g: WebSocket communication
-- 3-011h: Preferences storage
-- 3-011i: AI integration modules
-- 3-011j: Final integration and cleanup
+**Sub-issue Status (2026-02-12):**
+- 3-011a: Core canvas infrastructure - COMPLETE
+- 3-011b: Theme and layout constants - COMPLETE
+- 3-011c: Input handling - COMPLETE
+- 3-011d: Card and zone rendering - COMPLETE
+- 3-011e: Panel rendering - COMPLETE
+- 3-011f: Animation system - COMPLETE
+- 3-011g: WebSocket communication - COMPLETE
+- 3-011h: Preferences storage - COMPLETE
+- 3-011i: AI integration modules - COMPLETE
+- 3-011j: Final integration - COMPLETE (cleanup tasks pending)
+
+**Files Created:**
+- canvas.h/c - Canvas initialization and render loop
+- draw2d.h/c - 2D drawing primitives
+- theme.h/c - Colors, layout constants
+- input.h/c - Mouse and keyboard handling
+- card-renderer.h/c - Card rendering with faction colors
+- zone-renderer.h/c - Hand, trade row, bases, play area
+- panel-renderer.h/c - Status bar and narrative panel
+- animation.h/c - Animation system with easing
+- websocket.h/c - WebSocket via EM_ASM
+- preferences.h/c - localStorage persistence
+- ai-hooks.h/c - AI integration for narratives
+- game-client.h/c - Main integration module
+
+**Remaining cleanup:**
+- Update index.html to minimal shell
+- Update Makefile.wasm with new sources
+- Test full integration
+- Remove old JS files from assets/web/
 
 ## Checkpoint Status
 
