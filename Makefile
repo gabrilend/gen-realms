@@ -77,6 +77,7 @@ BIN_DIR = bin
 TERMINAL_BIN = $(BIN_DIR)/symbeline-terminal
 SERVER_BIN = $(BIN_DIR)/symbeline-server
 DEMO_BIN = $(BIN_DIR)/phase-1-demo
+DEMO2_BIN = $(BIN_DIR)/phase-2-demo
 TEST_TERMINAL_BIN = $(BIN_DIR)/test-terminal
 TEST_CONFIG_BIN = $(BIN_DIR)/test-config
 TEST_HTTP_BIN = $(BIN_DIR)/test-http
@@ -154,6 +155,17 @@ DEMO_SOURCES = \
 	$(DEMO_DIR)/phase-1-demo.c \
 	$(CORE_SOURCES)
 
+# Phase 2 demo sources (2-010)
+DEMO2_SOURCES = \
+	$(DEMO_DIR)/phase-2-demo.c \
+	$(CORE_SOURCES) \
+	$(CORE_DIR)/09-serialize.c \
+	$(NET_DIR)/04-protocol.c \
+	$(NET_DIR)/06-connections.c \
+	$(NET_DIR)/07-sessions.c \
+	$(NET_DIR)/08-validation.c \
+	$(CJSON_SOURCES)
+
 TEST_PROTOCOL_SOURCES = \
 	tests/test-protocol.c \
 	$(NET_DIR)/04-protocol.c \
@@ -215,6 +227,7 @@ TEST_SESSIONS_OBJECTS = $(TEST_SESSIONS_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_HIDDEN_INFO_OBJECTS = $(TEST_HIDDEN_INFO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_VALIDATION_OBJECTS = $(TEST_VALIDATION_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
+DEMO2_OBJECTS = $(DEMO2_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
 # {{{ output binaries
@@ -222,7 +235,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info test-validation dirs deps deps-force deps-info clean-deps
+.PHONY: all clean terminal server demo demo2 test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info test-validation dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -247,6 +260,13 @@ demo: dirs $(DEMO_BIN)
 
 $(DEMO_BIN): $(DEMO_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^
+
+# Phase 2 Demo (2-010)
+demo2: dirs $(DEMO2_BIN)
+	@echo "Phase 2 demo built. Run with: ./$(DEMO2_BIN)"
+
+$(DEMO2_BIN): $(DEMO2_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
 
 # Test programs - run core tests (main test target)
 test: test-core

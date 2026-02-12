@@ -1,16 +1,22 @@
 # Symbeline Realms
 
-A fantasy-themed deck-building card game inspired by Star Realms, featuring an AI-powered Dungeon Master that narrates battles and dynamically generates card artwork.
+A fantasy-themed deck-building card game inspired by Star Realms, featuring an 
+AI-powered Dungeon Master that narrates battles and dynamically generates card 
+artwork.
 
 ## Overview
 
-Symbeline Realms transforms the sci-fi deck-builder formula into a fantasy setting where an LLM-powered DM tells the story of your battles. As you play cards and attack opponents, the AI generates narrative text describing the clash of forces. Card artwork regenerates dynamically throughout the game, with upgrades reflected visually.
+Symbeline Realms transforms the sci-fi deck-builder formula into a fantasy 
+setting where an LLM-powered DM tells the story of your battles. As you play 
+cards and attack opponents, the AI generates narrative text describing the clash
+of forces. Card artwork regenerates dynamically throughout the game, with 
+upgrades reflected visually.
 
 ```
  .----------------.
  | >- 0  = .  @ * |
  |  *  \  / \  *  |
- | vv    o=.    jck
+ | vv    o=.     jck
  | *-H    \\ < <  |
  |  /   *  ))     |
  '----------------'
@@ -118,11 +124,14 @@ The d10/d4 system modifies your hand size over the game:
 
 ### Draw Order Choice
 
-At the start of each turn, choose the order to draw cards from your deck. This creates tactical decisions around sequencing auto-draw effects and responding to the trade row.
+At the start of each turn, choose the order to draw cards from your deck. This
+creates tactical decisions around sequencing auto-draw effects and responding to
+the trade row.
 
 ### Auto-Draw Effects
 
-Cards with "draw a card" effects trigger automatically when drawn at turn start, eliminating the tedious play-draw-play loop of traditional deck builders.
+Cards with "draw a card" effects trigger automatically when drawn at turn start,
+eliminating the tedious play-draw-play loop of traditional deck builders.
 
 ## Development Status
 

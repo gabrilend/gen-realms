@@ -27,13 +27,22 @@ AI + Content │   │       │       │       │               │    │
              ▼   ▼       ▼       ▼       ▼               ▼    ▼
 ```
 
-## Current Status (2026-02-11)
+## Current Status (2026-02-12)
 
 | Track | Status | In Progress | Blocking |
 |-------|--------|-------------|----------|
-| **Alpha** | Beta checkpoint work | 1-008, 1-012 | - |
-| **Beta** | Waiting | - | Needs 1-012 |
-| **Gamma** | Context mgmt complete | 5-008 | - |
+| **Alpha-2** | Ready | 1-013 (demo) | - |
+| **Beta-2** | Protocol phase | 2-010 | - |
+| **Gamma-2** | Demos blocked | 4-009 can start | Needs 3-010 |
+
+### Phase 1 Summary (Complete)
+
+The first parallel development phase achieved:
+- **Track Alpha:** Core engine complete (1-001 through 1-012)
+- **Track Beta:** All rendering/input complete (25 issues)
+- **Track Gamma:** All AI/content implementation complete (33 issues)
+
+Total: 70 issues completed, 305 core tests + 235 AI tests = 540 tests passing
 
 ## Synchronization Checkpoints
 
@@ -348,12 +357,135 @@ Legacy track files (kept for history):
 
 ---
 
-## Starting Points (Current)
+---
 
-| Track   | Current Work | Next After Current |
-|---------|--------------|-------------------|
-| Alpha   | 1-008, 1-012 | 1-013 (demo)      |
-| Beta    | (waiting)    | 2-005 (protocol)  |
-| Gamma   | 5-008        | 6-002 or 6-005    |
+## Phase 2: Track Assignments (2026-02-12)
 
-**Critical Path:** Track Alpha 1-012 → Track Beta 2-005 → Full integration
+With Phase 1 complete, development enters Phase 2 with revised track assignments.
+Each track continues with the "-2" suffix to denote the second development phase.
+
+### Track Alpha-2: Core Engine Completion
+
+**Focus:** Phase 1 Demo
+**Progress File:** `issues/track-alpha-2-progress.md`
+
+| Issue | Description | Status | Priority |
+|-------|-------------|--------|----------|
+| 1-013 | Phase 1 Demo | READY | HIGH |
+
+**Notes:**
+- Only one issue remaining
+- All dependencies satisfied
+- Can complete quickly to unblock other work
+
+### Track Beta-2: Network Protocol & Integration
+
+**Focus:** Protocol implementation and demos
+**Progress File:** `issues/track-beta-2-progress.md`
+
+| Issue | Description | Status | Priority |
+|-------|-------------|--------|----------|
+| 2-005* | Protocol implementation | UNBLOCKED | CRITICAL |
+| 2-003 | WebSocket handler | blocked on 2-005 | HIGH |
+| 2-006 | Connection manager | blocked on 2-003 | HIGH |
+| 2-007 | Game session management | blocked on 2-006 | HIGH |
+| 2-008 | Hidden information handling | blocked on 2-007 | HIGH |
+| 2-009 | Input validation | blocked on 2-005 | HIGH |
+| 2-010 | Phase 2 Demo | **IN PROGRESS** | HIGH |
+| 3-010 | Phase 3 Demo | blocked on 2-010 | MEDIUM |
+| 3-011* | WASM JS elimination | independent | MEDIUM |
+
+**Critical Path:**
+```
+2-005 ──► 2-003 ──► 2-006 ──► 2-007 ──► 2-008 ──► 2-010 ──► 3-010
+   └──────► 2-009 ─────────────────────────────────┘
+```
+
+**Notes:**
+- 2-005 (Protocol) is now unblocked - critical path item
+- 2-010 is in progress
+- 3-011 (WASM elimination) is large but can be parallel work
+
+### Track Gamma-2: Demos & Balance
+
+**Focus:** Balance tools and phase demos
+**Progress File:** `issues/track-gamma-2-progress.md`
+
+| Issue | Description | Status | Priority |
+|-------|-------------|--------|----------|
+| 4-009 | Card balance validator | READY | MEDIUM |
+| 4-010 | Phase 4 Demo | blocked on 4-009, 3-010 | LOW |
+| 5-010 | Phase 5 Demo | blocked on 3-010 | MEDIUM |
+| 6-010 | Phase 6 Demo | blocked on 5-010 | MEDIUM |
+
+**Notes:**
+- 4-009 can start immediately (only needs core engine)
+- All other issues blocked on Track Beta-2 completing 3-010
+- This track has the most blocked issues
+
+---
+
+## Phase 2 Critical Path
+
+```
+                    CRITICAL PATH
+                         │
+    Track Alpha-2        │         Track Gamma-2
+         │               │              │
+      1-013 ─────────────┼──────────► 4-009
+    (Phase 1)            │           (Balance)
+         │               │              │
+         ▼               │              ▼
+    Track Beta-2         │           4-010
+         │               │         (Phase 4)
+      2-005 ◄────────────┘              │
+    (Protocol)                          │
+         │                              │
+         ▼                              │
+   2-003 → 2-006                        │
+   2-009   2-007                        │
+         │  │                           │
+         ▼  ▼                           │
+      2-008                             │
+         │                              │
+         ▼                              │
+      2-010 ─────────────────────────► 3-010
+    (Phase 2)                        (Phase 3)
+         │                              │
+         │                              ├──────► 5-010 ──► 6-010
+         │                              │      (Phase 5)  (Phase 6)
+         └──────────────────────────────┘
+```
+
+---
+
+## Recommended Team Assignments (Phase 2)
+
+### Solo Developer
+Work in order: Alpha-2 → Beta-2 → Gamma-2
+1. Complete 1-013 first (quick win)
+2. Work through Beta-2 critical path (2-005 → 2-010)
+3. Complete 3-010, then Gamma-2 demos
+
+### Two Developers
+- **Dev 1:** Track Beta-2 (critical path: 2-005 through 3-010)
+- **Dev 2:** Track Alpha-2 (1-013) → Track Gamma-2 (4-009 → demos)
+- **Sync at:** After 3-010 completion
+
+### Three Developers
+- **Dev 1:** Track Alpha-2 (1-013) then assist Beta-2
+- **Dev 2:** Track Beta-2 (2-005 through 2-010, then 3-010)
+- **Dev 3:** Track Gamma-2 (4-009) then assist Beta-2 or work on 3-011
+- **Sync at:** After each demo completion
+
+---
+
+## Starting Points (Phase 2)
+
+| Track     | Current Work | Next After Current | Blocked By |
+|-----------|--------------|-------------------|------------|
+| Alpha-2   | 1-013 (demo) | (complete) | - |
+| Beta-2    | 2-010 (in progress) | 3-010 | - |
+| Gamma-2   | 4-009 (balance) | 5-010, 4-010, 6-010 | 3-010 |
+
+**Critical Path:** 2-005 → 2-003 → 2-006 → 2-007 → 2-008 → 2-010 → 3-010 → All demos
