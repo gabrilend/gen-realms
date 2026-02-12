@@ -1,7 +1,14 @@
 # 2-008: Hidden Information Handling
 
+## Status: COMPLETE
+
 ## Current Behavior
-Gamestate serialization doesn't consider player perspective.
+ViewPerspective enum (VIEW_SELF, VIEW_OPPONENT, VIEW_SPECTATOR) controls
+what information is visible during game state serialization. Opponent hand
+contents are hidden, showing only count. Spectators can see all hands.
+
+## Original Behavior (before fix)
+Gamestate serialization didn't consider player perspective.
 
 ## Intended Behavior
 Proper hidden information handling that:
@@ -54,8 +61,34 @@ Proper hidden information handling that:
 | Discard pile | Yes | Yes | Yes |
 
 ## Acceptance Criteria
-- [ ] Opponent hand contents never sent
-- [ ] Hand counts visible to all
-- [ ] Spectators see everything
-- [ ] Server validates actions without leaking
-- [ ] Test confirms no information leakage
+- [x] Opponent hand contents never sent
+- [x] Hand counts visible to all
+- [x] Spectators see everything
+- [x] Server validates actions without leaking
+- [x] Test confirms no information leakage
+
+## Implementation Notes
+
+### Files Modified
+- `src/core/09-serialize.h` - Added ViewPerspective enum and new function declarations
+- `src/core/09-serialize.c` - Added serialize_player_for_view, serialize_game_for_spectator,
+  updated serialize_player_public to include d10/d4 and discard pile
+
+### Files Created
+- `tests/test-hidden-info.c` - 10 unit tests validating hidden info handling
+
+### Key Functions Added
+- `serialize_player_for_view(Player*, ViewPerspective)` - Perspective-aware player serialization
+- `serialize_game_for_spectator(Game*)` - Full visibility for spectators
+
+### Test Coverage
+1. Private player view includes hand contents
+2. Public player view hides hand contents
+3. Public player view includes d10/d4
+4. Public player view includes discard pile
+5. Game serialization hides opponent hand
+6. Spectator view shows all hands
+7. No hand info leaks in opponent JSON string
+8. ViewPerspective VIEW_OPPONENT hides hand
+9. ViewPerspective VIEW_SELF shows hand
+10. ViewPerspective VIEW_SPECTATOR shows hand

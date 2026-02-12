@@ -217,22 +217,30 @@ cJSON* serialize_player_public(Player* player) {
     /* Health */
     cJSON_AddNumberToObject(json, "authority", player->authority);
 
+    /* Deck flow tracker (visible to all per game rules) */
+    cJSON_AddNumberToObject(json, "d10", player->d10);
+    cJSON_AddNumberToObject(json, "d4", player->d4);
+
     /* Public counts (hide actual hand contents) */
     if (player->deck) {
         cJSON_AddNumberToObject(json, "hand_count", player->deck->hand_count);
         cJSON_AddNumberToObject(json, "deck_count", player->deck->draw_pile_count);
         cJSON_AddNumberToObject(json, "discard_count", player->deck->discard_count);
         cJSON_AddNumberToObject(json, "played_count", player->deck->played_count);
+
+        /* Discard pile contents are public (visible to all) */
+        cJSON_AddItemToObject(json, "discard",
+            serialize_card_array(player->deck->discard, player->deck->discard_count));
+
+        /* Played cards are public */
+        if (player->deck->played_count > 0) {
+            cJSON_AddItemToObject(json, "played",
+                serialize_card_array(player->deck->played, player->deck->played_count));
+        }
     }
 
     /* Bases are public */
     cJSON_AddItemToObject(json, "bases", serialize_bases(player));
-
-    /* Played cards are public */
-    if (player->deck && player->deck->played_count > 0) {
-        cJSON_AddItemToObject(json, "played",
-            serialize_card_array(player->deck->played, player->deck->played_count));
-    }
 
     return json;
 }
@@ -290,6 +298,24 @@ cJSON* serialize_player_private(Player* player) {
     cJSON_AddItemToObject(json, "factions_played", factions);
 
     return json;
+}
+/* }}} */
+
+/* {{{ serialize_player_for_view */
+cJSON* serialize_player_for_view(Player* player, ViewPerspective view) {
+    if (!player) return NULL;
+
+    switch (view) {
+        case VIEW_SELF:
+        case VIEW_SPECTATOR:
+            /* Full info for self and spectators */
+            return serialize_player_private(player);
+
+        case VIEW_OPPONENT:
+        default:
+            /* Limited info for opponents */
+            return serialize_player_public(player);
+    }
 }
 /* }}} */
 
@@ -405,6 +431,45 @@ cJSON* serialize_game_full(Game* game) {
     for (int i = 0; i < game->player_count; i++) {
         if (game->players[i]) {
             cJSON_AddItemToArray(players, serialize_player_private(game->players[i]));
+        }
+    }
+    cJSON_AddItemToObject(json, "players", players);
+
+    /* Trade row */
+    cJSON_AddItemToObject(json, "trade_row", serialize_trade_row(game->trade_row));
+
+    return json;
+}
+/* }}} */
+
+/* {{{ serialize_game_for_spectator */
+cJSON* serialize_game_for_spectator(Game* game) {
+    if (!game) return NULL;
+
+    cJSON* json = cJSON_CreateObject();
+    if (!json) return NULL;
+
+    /* Turn info */
+    cJSON_AddNumberToObject(json, "turn", game->turn_number);
+    cJSON_AddStringToObject(json, "phase", game_phase_to_string(game->phase));
+    cJSON_AddNumberToObject(json, "active_player", game->active_player);
+    cJSON_AddNumberToObject(json, "player_count", game->player_count);
+
+    /* Spectator flag */
+    cJSON_AddBoolToObject(json, "is_spectator", true);
+
+    /* Game end state */
+    cJSON_AddBoolToObject(json, "game_over", game->game_over);
+    if (game->game_over) {
+        cJSON_AddNumberToObject(json, "winner", game->winner);
+    }
+
+    /* All players with full info (spectators see everything) */
+    cJSON* players = cJSON_CreateArray();
+    for (int i = 0; i < game->player_count; i++) {
+        if (game->players[i]) {
+            cJSON* player_json = serialize_player_for_view(game->players[i], VIEW_SPECTATOR);
+            cJSON_AddItemToArray(players, player_json);
         }
     }
     cJSON_AddItemToObject(json, "players", players);

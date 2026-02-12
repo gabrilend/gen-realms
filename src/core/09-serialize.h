@@ -19,6 +19,21 @@
 #include <stdbool.h>
 
 /* ========================================================================== */
+/*                            View Perspective                                 */
+/* ========================================================================== */
+
+/* {{{ ViewPerspective
+ * Determines what information is visible when serializing game state.
+ * Used to properly hide opponent hand contents from players.
+ */
+typedef enum {
+    VIEW_SELF,       /* Full info - player sees their own data */
+    VIEW_OPPONENT,   /* Limited info - hides hand contents */
+    VIEW_SPECTATOR   /* Full info for all players (spectator mode) */
+} ViewPerspective;
+/* }}} */
+
+/* ========================================================================== */
 /*                          Game State Serialization                          */
 /* ========================================================================== */
 
@@ -38,6 +53,15 @@ cJSON* serialize_game_for_player(Game* game, int player_id);
  * Returns NULL on failure.
  */
 cJSON* serialize_game_full(Game* game);
+/* }}} */
+
+/* {{{ serialize_game_for_spectator
+ * Serializes the full game state for spectator viewing.
+ * Shows all players' hand contents (spectators can see everything).
+ * Caller must free the returned cJSON object with cJSON_Delete().
+ * Returns NULL on failure.
+ */
+cJSON* serialize_game_for_spectator(Game* game);
 /* }}} */
 
 /* ========================================================================== */
@@ -67,9 +91,19 @@ cJSON* serialize_card_type(CardType* type);
 cJSON* serialize_effect(Effect* effect);
 /* }}} */
 
+/* {{{ serialize_player_for_view
+ * Serializes player information based on viewing perspective.
+ * - VIEW_SELF: Full info including hand contents
+ * - VIEW_OPPONENT: Public info only (hand count, not contents)
+ * - VIEW_SPECTATOR: Full info (spectators see all)
+ * Caller must free the returned cJSON object with cJSON_Delete().
+ */
+cJSON* serialize_player_for_view(Player* player, ViewPerspective view);
+/* }}} */
+
 /* {{{ serialize_player_public
  * Serializes publicly visible player information:
- * - authority, bases, hand_count, deck_count, discard_count
+ * - authority, d10, d4, bases, hand_count, deck_count, discard pile
  * Used for opponent view in player-specific serialization.
  * Caller must free the returned cJSON object with cJSON_Delete().
  */

@@ -24,11 +24,11 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 | 2-005d | ↳ Validation and Error Handling | COMPLETE |
 | 2-006 | Connection Manager | COMPLETE |
 | 2-007 | Game Session Management | COMPLETE |
-| 2-008 | Hidden Information Handling | pending |
+| 2-008 | Hidden Information Handling | COMPLETE |
 | 2-009 | Input Validation | pending |
 | 2-010 | Phase 2 Demo | pending |
 
-## Completed: 15/18
+## Completed: 16/18
 
 ## Technology Stack
 - libwebsockets for HTTP/WebSocket server
@@ -37,6 +37,22 @@ Implement the server-side networking infrastructure supporting both SSH (termina
 - Unified connection manager for transport-agnostic game logic
 
 ## Recent Progress
+
+### 2-008: Hidden Information Handling (COMPLETE)
+Implemented perspective-aware game state serialization:
+- ViewPerspective enum (VIEW_SELF, VIEW_OPPONENT, VIEW_SPECTATOR)
+- serialize_player_for_view() for perspective-based player data
+- serialize_game_for_spectator() for full visibility spectator mode
+- Updated serialize_player_public to include d10/d4 and discard pile
+- 10 unit tests validating hidden information handling
+- Verified no information leakage through JSON string search
+
+Files modified:
+- src/core/09-serialize.h - Added ViewPerspective and new function declarations
+- src/core/09-serialize.c - Implementation of perspective handling
+
+Files created:
+- tests/test-hidden-info.c - 10 unit tests (all pass)
 
 ### 2-007: Game Session Management (COMPLETE)
 Implemented session management for multiplayer game coordination:
