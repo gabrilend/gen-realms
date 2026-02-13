@@ -1,18 +1,15 @@
 {
   "id": "bramble_thicket",
-  "name": "Bramble Thicket",
+  "name": "Bramble Shaper",
   "cost": 3,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 4,
-  "is_outpost": true,
-  "effects": [],
+  "card_type": "ship",
+  "effects": [
+    { "type": "spawn", "card_id": "bramble_thicket_outpost" }
+  ],
   "ally_effects": [
     { "type": "add_authority", "value": 1 }
   ],
-  "on_destroyed": {
-    "type": "trigger_charge"
-  },
   "flavor": "When the thorns fall, the beasts behind them do not.",
-  "art_prompt": "dense wall of thorny brambles with glowing eyes peering through, medieval fantasy"
+  "art_prompt": "druid shaping wall of brambles, glowing eyes, medieval fantasy"
 }

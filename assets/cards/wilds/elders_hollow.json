@@ -1,19 +1,16 @@
 {
   "id": "elders_hollow",
-  "name": "Elder's Hollow",
+  "name": "Elder Summoner",
   "cost": 5,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 5,
-  "is_outpost": false,
+  "card_type": "ship",
   "effects": [
-    { "type": "draw_card", "value": 1 }
+    { "type": "draw_card", "value": 1 },
+    { "type": "spawn", "card_id": "elders_hollow_base" }
   ],
   "ally_effects": [
     { "type": "add_authority", "value": 2 }
   ],
-  "spawns": "wolf_token",
-  "spawn_per_ally": true,
   "flavor": "The eldest speaks, and the forest listens.",
-  "art_prompt": "massive hollow tree with ancient druid spirit, wolves gathering in reverence, medieval fantasy"
+  "art_prompt": "ancient druid summoning the elder hollow, wolves gathering, medieval fantasy"
 }

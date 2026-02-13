@@ -1,17 +1,16 @@
 {
   "id": "thornwall",
-  "name": "Thornwall",
+  "name": "Thornwall Summoner",
   "cost": 3,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 4,
-  "is_outpost": true,
+  "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 2 }
+    { "type": "add_combat", "value": 1 },
+    { "type": "spawn", "card_id": "thornwall_outpost" }
   ],
   "ally_effects": [
     { "type": "add_authority", "value": 1 }
   ],
   "flavor": "The forest defends its own.",
-  "art_prompt": "living wall of thorny vines with glowing eyes within, dark forest, medieval fantasy"
+  "art_prompt": "druid summoning wall of thorny vines, dark forest, medieval fantasy"
 }

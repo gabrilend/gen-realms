@@ -1,0 +1,14 @@
+{
+  "id": "elders_hollow_base",
+  "name": "Elder's Hollow",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "temporary_base": true,
+  "spawns": "wolf_token",
+  "spawn_per_ally": true,
+  "flavor": "The hollow stands until felled.",
+  "art_prompt": "massive hollow tree with ancient druid spirit, wolves gathering in reverence, medieval fantasy"
+}

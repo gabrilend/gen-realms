@@ -1,17 +1,16 @@
 {
   "id": "crystal_hollow",
-  "name": "Crystal Hollow",
+  "name": "Crystal Singer",
   "cost": 3,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 3,
-  "is_outpost": false,
+  "card_type": "ship",
   "effects": [
-    { "type": "add_trade", "value": 1 }
+    { "type": "add_trade", "value": 1 },
+    { "type": "spawn", "card_id": "crystal_hollow_base" }
   ],
   "ally_effects": [
     { "type": "add_trade", "value": 1 }
   ],
   "flavor": "The stones remember. The crystals sing.",
-  "art_prompt": "underground cavern where plants grow into crystals, gemstones arranged by animals, medieval fantasy"
+  "art_prompt": "druid singing to crystals, underground cavern, medieval fantasy"
 }

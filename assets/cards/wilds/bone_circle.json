@@ -1,19 +1,15 @@
 {
   "id": "bone_circle",
-  "name": "Bone Circle",
+  "name": "Bone Speaker",
   "cost": 4,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 4,
-  "is_outpost": false,
-  "effects": [],
+  "card_type": "ship",
+  "effects": [
+    { "type": "spawn", "card_id": "bone_circle_base" }
+  ],
   "ally_effects": [
     { "type": "draw_card", "value": 1 }
   ],
-  "frontier_bonus": {
-    "type": "draw_on_charge",
-    "value": 1
-  },
   "flavor": "The ancestors watch. The ancestors remember.",
-  "art_prompt": "ritual circle of ancient bones, spirit animals circling above, druidic magic, medieval fantasy"
+  "art_prompt": "shaman speaking to bone spirits, ritual circle, medieval fantasy"
 }

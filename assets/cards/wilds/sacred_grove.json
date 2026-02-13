@@ -1,18 +1,16 @@
 {
   "id": "sacred_grove",
-  "name": "Sacred Grove",
+  "name": "Grove Keeper",
   "cost": 4,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 5,
-  "is_outpost": false,
+  "card_type": "ship",
   "effects": [
-    { "type": "add_combat", "value": 1 }
+    { "type": "add_combat", "value": 1 },
+    { "type": "spawn", "card_id": "sacred_grove_base" }
   ],
   "ally_effects": [
     { "type": "add_authority", "value": 2 }
   ],
-  "spawns": "wolf_token",
   "flavor": "From these ancient roots, the pack is born eternal.",
-  "art_prompt": "mystical forest clearing with spirit wolves, glowing mushrooms, medieval fantasy"
+  "art_prompt": "druid keeper summoning sacred grove, spirit wolves gathering, medieval fantasy"
 }

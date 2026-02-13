@@ -1,0 +1,15 @@
+{
+  "id": "honey_cache_base",
+  "name": "Honey Cache",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 3,
+  "is_outpost": false,
+  "temporary_base": true,
+  "effects": [
+    { "type": "add_authority", "value": 1 }
+  ],
+  "flavor": "The honey flows until the hive falls.",
+  "art_prompt": "bear-guarded beehive in ancient tree, golden honey flowing, medieval fantasy"
+}

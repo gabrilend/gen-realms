@@ -113,3 +113,51 @@ Added **Beastcaller** (Cost 3) to bring faction to 15 cards total.
 - Low base defense (3-5) encourages frontier stacking
 - Utility effects reward strategic base acquisition
 - Pack scaling creates n² ally synergies (1,4,9,16 power curve)
+
+### Addendum 3 (2026-02-12) - Summoner Ships & Temporary Bases
+
+**Major restructure: bases converted to summoner ship + temporary base pairs**
+
+All Wilds bases are now **summoner ships** that spawn **temporary bases**:
+- Ships cycle through deck (replayable each shuffle)
+- Temporary bases have `temporary_base: true` and are **scrapped** when destroyed
+- This creates wave tactics: build bases, charge, lose them, rebuild
+
+**Summoner Ship → Temporary Base Pairs (11 total):**
+
+| Summoner Ship | Cost | Effects | Temporary Base | Def | Type |
+|---------------|------|---------|----------------|-----|------|
+| Den Mother | 2 | +1 Combat, spawn | Moonlit Den | 3 | Outpost |
+| Honey Keeper | 2 | +1 Authority, spawn | Honey Cache | 3 | Base |
+| Moss Weaver | 3 | +1 Trade, spawn | Moss Garden | 3 | Base |
+| Crystal Singer | 3 | +1 Trade, spawn | Crystal Hollow | 3 | Base |
+| Thornwall Summoner | 3 | +1 Combat, spawn | Thornwall | 4 | Outpost |
+| Bramble Shaper | 3 | +1 Combat, spawn | Bramble Thicket | 4 | Outpost |
+| Bone Speaker | 4 | Draw 1, spawn | Bone Circle | 4 | Base |
+| Mill Master | 4 | +1 Combat, spawn | Claw and Tooth Mill | 4 | Base |
+| Grove Keeper | 4 | +1 Combat, spawn | Sacred Grove | 5 | Base |
+| Elder Summoner | 5 | Draw 1, spawn | Elder's Hollow | 5 | Base |
+| Heart Caller | 6 | +2 Combat, Draw 1, spawn | Heart of the Forest | 7 | Base |
+
+**New Schema Field:**
+```json
+"temporary_base": {
+  "type": "boolean",
+  "default": false,
+  "description": "WILDS ONLY: Base is scrapped when destroyed instead of going to discard."
+}
+```
+
+**Updated Card Count:**
+- 11 regular ships (unchanged)
+- 11 summoner ships (converted from bases)
+- 11 temporary base tokens (new)
+- 2 unit tokens (wolf_token, hardwood_fang)
+- **Total: 35 Wilds cards**
+
+**Design Intent:**
+- Traditional bases clog your deck forever once acquired
+- Summoner ships cycle, allowing repeated base deployment
+- Temporary bases scrap when destroyed—no discard pile clutter
+- Creates "wave attack" playstyle: raise defenses, charge, rebuild
+- Opponent must decide: attack bases (scraps them) or ignore (lets them persist)

@@ -1,18 +1,18 @@
 {
   "id": "heart_of_the_forest",
-  "name": "Heart of the Forest",
+  "name": "Heart Caller",
   "cost": 6,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 6,
-  "is_outpost": false,
+  "card_type": "ship",
+  "frontier_leader": true,
   "effects": [
     { "type": "add_combat", "value": 2 },
-    { "type": "draw_card", "value": 1 }
+    { "type": "draw_card", "value": 1 },
+    { "type": "spawn", "card_id": "heart_of_the_forest_base" }
   ],
   "ally_effects": [
     { "type": "add_authority", "value": 3 }
   ],
   "flavor": "All wild things hear its call.",
-  "art_prompt": "massive glowing tree heart pulsing with green energy, forest spirits, medieval fantasy"
+  "art_prompt": "ancient druid summoning the heart of the forest, green energy pulsing, medieval fantasy"
 }

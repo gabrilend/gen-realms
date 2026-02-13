@@ -1,0 +1,14 @@
+{
+  "id": "claw_and_tooth_mill_base",
+  "name": "Claw and Tooth Mill",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "temporary_base": true,
+  "spawns": "hardwood_fang",
+  "spawn_per_ally": true,
+  "flavor": "The mill turns until broken.",
+  "art_prompt": "primitive mill carving wooden weapons from massive trees, beast-folk craftsmen, medieval fantasy"
+}

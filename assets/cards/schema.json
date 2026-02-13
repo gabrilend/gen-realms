@@ -90,7 +90,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["trigger_charge", "draw_card", "add_combat", "spawn"],
+          "enum": ["trigger_charge", "draw_card", "add_combat", "spawn", "scrap_self"],
           "description": "Effect type when destroyed"
         },
         "value": {
@@ -99,6 +99,11 @@
         }
       },
       "required": ["type"]
+    },
+    "temporary_base": {
+      "type": "boolean",
+      "default": false,
+      "description": "WILDS ONLY: Base is scrapped when destroyed instead of going to discard. Spawned by ships, not acquired directly."
     },
     "always_available": {
       "type": "boolean",

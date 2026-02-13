@@ -264,11 +264,36 @@ Merchants trade in certainty. The forecast isn't a guess—it's a ledger
 entry for tomorrow. Knowing "7 cards next turn" lets you commit fully
 this turn, confident in what's coming.
 
-### The Wilds: Frontier & The Charge
+### The Wilds: Summoners & Temporary Bases
 
-The Wilds has two unique mechanics that work together:
+The Wilds has three unique mechanics that work together:
 
-#### 1. Effect Split: Combat/Draw vs Resources/Healing
+#### 1. Summoner Ships & Temporary Bases
+
+Wilds "bases" are actually **summoner ships** that spawn **temporary bases**:
+
+**How It Works:**
+1. Play a summoner ship (e.g., Thornwall Summoner)
+2. Ship's effects trigger (combat, draw, etc.)
+3. Ship spawns a temporary base token into play
+4. Ship goes to discard pile (can be replayed next cycle)
+5. Temporary base persists in play until destroyed
+6. When destroyed, temporary base is **scrapped** (not discarded)
+
+**Summoner Ships (cost 2-5):**
+| Ship | Cost | Ship Effects | Spawns |
+|------|------|--------------|--------|
+| Den Mother | 2 | +1 Combat | Moonlit Den (outpost, def 3) |
+| Thornwall Summoner | 3 | +1 Combat | Thornwall (outpost, def 4) |
+| Grove Keeper | 4 | +1 Combat | Sacred Grove (def 5, spawns wolves) |
+| Heart Caller | 6 | +2 Combat, Draw 1 | Heart of the Forest (def 7) |
+
+**Design Intent:**
+Traditional bases are one-and-done—once bought, they're in your deck forever.
+Summoner ships cycle through your deck, letting you replay them each shuffle.
+This creates wave tactics: raise bases, charge, lose them, rebuild.
+
+#### 2. Effect Split: Combat/Draw vs Resources/Healing
 
 Wilds cards split their effects:
 - **Main effects:** Combat damage and card draw (offensive)
@@ -276,7 +301,7 @@ Wilds cards split their effects:
 
 This creates a tension: play cards normally for damage, or...
 
-#### 2. The Frontier
+#### 3. The Frontier
 
 Wilds cards can be played to the **Frontier** instead of the play area.
 
@@ -301,7 +326,7 @@ Turn 4: Play Dire Bear (cost 4) to Frontier
         → Ally triggers: +2 Authority ×3 (3 allies at frontier)
 ```
 
-#### 3. The Charge (Frontier Leaders)
+#### 4. The Charge (Frontier Leaders)
 
 Certain Wilds cards are **Frontier Leaders** (marked with `frontier_leader: true`):
 - Beastcaller (cost 3)
@@ -349,12 +374,13 @@ The pack gathers at the guardhouse, strengthening its walls while
 they wait. Each beast that joins heals the tribe. Then the alpha
 howls, and they all charge together—an unstoppable wave.
 
-#### 4. Wilds Base Utilities
+#### 5. Temporary Base Utilities
 
-Wilds bases have low defense (3-5) but provide unique utility effects:
+Temporary bases (spawned by summoner ships) have low defense (3-5) but provide
+unique utility effects. When destroyed, they are **scrapped** (removed from game).
 
 **Spawn Per Ally (`spawn_per_ally: true`):**
-When a base has this flag, it spawns one unit per Wilds ally in play,
+When a temporary base has this flag, it spawns one unit per Wilds ally in play,
 not just one unit. This makes ally-heavy builds extremely productive.
 - Claw and Tooth Mill: Spawns Hardwood Fang tokens per ally
 - Elder's Hollow: Spawns Wolf Tokens per ally
@@ -368,23 +394,27 @@ Some bases grant bonuses to cards that charge from their frontier:
 Certain bases have effects when they're destroyed:
 - Bramble Thicket: When destroyed, triggers a charge (all frontier cards)
 
-**Base Variety:**
-| Base | Cost | Def | Type | Special Effect |
-|------|------|-----|------|----------------|
-| Moonlit Den | 2 | 3 | Outpost | Cheap protection |
-| Moss Garden Grove | 3 | 3 | Base | Frontier bonus: +1 Attack on charge |
-| Crystal Hollow | 3 | 3 | Base | +1 Trade, stacking with allies |
-| Bramble Thicket | 3 | 4 | Outpost | Trigger charge on destruction |
-| Honey Cache | 2 | 3 | Base | +2 Authority, +1 per ally |
-| Claw and Tooth Mill | 4 | 4 | Base | Spawn tokens per ally |
-| Bone Circle | 4 | 4 | Base | Draw 1 on charge |
-| Elder's Hollow | 5 | 5 | Base | Draw 1, spawn wolves per ally |
+**Summoner Ship → Temporary Base Pairs:**
+| Summoner Ship | Cost | Temporary Base | Def | Type | Special |
+|---------------|------|----------------|-----|------|---------|
+| Den Mother | 2 | Moonlit Den | 3 | Outpost | Cheap protection |
+| Honey Keeper | 2 | Honey Cache | 3 | Base | +2 Authority, +1/ally |
+| Moss Weaver | 3 | Moss Garden | 3 | Base | Frontier bonus: +1 Attack |
+| Crystal Singer | 3 | Crystal Hollow | 3 | Base | +1 Trade, +1/ally |
+| Thornwall Summoner | 3 | Thornwall | 4 | Outpost | +1 Combat |
+| Bramble Shaper | 3 | Bramble Thicket | 4 | Outpost | Charge on destroy |
+| Bone Speaker | 4 | Bone Circle | 4 | Base | Draw on charge |
+| Mill Master | 4 | Claw and Tooth Mill | 4 | Base | Spawn tokens/ally |
+| Grove Keeper | 4 | Sacred Grove | 5 | Base | Spawns wolves |
+| Elder Summoner | 5 | Elder's Hollow | 5 | Base | Draw 1, wolves/ally |
+| Heart Caller | 6 | Heart of the Forest | 7 | Base | +2 Combat, ally bonuses |
 
 **Strategic Value:**
-- Bases are common in Wilds decks, making beast cards rarer to draw
-- Lower defense encourages frontier stacking for protection
-- Utility effects reward long-game base strategies
+- Summoner ships cycle through deck (replayable each shuffle)
+- Temporary bases are scrapped when destroyed (no clogging discard)
+- Build and rebuild bases wave after wave
 - Mix of outposts (must attack) and regular bases (can ignore)
+- Temporary base scrap creates interesting combat decisions for opponent
 
 ### High Kingdom: Recruit (The March Column)
 

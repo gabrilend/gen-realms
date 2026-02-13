@@ -1,0 +1,15 @@
+{
+  "id": "bramble_thicket_outpost",
+  "name": "Bramble Thicket",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": true,
+  "temporary_base": true,
+  "on_destroyed": {
+    "type": "trigger_charge"
+  },
+  "flavor": "The thorns hold until broken.",
+  "art_prompt": "dense wall of thorny brambles with glowing eyes peering through, medieval fantasy"
+}

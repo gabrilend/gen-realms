@@ -1,0 +1,13 @@
+{
+  "id": "sacred_grove_base",
+  "name": "Sacred Grove",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 5,
+  "is_outpost": false,
+  "temporary_base": true,
+  "spawns": "wolf_token",
+  "flavor": "The grove persists until the last defender falls.",
+  "art_prompt": "mystical forest clearing with spirit wolves, glowing mushrooms, medieval fantasy"
+}

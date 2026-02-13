@@ -1,0 +1,12 @@
+{
+  "id": "crystal_hollow_base",
+  "name": "Crystal Hollow",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 3,
+  "is_outpost": false,
+  "temporary_base": true,
+  "flavor": "The crystals sing until shattered.",
+  "art_prompt": "underground cavern where plants grow into crystals, gemstones arranged by animals, medieval fantasy"
+}

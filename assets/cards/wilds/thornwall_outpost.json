@@ -1,0 +1,15 @@
+{
+  "id": "thornwall_outpost",
+  "name": "Thornwall",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": true,
+  "temporary_base": true,
+  "effects": [
+    { "type": "add_combat", "value": 1 }
+  ],
+  "flavor": "Living thorns, temporary but fierce.",
+  "art_prompt": "living wall of thorny vines with glowing eyes within, dark forest, medieval fantasy"
+}

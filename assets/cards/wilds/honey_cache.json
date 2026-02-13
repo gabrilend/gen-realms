@@ -1,17 +1,16 @@
 {
   "id": "honey_cache",
-  "name": "Honey Cache",
+  "name": "Honey Keeper",
   "cost": 2,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 3,
-  "is_outpost": false,
+  "card_type": "ship",
   "effects": [
-    { "type": "add_authority", "value": 2 }
+    { "type": "add_authority", "value": 1 },
+    { "type": "spawn", "card_id": "honey_cache_base" }
   ],
   "ally_effects": [
     { "type": "add_authority", "value": 1 }
   ],
   "flavor": "Sweetness for the strong. Strength for the patient.",
-  "art_prompt": "bear-guarded beehive in ancient tree, golden honey flowing, medieval fantasy"
+  "art_prompt": "bear spirit guarding beehive, golden honey, medieval fantasy"
 }

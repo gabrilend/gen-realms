@@ -163,7 +163,26 @@ Late game: High-velocity deck cycles power cards repeatedly
 
 **Philosophy:** Gather strength, then overwhelm with brutal power.
 
-**Core Mechanic: Frontier & Charge**
+**Core Mechanics: Summoners, Temporary Bases & The Charge**
+
+The Wilds has a unique base system: **summoner ships** that spawn
+**temporary bases**. Unlike other factions' permanent bases, Wilds bases
+are scrapped when destroyed—but the summoners cycle back through your deck.
+
+**Summoner Ships:**
+| Ship | Cost | Spawns |
+|------|------|--------|
+| Den Mother | 2 | Moonlit Den (outpost, def 3) |
+| Thornwall Summoner | 3 | Thornwall (outpost, def 4) |
+| Grove Keeper | 4 | Sacred Grove (def 5) |
+| Elder Summoner | 5 | Elder's Hollow (def 5) |
+| Heart Caller | 6 | Heart of the Forest (def 7) |
+
+**Temporary Bases:**
+When destroyed, these bases are **scrapped** (removed from game), not discarded.
+This creates wave tactics—raise bases, use them, lose them, replay summoners.
+
+**Frontier & Charge:**
 Wilds cards can be played to the Frontier instead of the play area:
 - Card's cost adds to base defense
 - Ally effects trigger immediately (healing/resources)
@@ -206,9 +225,9 @@ Wilds ally effects trigger per OTHER ally in play:
 This rewards commitment to the faction.
 
 **Play Pattern:**
-Early game: Acquire bases, establish frontier positions
-Mid game: Stack cards at frontier, heal while building
-Late game: Time the charge for maximum impact
+Early game: Acquire summoner ships, establish first temporary bases
+Mid game: Stack cards at frontier, replay summoners for wave attacks
+Late game: Time charges with pack n² scaling for devastating bursts
 
 ---
 
@@ -251,6 +270,7 @@ established; Merchants need ongoing infrastructure.
 | Scrap (Artificer) | Shrinks | Faster |
 | Coin Troops (Merchant) | Neutral | Unchanged |
 | Recruit (Kingdom) | Neutral | Faster (cycling) |
+| Summoners (Wilds) | Ships cycle, bases scrap | Wave (repeatable) |
 | Frontier (Wilds) | Neutral | Burst (delayed) |
 
 **No Dominant Strategy:**

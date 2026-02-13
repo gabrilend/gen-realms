@@ -1,20 +1,15 @@
 {
   "id": "moss_garden_grove",
-  "name": "Moss Garden Grove",
+  "name": "Moss Weaver",
   "cost": 3,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 3,
-  "is_outpost": false,
-  "effects": [],
+  "card_type": "ship",
+  "effects": [
+    { "type": "spawn", "card_id": "moss_garden_base" }
+  ],
   "ally_effects": [
     { "type": "add_authority", "value": 1 }
   ],
-  "frontier_bonus": {
-    "type": "upgrade_attack",
-    "value": 1,
-    "trigger": "on_charge"
-  },
   "flavor": "Moss-coated warriors emerge, armored in living green.",
-  "art_prompt": "serene moss garden by a river, druids affixing green moss armor to wolves, medieval fantasy"
+  "art_prompt": "druid weaving moss armor, serene river garden, medieval fantasy"
 }

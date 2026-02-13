@@ -1,0 +1,16 @@
+{
+  "id": "bone_circle_base",
+  "name": "Bone Circle",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 4,
+  "is_outpost": false,
+  "temporary_base": true,
+  "frontier_bonus": {
+    "type": "draw_on_charge",
+    "value": 1
+  },
+  "flavor": "The bones hold until scattered.",
+  "art_prompt": "ritual circle of ancient bones, spirit animals circling above, druidic magic, medieval fantasy"
+}

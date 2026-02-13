@@ -1,0 +1,12 @@
+{
+  "id": "heart_of_the_forest_base",
+  "name": "Heart of the Forest",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 6,
+  "is_outpost": false,
+  "temporary_base": true,
+  "flavor": "The heart beats until silenced.",
+  "art_prompt": "massive glowing tree heart pulsing with green energy, forest spirits, medieval fantasy"
+}

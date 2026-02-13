@@ -1,0 +1,17 @@
+{
+  "id": "moss_garden_base",
+  "name": "Moss Garden Grove",
+  "cost": 0,
+  "faction": "wilds",
+  "card_type": "base",
+  "defense": 3,
+  "is_outpost": false,
+  "temporary_base": true,
+  "frontier_bonus": {
+    "type": "upgrade_attack",
+    "value": 1,
+    "trigger": "on_charge"
+  },
+  "flavor": "The moss grows until trampled.",
+  "art_prompt": "serene moss garden by a river, druids affixing green moss armor to wolves, medieval fantasy"
+}

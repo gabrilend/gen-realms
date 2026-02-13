@@ -29,10 +29,10 @@ Create the actual game content with fantasy-themed cards, faction designs, and a
 | Starting cards | 2 (scout, viper) |
 | Neutral trade cards | 6 |
 | Merchant Guilds | 24 (11 ships, 6 bases, 4 tokens, 3 coin troops) |
-| The Wilds | 24 (11 ships, 11 bases, 2 tokens) |
+| The Wilds | 35 (11 ships, 11 summoner ships, 11 temp bases, 2 tokens) |
 | High Kingdom | 15 (11 ships, 3 bases, 1 token) |
 | Artificer Order | 15 (11 ships, 3 bases, 1 token) |
-| **Total** | **86 cards** |
+| **Total** | **97 cards** |
 
 ## Notes
 Phase 4 transforms the game engine into a playable game with real content. Cards are defined in JSON with faction themes, upgrade effects, and spawning abilities. Focus on balanced faction identities and fantasy flavor.
@@ -66,6 +66,15 @@ Major redesign implemented to create unique faction identity:
 - **More Bases**: 11 bases (was 3) with low defense (3-5) and utility effects
 - **New Schema Fields**: `spawn_per_ally`, `frontier_bonus`, `on_destroyed`
 - See docs/02-game-mechanics.md for full Frontier mechanic documentation
+
+## Wilds Summoner Ship Conversion (2026-02-12)
+Major faction restructure - all bases converted to summoner ship + temporary base pairs:
+- **Summoner Ships**: Ships that spawn temporary bases, cycle through deck
+- **Temporary Bases**: Have `temporary_base: true`, scrapped when destroyed
+- **Wave Tactics**: Build bases, charge, lose them, replay summoners next shuffle
+- **New Schema Field**: `temporary_base` for scrap-on-destroy behavior
+- 11 summoner ships + 11 temporary base tokens added (24 cards → 35 cards)
+- See issue 4-003 Addendum 3 for full details
 
 ## Remaining Work
 - 4-009: Balance validator requires C implementation (Track A dependency)

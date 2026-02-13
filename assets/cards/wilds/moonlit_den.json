@@ -1,15 +1,15 @@
 {
   "id": "moonlit_den",
-  "name": "Moonlit Den",
+  "name": "Den Mother",
   "cost": 2,
   "faction": "wilds",
-  "card_type": "base",
-  "defense": 3,
-  "is_outpost": true,
-  "effects": [],
+  "card_type": "ship",
+  "effects": [
+    { "type": "spawn", "card_id": "moonlit_den_outpost" }
+  ],
   "ally_effects": [
     { "type": "add_authority", "value": 1 }
   ],
   "flavor": "Under silver light, the pack finds rest.",
-  "art_prompt": "wolf den beneath ancient oak, moonlight streaming through branches, medieval fantasy"
+  "art_prompt": "wolf mother summoning protective den, moonlight, medieval fantasy"
 }
