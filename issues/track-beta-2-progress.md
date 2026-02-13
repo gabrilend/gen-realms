@@ -69,7 +69,8 @@ Track Beta-2 implements the critical networking path:
 
 | Issue | Description | Dependencies | Priority |
 |-------|-------------|--------------|----------|
-| 3-011* | WASM JS elimination (10 sub-issues) | 3-003 (done) | MEDIUM |
+| 3-011* | WASM JS elimination (10 sub-issues) | 3-003 (done) | ARCHIVED |
+| 3-012* | Lua client architecture (4 sub-issues) | 2-005 (protocol) | MEDIUM |
 
 ## Critical Path Analysis
 
@@ -172,28 +173,19 @@ Track Beta-2 implements the critical networking path:
 - Both clients playing simultaneously
 - All UI features working
 
-### 3-011: WASM JS Elimination (Optional Parallel)
+### 3-011: WASM JS Elimination (ARCHIVED)
 
-**Status:** CORE COMPLETE (final cleanup pending)
-**Sub-issues:** 3-011a through 3-011j (10 sub-issues)
+**Status:** ARCHIVED (replaced by 3-012 Lua Client)
+**Sub-issues:** 3-011a through 3-011j (10 sub-issues, archived)
 
-This large refactoring effort can proceed in parallel as it doesn't
-affect the critical protocol path. It replaces 22 JavaScript files
-with pure WebAssembly C code.
+This approach was abandoned because WebAssembly still requires JavaScript
+bridging via Emscripten's EM_ASM for Canvas/WebSocket access. The goal is
+to eliminate JavaScript entirely, not just avoid writing it manually.
 
-**Sub-issue Status (2026-02-12):**
-- 3-011a: Core canvas infrastructure - COMPLETE
-- 3-011b: Theme and layout constants - COMPLETE
-- 3-011c: Input handling - COMPLETE
-- 3-011d: Card and zone rendering - COMPLETE
-- 3-011e: Panel rendering - COMPLETE
-- 3-011f: Animation system - COMPLETE
-- 3-011g: WebSocket communication - COMPLETE
-- 3-011h: Preferences storage - COMPLETE
-- 3-011i: AI integration modules - COMPLETE
-- 3-011j: Final integration - COMPLETE (cleanup tasks pending)
+**Replacement:** 3-012 Lua Client Architecture - users run Lua interpreter
+locally, server sends JSON game state, no JavaScript anywhere in stack.
 
-**Files Created:**
+**Files Created (archived as reference):**
 - canvas.h/c - Canvas initialization and render loop
 - draw2d.h/c - 2D drawing primitives
 - theme.h/c - Colors, layout constants
@@ -202,16 +194,13 @@ with pure WebAssembly C code.
 - zone-renderer.h/c - Hand, trade row, bases, play area
 - panel-renderer.h/c - Status bar and narrative panel
 - animation.h/c - Animation system with easing
-- websocket.h/c - WebSocket via EM_ASM
-- preferences.h/c - localStorage persistence
+- websocket.h/c - WebSocket via EM_ASM (still requires JS!)
+- preferences.h/c - localStorage persistence (requires JS!)
 - ai-hooks.h/c - AI integration for narratives
 - game-client.h/c - Main integration module
 
-**Remaining cleanup:**
-- Update index.html to minimal shell
-- Update Makefile.wasm with new sources
-- Test full integration
-- Remove old JS files from assets/web/
+The C code remains useful as reference for visual design and algorithms.
+Issue files moved to: issues/completed/archived/
 
 ## Checkpoint Status
 

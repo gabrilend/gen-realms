@@ -3,7 +3,20 @@
 ## Goal
 Implement both terminal (ncurses) and browser (HTML5 Canvas) client renderers with unified input handling and client-side features.
 
-## Status: COMPLETE
+## Status: IN PROGRESS (Architecture Revision)
+
+## Architecture Note (2026-02-12)
+
+The browser client approach has been reconsidered. JavaScript is architecturally
+insecure (executes arbitrary remote code). The WASM implementation still requires
+JavaScript bridging via Emscripten's EM_ASM for Canvas/WebSocket access.
+
+**New direction:** Lua-based client (3-012) that users run locally with a Lua
+interpreter they control. No JavaScript anywhere. Server sends JSON game state,
+client renders using terminal escape codes or Love2D graphics.
+
+The 3-011 WASM work is archived as reference material - the C rendering logic
+documents visual design and can inform the Lua implementation.
 
 ## Issues
 
@@ -33,16 +46,50 @@ Implement both terminal (ncurses) and browser (HTML5 Canvas) client renderers wi
 | 3-008c | ↳ Attack/damage effects | COMPLETE |
 | 3-009 | Narrative Display | COMPLETE |
 | 3-010 | Phase 3 Demo | COMPLETE |
+| 3-011 | WASM JS Elimination | ARCHIVED |
+| 3-011a-j | ↳ Sub-issues (10 total) | ARCHIVED |
+| 3-012 | Lua Client Architecture | PENDING |
+| 3-012a | ↳ Lua Protocol Client | PENDING |
+| 3-012b | ↳ Lua Terminal Renderer | PENDING |
+| 3-012c | ↳ Lua Love2D Renderer | PENDING |
+| 3-012d | ↳ Script Distribution | PENDING |
 
-## Completed: 24/24
+## Completed: 24/28 (4 pending, 10 archived)
 
 ## Technology Stack
-- ncurses for terminal UI
-- HTML5 Canvas for browser rendering
-- localStorage for client preferences
-- JavaScript for browser interactivity
+- ncurses for terminal UI (native C client)
+- Lua + ANSI escape codes (portable terminal client)
+- Love2D for graphical client (optional, no browser)
+- JSON for game state serialization
+- TCP/WebSocket for network communication
+
+### Archived Technologies
+- HTML5 Canvas (requires JavaScript)
+- localStorage (requires JavaScript)
+- Emscripten/WASM (requires JS bridging)
 
 ## Recent Progress
+
+### 3-012: Lua Client Architecture (2026-02-12)
+New architectural direction to eliminate JavaScript entirely. Browser clients
+replaced by Lua-based clients that users run locally. Two rendering modes:
+- Terminal: Lua + ANSI escape codes (works in any terminal)
+- Graphical: Love2D (cross-platform, no browser dependency)
+
+Server sends JSON game state, client renders locally. Users control what code
+runs on their machine. See issue file for full rationale and implementation plan.
+
+### 3-011: WASM JS Elimination (ARCHIVED)
+Created 12 C module pairs (~3,500 lines) for pure WASM client. However, the
+implementation still requires JavaScript bridging via Emscripten's EM_ASM.
+Since the goal is to eliminate JavaScript entirely (not just avoid writing it),
+this approach is archived. The C code remains as reference for visual design.
+
+Files created (archived as reference):
+- canvas.h/c, draw2d.h/c, theme.h/c, input.h/c
+- card-renderer.h/c, zone-renderer.h/c, panel-renderer.h/c
+- animation.h/c, websocket.h/c, preferences.h/c
+- ai-hooks.h/c, game-client.h/c
 
 ### 3-010: Phase 3 Demo (COMPLETE)
 Comprehensive demonstration of all Phase 3 client rendering components:
