@@ -323,6 +323,11 @@ Budget-based computation limiting for consistent response times.
 AI vs AI exhibition match with strategy visualization and commentary.
 Human vs AI with adjustable difficulty.
 
+### 8-013: Faction Synergy Heuristics
+Bias card acquisition toward faction coherence - cards sharing a faction with
+existing ally-effect cards are valued higher. Creates emergent deck-building
+strategies where the AI naturally gravitates toward faction concentration.
+
 ---
 
 ## Future Phases (Outline)

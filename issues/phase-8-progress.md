@@ -81,8 +81,9 @@ The meta-selector that chooses which strategy tree to traverse:
 | 8-010 | Strategy Learning System | pending |
 | 8-011 | Performance Optimization | pending |
 | 8-012 | Phase 8 Demo | pending |
+| 8-013 | Faction Synergy Heuristics | pending |
 
-## Completed: 0/12
+## Completed: 0/13
 
 ## Dependencies
 - Phase 1: Core C Engine (required - game logic)
