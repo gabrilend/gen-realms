@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbeline Realms</title>
+    <style>
+        /* Minimal inline styles - no external CSS needed */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #0d0d1a; }
+        #canvas { width: 100%; height: 100%; display: block; }
+        #loading {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #888;
+            font-family: monospace;
+            text-align: center;
+        }
+        #loading.hidden { display: none; }
+        .error { color: #ff4444; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="loading">
+        <div id="status">Loading WebAssembly...</div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script src="symbeline.js" onerror="showError('Failed to load symbeline.js')"></script>
+    <script>
+        /* Minimal bootstrap - all logic is in WASM */
+        function showError(msg) {
+            document.getElementById('status').textContent = 'Error';
+            document.getElementById('error').textContent = msg;
+        }
+
+        (async function() {
+            if (typeof SymbelineRealms === 'undefined') {
+                showError('WebAssembly module not found. Run: make -f Makefile.wasm');
+                return;
+            }
+
+            try {
+                /* Initialize Emscripten module */
+                const Module = await SymbelineRealms({
+                    canvas: document.getElementById('canvas'),
+                    print: console.log,
+                    printErr: console.error
+                });
+
+                /* Store canvas reference for WASM access */
+                Module.canvas = document.getElementById('canvas');
+
+                /* Hide loading overlay */
+                document.getElementById('loading').classList.add('hidden');
+
+                /* Start the game - calls game_main() in C */
+                Module._game_main();
+
+            } catch (err) {
+                showError(err.message || 'Failed to initialize WebAssembly');
+                console.error(err);
+            }
+        })();
+    </script>
+</body>
+</html>

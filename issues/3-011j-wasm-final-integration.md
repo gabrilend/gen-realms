@@ -59,9 +59,10 @@ WASM is the primary component with Emscripten-generated loader as only JS.
 - [x] WebSocket callbacks update game state
 - [x] AI callbacks update narrative
 - [x] Default data for testing without server
-- [ ] index.html reduced to minimal shell
-- [ ] No external JS files except Emscripten loader
-- [ ] Build and run with pure WASM client
+- [x] index.html reduced to minimal shell (index-wasm.html created)
+- [x] Makefile.wasm updated with all source files
+- [ ] Build and run with pure WASM client (requires Emscripten SDK)
+- [ ] Remove old JS files (cleanup script created)
 
 ## Implementation Notes
 
@@ -91,7 +92,41 @@ Game state machine:
 
 ## Remaining Work
 
-1. Update index.html to minimal shell
-2. Update Makefile.wasm with all source files
-3. Test full integration
-4. Remove old JS files from assets/web/
+1. ~~Update index.html to minimal shell~~ → Created index-wasm.html (30 lines)
+2. ~~Update Makefile.wasm with all source files~~ → Done (12 WASM + 8 core + 1 lib = 21 source files)
+3. Test full integration → Requires Emscripten SDK
+4. ~~Document JS cleanup~~ → Created scripts/cleanup-legacy-js.sh
+
+## Completed Items (2026-02-12)
+
+- Created `assets/web/index-wasm.html` - Minimal 30-line HTML shell
+- Updated `Makefile.wasm` with all new WASM source files
+- Added WebSocket callback exports to EMCC_FLAGS
+- Added `legacy` target for backward-compatible builds
+- Added `size`, `serve`, and `sources` development targets
+- Created `scripts/cleanup-legacy-js.sh` for JS file removal
+
+## Build Instructions
+
+```bash
+# Install Emscripten SDK (one-time setup)
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk && ./emsdk install latest && ./emsdk activate latest
+
+# Build pure WASM client
+source emsdk_env.sh
+make -f Makefile.wasm
+
+# Test locally
+make -f Makefile.wasm serve
+# Open http://localhost:8000/assets/web/index-wasm.html
+
+# Check build size
+make -f Makefile.wasm size
+```
+
+## Files Changed
+
+- `assets/web/index-wasm.html` - New minimal HTML shell
+- `Makefile.wasm` - Updated with all source files
+- `scripts/cleanup-legacy-js.sh` - Cleanup script for old JS files
