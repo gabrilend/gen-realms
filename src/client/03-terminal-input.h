@@ -8,6 +8,7 @@
 #define TERMINAL_INPUT_H
 
 #include "01-terminal.h"
+#include "../core/05-game.h"  /* For GamePhase enum */
 #include <stdbool.h>
 
 /* {{{ Command types
@@ -45,14 +46,9 @@ typedef struct {
 } Command;
 /* }}} */
 
-/* {{{ Game phase for context-sensitive help */
-typedef enum {
-    PHASE_MAIN = 0,      /* Main phase - play cards, buy, attack */
-    PHASE_DRAW_ORDER,    /* Draw order selection phase */
-    PHASE_WAITING,       /* Waiting for opponent */
-    PHASE_GAME_OVER      /* Game ended */
-} GamePhase;
-/* }}} */
+/* GamePhase is now imported from core/05-game.h */
+/* Note: PHASE_WAITING is not in the core enum, functions using it
+ * should check for non-active-player state instead */
 
 /* {{{ Input history
  * Stores recent commands for up/down arrow navigation.

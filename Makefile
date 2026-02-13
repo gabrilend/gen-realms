@@ -78,6 +78,7 @@ TERMINAL_BIN = $(BIN_DIR)/symbeline-terminal
 SERVER_BIN = $(BIN_DIR)/symbeline-server
 DEMO_BIN = $(BIN_DIR)/phase-1-demo
 DEMO2_BIN = $(BIN_DIR)/phase-2-demo
+DEMO3_BIN = $(BIN_DIR)/phase-3-demo
 TEST_TERMINAL_BIN = $(BIN_DIR)/test-terminal
 TEST_CONFIG_BIN = $(BIN_DIR)/test-config
 TEST_HTTP_BIN = $(BIN_DIR)/test-http
@@ -168,6 +169,15 @@ DEMO2_SOURCES = \
 	$(NET_DIR)/08-validation.c \
 	$(CJSON_SOURCES)
 
+# Phase 3 demo sources (3-010)
+# Terminal client demonstration with ncurses
+DEMO3_SOURCES = \
+	$(DEMO_DIR)/phase-3-demo.c \
+	$(CORE_SOURCES) \
+	$(CLIENT_DIR)/01-terminal.c \
+	$(CLIENT_DIR)/02-terminal-render.c \
+	$(CLIENT_DIR)/03-terminal-input.c
+
 TEST_PROTOCOL_SOURCES = \
 	tests/test-protocol.c \
 	$(NET_DIR)/04-protocol.c \
@@ -230,6 +240,7 @@ TEST_HIDDEN_INFO_OBJECTS = $(TEST_HIDDEN_INFO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 TEST_VALIDATION_OBJECTS = $(TEST_VALIDATION_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO_OBJECTS = $(DEMO_SOURCES:%.c=$(BUILD_DIR)/%.o)
 DEMO2_OBJECTS = $(DEMO2_SOURCES:%.c=$(BUILD_DIR)/%.o)
+DEMO3_OBJECTS = $(DEMO3_SOURCES:%.c=$(BUILD_DIR)/%.o)
 # }}}
 
 # {{{ output binaries
@@ -237,7 +248,7 @@ TEST_CORE_BIN = $(BIN_DIR)/test-core
 # }}}
 
 # {{{ build targets
-.PHONY: all clean terminal server demo demo2 test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info test-validation dirs deps deps-force deps-info clean-deps
+.PHONY: all clean terminal server demo demo2 demo3 test test-core test-terminal test-config test-http test-ssh test-serialize test-protocol test-websocket test-connections test-sessions test-hidden-info test-validation dirs deps deps-force deps-info clean-deps
 
 all: dirs terminal
 
@@ -269,6 +280,13 @@ demo2: dirs $(DEMO2_BIN)
 
 $(DEMO2_BIN): $(DEMO2_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(MATH_LIBS)
+
+# Phase 3 Demo (3-010) - Terminal client demonstration
+demo3: dirs $(DEMO3_BIN)
+	@echo "Phase 3 demo built. Run with: ./$(DEMO3_BIN)"
+
+$(DEMO3_BIN): $(DEMO3_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(NCURSES_LIBS)
 
 # Test programs - run core tests (main test target)
 test: test-core

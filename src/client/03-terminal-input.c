@@ -4,9 +4,12 @@
  * Uses ncurses for input handling with support for arrow key navigation.
  */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include "03-terminal-input.h"
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>  /* For strcasecmp, strncasecmp */
 #include <ctype.h>
 
 /* {{{ Command strings for parsing */
@@ -510,12 +513,21 @@ void terminal_show_help_for_phase(TerminalUI* ui, GamePhase phase) {
             wattroff(ui->narrative_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
             break;
 
-        case PHASE_WAITING:
-            mvwprintw(ui->narrative_win, 0, 2, " WAITING ");
+        case PHASE_END:
+            mvwprintw(ui->narrative_win, 0, 2, " END PHASE ");
             wattron(ui->narrative_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
-            mvwprintw(ui->narrative_win, y++, 2, "Waiting for opponent...");
+            mvwprintw(ui->narrative_win, y++, 2, "Turn ending...");
             y++;
             mvwprintw(ui->narrative_win, y++, 2, "q - Quit game");
+            wattroff(ui->narrative_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
+            break;
+
+        case PHASE_NOT_STARTED:
+            mvwprintw(ui->narrative_win, 0, 2, " WAITING ");
+            wattron(ui->narrative_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
+            mvwprintw(ui->narrative_win, y++, 2, "Waiting for game to start...");
+            y++;
+            mvwprintw(ui->narrative_win, y++, 2, "q - Quit");
             wattroff(ui->narrative_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
             break;
 
@@ -645,7 +657,8 @@ bool command_valid_for_phase(Command* cmd, GamePhase phase) {
             /* Only draw order command valid */
             return cmd->type == CMD_DRAW_ORDER;
 
-        case PHASE_WAITING:
+        case PHASE_END:
+        case PHASE_NOT_STARTED:
         case PHASE_GAME_OVER:
             /* Only help/quit valid (already checked above) */
             return false;
@@ -675,8 +688,10 @@ const char* command_validation_error(Command* cmd, GamePhase phase) {
         switch (phase) {
             case PHASE_DRAW_ORDER:
                 return "Use 'd' command to set draw order";
-            case PHASE_WAITING:
-                return "Waiting for opponent";
+            case PHASE_END:
+                return "Turn is ending, please wait";
+            case PHASE_NOT_STARTED:
+                return "Game has not started yet";
             case PHASE_GAME_OVER:
                 return "Game is over";
             default:

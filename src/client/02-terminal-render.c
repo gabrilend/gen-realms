@@ -363,8 +363,28 @@ void terminal_render_trade_row(TerminalUI* ui, TradeRow* row, int player_trade) 
 }
 /* }}} */
 
+/* {{{ render_base_list
+ * Helper to render a list of bases (frontier or interior).
+ */
+static int render_base_list(WINDOW* win, CardInstance** bases, int count, int start_y, int max_y, int start_idx) {
+    int rendered = 0;
+    for (int i = 0; i < count && start_y + rendered < max_y; i++) {
+        CardInstance* base = bases[i];
+        int color = faction_color_pair(base->type->faction);
+
+        wattron(win, COLOR_PAIR(color));
+        mvwprintw(win, start_y + rendered, 1, "[%d] %s (%d def%s)",
+                  start_idx + i, base->type->name, base->type->defense,
+                  base->type->is_outpost ? " OUT" : "");
+        wattroff(win, COLOR_PAIR(color));
+        rendered++;
+    }
+    return rendered;
+}
+/* }}} */
+
 /* {{{ terminal_render_bases
- * Renders bases for both players.
+ * Renders bases for both players (frontier and interior combined).
  */
 void terminal_render_bases(TerminalUI* ui, Player* player, Player* opponent) {
     if (ui == NULL || ui->base_win == NULL) return;
@@ -375,19 +395,16 @@ void terminal_render_bases(TerminalUI* ui, Player* player, Player* opponent) {
     int h = getmaxy(ui->base_win);
     int mid = h / 2;
 
-    /* Your bases */
-    mvwprintw(ui->base_win, 0, 2, " YOUR BASES (%d) ", player->deck->base_count);
+    /* Your bases (frontier + interior) */
+    int total_bases = player->deck->frontier_base_count + player->deck->interior_base_count;
+    mvwprintw(ui->base_win, 0, 2, " YOUR BASES (%d) ", total_bases);
 
-    for (int i = 0; i < player->deck->base_count && i + 1 < mid; i++) {
-        CardInstance* base = player->deck->bases[i];
-        int color = faction_color_pair(base->type->faction);
-
-        wattron(ui->base_win, COLOR_PAIR(color));
-        mvwprintw(ui->base_win, i + 1, 1, "[%d] %s (%d def%s)",
-                  i, base->type->name, base->type->defense,
-                  base->type->is_outpost ? " OUT" : "");
-        wattroff(ui->base_win, COLOR_PAIR(color));
-    }
+    int y = 1;
+    y += render_base_list(ui->base_win, player->deck->frontier_bases,
+                          player->deck->frontier_base_count, y, mid - 1, 0);
+    render_base_list(ui->base_win, player->deck->interior_bases,
+                     player->deck->interior_base_count, y, mid - 1,
+                     player->deck->frontier_base_count);
 
     /* Divider */
     wattron(ui->base_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
@@ -395,20 +412,17 @@ void terminal_render_bases(TerminalUI* ui, Player* player, Player* opponent) {
     wattroff(ui->base_win, COLOR_PAIR(COLOR_PAIR_DEFAULT));
 
     /* Opponent bases */
+    int opp_total = opponent->deck->frontier_base_count + opponent->deck->interior_base_count;
     wattron(ui->base_win, COLOR_PAIR(COLOR_PAIR_ERROR));
-    mvwprintw(ui->base_win, mid, 2, " OPPONENT BASES (%d) ", opponent->deck->base_count);
+    mvwprintw(ui->base_win, mid, 2, " OPPONENT BASES (%d) ", opp_total);
     wattroff(ui->base_win, COLOR_PAIR(COLOR_PAIR_ERROR));
 
-    for (int i = 0; i < opponent->deck->base_count && mid + i + 1 < h - 1; i++) {
-        CardInstance* base = opponent->deck->bases[i];
-        int color = faction_color_pair(base->type->faction);
-
-        wattron(ui->base_win, COLOR_PAIR(color));
-        mvwprintw(ui->base_win, mid + i + 1, 1, "[%d] %s (%d def%s)",
-                  i, base->type->name, base->type->defense,
-                  base->type->is_outpost ? " OUT" : "");
-        wattroff(ui->base_win, COLOR_PAIR(color));
-    }
+    y = mid + 1;
+    y += render_base_list(ui->base_win, opponent->deck->frontier_bases,
+                          opponent->deck->frontier_base_count, y, h - 1, 0);
+    render_base_list(ui->base_win, opponent->deck->interior_bases,
+                     opponent->deck->interior_base_count, y, h - 1,
+                     opponent->deck->frontier_base_count);
 
     wrefresh(ui->base_win);
 }
