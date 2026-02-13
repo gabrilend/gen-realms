@@ -48,36 +48,41 @@ documents visual design and can inform the Lua implementation.
 | 3-010 | Phase 3 Demo | COMPLETE |
 | 3-011 | WASM JS Elimination | ARCHIVED |
 | 3-011a-j | ↳ Sub-issues (10 total) | ARCHIVED |
-| 3-012 | Lua Client Architecture | PENDING |
-| 3-012a | ↳ Lua Protocol Client | PENDING |
-| 3-012b | ↳ Lua Terminal Renderer | PENDING |
-| 3-012c | ↳ Lua Love2D Renderer | PENDING |
-| 3-012d | ↳ Script Distribution | PENDING |
+| 3-012 | Love2D Graphics Client | PENDING |
+| 3-012a | ↳ Love2D Project Structure | PENDING |
+| 3-012b | ↳ Thread Architecture | PENDING |
+| 3-012c | ↳ Canvas API Wrapper | PENDING |
+| 3-012d | ↳ Game Renderer | PENDING |
 
 ## Completed: 24/28 (4 pending, 10 archived)
 
 ## Technology Stack
-- ncurses for terminal UI (native C client)
-- Lua + ANSI escape codes (portable terminal client)
-- Love2D for graphical client (optional, no browser)
+- ncurses for terminal UI (native C client, complete)
+- Love2D for graphical client (replaces browser Canvas)
+  - love.graphics.* mirrors HTML5 Canvas API
+  - love.thread for parallel computation (braided threads)
+  - luasocket for TCP networking
 - JSON for game state serialization
-- TCP/WebSocket for network communication
+- TCP for network communication
 
 ### Archived Technologies
 - HTML5 Canvas (requires JavaScript)
 - localStorage (requires JavaScript)
 - Emscripten/WASM (requires JS bridging)
+- WebSocket in browser (requires JavaScript)
 
 ## Recent Progress
 
-### 3-012: Lua Client Architecture (2026-02-12)
-New architectural direction to eliminate JavaScript entirely. Browser clients
-replaced by Lua-based clients that users run locally. Two rendering modes:
-- Terminal: Lua + ANSI escape codes (works in any terminal)
-- Graphical: Love2D (cross-platform, no browser dependency)
+### 3-012: Love2D Graphics Client (2026-02-12)
+Replaces HTML5 Canvas JavaScript API with Love2D. Terminal client already
+exists (ncurses). This provides the graphical renderer:
+- love.graphics.* mirrors Canvas API (fillRect, drawImage, etc.)
+- love.thread enables parallel computation (network, state, render threads)
+- Three threads braided via channels for smooth 60fps rendering
+- No JavaScript anywhere in the stack
 
-Server sends JSON game state, client renders locally. Users control what code
-runs on their machine. See issue file for full rationale and implementation plan.
+Server sends JSON game state via TCP. Love2D client parses, computes animation
+diffs, and renders. Users can inspect all Lua scripts before running.
 
 ### 3-011: WASM JS Elimination (ARCHIVED)
 Created 12 C module pairs (~3,500 lines) for pure WASM client. However, the
